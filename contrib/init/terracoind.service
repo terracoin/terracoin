@@ -1,0 +1,22 @@
+[Unit]
+Description=Terracoin's distributed currency daemon
+After=network.target
+
+[Service]
+User=terracoincore
+Group=terracoincore
+
+Type=forking
+PIDFile=/var/lib/terracoind/terracoind.pid
+ExecStart=/usr/bin/terracoind -daemon -pid=/var/lib/terracoind/terracoind.pid \
+-conf=/etc/terracoincore/terracoin.conf -datadir=/var/lib/terracoind -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
