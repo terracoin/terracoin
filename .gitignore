@@ -6,6 +6,7 @@ reset-files.bash
 *.tar.gz
 
 *.exe
+bin/
 src/dash
 src/dashd
 src/dash-cli
