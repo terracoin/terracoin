@@ -30,7 +30,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
     genesis.nTime    = nTime;
     genesis.nBits    = nBits;
     genesis.nNonce   = nNonce;
-    genesis.nVersion = nVersion;
+    genesis.nVersion.SetGenesisVersion(nVersion);
     genesis.vtx.push_back(txNew);
     genesis.hashPrevBlock.SetNull();
     genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
@@ -112,8 +112,8 @@ public:
 
         consensus.nAuxpowChainId = 0x0032;
         consensus.nAuxpowStartHeight = 833000;
-        consensus.fStrictChainId = true;
-        consensus.nLegacyBlocksBefore = 833000;
+        consensus.fStrictChainId = false;
+        consensus.nLegacyBlocksBefore = -1;
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
