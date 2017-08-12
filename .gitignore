@@ -7,13 +7,13 @@ reset-files.bash
 
 *.exe
 bin/
-src/dash
-src/dashd
-src/dash-cli
-src/dash-tx
-src/test/test_dash
-src/qt/test/test_dash-qt
-src/bench/bench_dash
+src/terracoin
+src/terracoind
+src/terracoin-cli
+src/terracoin-tx
+src/test/test_terracoin
+src/qt/test/test_terracoin-qt
+src/bench/bench_terracoin
 
 # autoreconf
 Makefile.in
@@ -36,8 +36,8 @@ config.log
 config.status
 configure
 libtool
-src/config/dash-config.h
-src/config/dash-config.h.in
+src/config/terracoin-config.h
+src/config/terracoin-config.h.in
 src/config/stamp-h1
 share/setup.nsi
 share/qt/Info.plist
@@ -63,7 +63,7 @@ libconftest.dylib*
 *.o
 *.o-*
 *.patch
-.dash
+.terracoin
 *.a
 *.pb.cc
 *.pb.h
@@ -82,12 +82,12 @@ libconftest.dylib*
 # Compilation and Qt preprocessor part
 *.qm
 Makefile
-dash-qt
+terracoin-qt
 Dash-Qt.app
 
 # Unit-tests
 Makefile.test
-dash-qt_test
+terracoin-qt_test
 src/test/buildenv.py
 
 # Resources cpp
@@ -101,7 +101,7 @@ build
 *.gcno
 *.gcda
 /*.info
-test_dash.coverage/
+test_terracoin.coverage/
 total.coverage/
 coverage_percent.txt
 
@@ -125,11 +125,11 @@ share/BitcoindComparisonTool.jar
 /doc/doxygen/
 
 libbitcoinconsensus.pc
-src/qt/dash-qt.bash
+src/qt/terracoin-qt.bash
 qa/pull-tester/tests-config.sh
 
 #development symlinks
-dash-cli
-dashd
-dash-qt
+terracoin-cli
+terracoind
+terracoin-qt
 make
