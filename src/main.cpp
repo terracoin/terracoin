@@ -2842,7 +2842,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     // the peer who sent us this block is missing some data and wasn't able
     // to recognize that block is actually invalid.
     // TODO: resync data (both ways?) and try to reprocess this block later.
-    if(pindex->nHeight >= 1083330) {
+    if(pindex->nHeight >= Params().GetConsensus().nDashRulesStartHeight) {
         CAmount blockReward = nFees + GetBlockSubsidy(pindex->pprev->nBits, pindex->pprev->nHeight, chainparams.GetConsensus());
         std::string strError = "";
         if (!IsBlockValueValid(block, pindex->nHeight, blockReward, strError)) {
@@ -6272,7 +6272,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         }
     }
 
-
+#if 0
+    // Alerts are disabled for now
     else if (fAlerts && strCommand == NetMsgType::ALERT)
     {
         CAlert alert;
@@ -6302,6 +6303,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
         }
     }
+#endif
 
 
     else if (strCommand == NetMsgType::FILTERLOAD)

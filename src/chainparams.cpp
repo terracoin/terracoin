@@ -114,6 +114,8 @@ public:
         consensus.nAuxpowStartHeight = 833000;
         consensus.fStrictChainId = false;
         consensus.nLegacyBlocksBefore = -1;
+    
+        consensus.nDashRulesStartHeight = 1083330;
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -280,6 +282,8 @@ public:
         consensus.fStrictChainId = false;
         consensus.nLegacyBlocksBefore = -1;
 
+        consensus.nDashRulesStartHeight = 0;
+
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
         pchMessageStart[2] = 0x09;
@@ -375,6 +379,8 @@ public:
         consensus.nAuxpowChainId = 0x0001;
         consensus.fStrictChainId = true;
         consensus.nLegacyBlocksBefore = 0;
+
+        consensus.nDashRulesStartHeight = 0;
 
         pchMessageStart[0] = 0xfa;
         pchMessageStart[1] = 0xbf;

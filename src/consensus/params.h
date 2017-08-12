@@ -80,6 +80,9 @@ struct Params {
     bool fStrictChainId;
     int nLegacyBlocksBefore; // -1 for "always allow"
 
+    /** Dash rules **/
+    int nDashRulesStartHeight;
+
     /**
      * Check whether or not to allow legacy blocks at the given height.
      * @param nHeight Height of the block to check.

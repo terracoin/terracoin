@@ -51,7 +51,7 @@ int CMerkleTx::SetMerkleBranch(const CBlock& block)
             break;
     if (nIndex == (int)block.vtx.size())
     {
-		vMerkleBranch.clear();
+	vMerkleBranch.clear();
         nIndex = -1;
         LogPrintf("ERROR: SetMerkleBranch(): couldn't find tx in block\n");
         return 0;
@@ -133,15 +133,16 @@ CAuxPow::check (const uint256& hashAuxBlock, int nChainId) const
         return error("Aux POW chain merkle branch too long");
 
     // Check that the chain merkle root is in the coinbase
-    const uint256 nRootHash
-      = CBlock::CheckMerkleBranch (hashAuxBlock, vChainMerkleBranch,
-                                   nChainIndex);
+    const uint256 nRootHash = CBlock::CheckMerkleBranch (hashAuxBlock, vChainMerkleBranch, nChainIndex);
     valtype vchRootHash(nRootHash.begin (), nRootHash.end ());
     std::reverse (vchRootHash.begin (), vchRootHash.end ()); // correct endian
 
     // Check that we are in the parent block merkle tree
     if (CBlock::CheckMerkleBranch(GetHash(), vMerkleBranch, nIndex) != parentBlock.hashMerkleRoot)
+    {
+	//LogPrintf("Aux POW: H1 %s H2 %s W %s %u %d\n", nRootHash.ToString(), nRootHash2.ToString(), parentBlock.hashMerkleRoot.ToString(), vMerkleBranch.size(), nIndex);
         return error("Aux POW merkle root incorrect");
+    }
 
     const CScript script = vin[0].scriptSig;
 
