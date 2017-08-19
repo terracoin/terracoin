@@ -255,6 +255,9 @@ void CMasternodeSync::ProcessTick()
     //the actual count of masternodes we have currently
     int nMnCount = mnodeman.CountMasternodes();
 
+    //Make it possible to bootstrap the first masternode
+    if(fMasterNode) nMnCount++;
+
     if(fDebug) LogPrintf("CMasternodeSync::ProcessTick -- nTick %d nMnCount %d\n", nTick, nMnCount);
 
     // RESET SYNCING INCASE OF FAILURE
