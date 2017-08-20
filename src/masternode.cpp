@@ -624,7 +624,7 @@ bool CMasternodeBroadcast::CheckOutpoint(int& nDos)
             LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Failed to find Masternode UTXO, masternode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
-        if(coins.vout[vin.prevout.n].nValue != 1000 * COIN) {
+        if(coins.vout[vin.prevout.n].nValue != MASTERNODE_COLLATERAL) {
             LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO should have 1000 TERRACOIN, masternode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
