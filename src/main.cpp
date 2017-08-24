@@ -1821,8 +1821,8 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue)
 {
-    CAmount ret = 5000 * COIN; // start at 10,000 TRC
-    return ret;
+    //Note this is payment TO the masternode OP, AFTER deducting the nSuperblockPart calculated above
+    return blockValue/2; // 45% of the total block value (50% of the value after nSuperblockPart)
 }
 
 bool IsInitialBlockDownload()
