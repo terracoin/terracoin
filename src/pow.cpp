@@ -324,7 +324,7 @@ unsigned int GetNextWorkRequiredV1(const CBlockIndex* pindexLast, const CBlockHe
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
     //Always use DGW on the testnet
-    if(params.NetworkIDString() != CBaseChainParams::MAIN)
+    if(Params().NetworkIDString() != CBaseChainParams::MAIN)
         return DarkGravityWave(pindexLast, params);
 
     if (pindexLast->nHeight <= 101631) {
