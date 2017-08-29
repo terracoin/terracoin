@@ -155,9 +155,7 @@ int64_t CSporkManager::GetSporkValue(int nSporkID)
         case SPORK_3_INSTANTSEND_MAX_VALUE:             return SPORK_3_INSTANTSEND_MAX_VALUE_DEFAULT;
         case SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT:    return SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT;
         case SPORK_5_SUPERBLOCKS_ENABLED:               return SPORK_5_SUPERBLOCKS_ENABLED_DEFAULT;
-        case SPORK_10_MASTERNODE_PAY_UPDATED_NODES:     return SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT;
         case SPORK_6_RECONSIDER_BLOCKS:                 return SPORK_6_RECONSIDER_BLOCKS_DEFAULT;
-        case SPORK_13_OLD_SUPERBLOCK_FLAG:              return SPORK_13_OLD_SUPERBLOCK_FLAG_DEFAULT;
         case SPORK_7_REQUIRE_SENTINEL_FLAG:             return SPORK_7_REQUIRE_SENTINEL_FLAG_DEFAULT;
         default:
             LogPrint("spork", "CSporkManager::GetSporkValue -- Unknown Spork ID %d\n", nSporkID);
@@ -173,9 +171,7 @@ int CSporkManager::GetSporkIDByName(std::string strName)
     if (strName == "SPORK_3_INSTANTSEND_MAX_VALUE")             return SPORK_3_INSTANTSEND_MAX_VALUE;
     if (strName == "SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT")    return SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT;
     if (strName == "SPORK_5_SUPERBLOCKS_ENABLED")               return SPORK_5_SUPERBLOCKS_ENABLED;
-    if (strName == "SPORK_10_MASTERNODE_PAY_UPDATED_NODES")     return SPORK_10_MASTERNODE_PAY_UPDATED_NODES;
     if (strName == "SPORK_6_RECONSIDER_BLOCKS")                 return SPORK_6_RECONSIDER_BLOCKS;
-    if (strName == "SPORK_13_OLD_SUPERBLOCK_FLAG")              return SPORK_13_OLD_SUPERBLOCK_FLAG;
     if (strName == "SPORK_7_REQUIRE_SENTINEL_FLAG")             return SPORK_7_REQUIRE_SENTINEL_FLAG;
 
     LogPrint("spork", "CSporkManager::GetSporkIDByName -- Unknown Spork name '%s'\n", strName);
@@ -190,9 +186,7 @@ std::string CSporkManager::GetSporkNameByID(int nSporkID)
         case SPORK_3_INSTANTSEND_MAX_VALUE:             return "SPORK_3_INSTANTSEND_MAX_VALUE";
         case SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT:    return "SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT";
         case SPORK_5_SUPERBLOCKS_ENABLED:               return "SPORK_5_SUPERBLOCKS_ENABLED";
-        case SPORK_10_MASTERNODE_PAY_UPDATED_NODES:     return "SPORK_10_MASTERNODE_PAY_UPDATED_NODES";
         case SPORK_6_RECONSIDER_BLOCKS:                 return "SPORK_6_RECONSIDER_BLOCKS";
-        case SPORK_13_OLD_SUPERBLOCK_FLAG:              return "SPORK_13_OLD_SUPERBLOCK_FLAG";
         case SPORK_7_REQUIRE_SENTINEL_FLAG:             return "SPORK_7_REQUIRE_SENTINEL_FLAG";
         default:
             LogPrint("spork", "CSporkManager::GetSporkNameByID -- Unknown Spork ID %d\n", nSporkID);
