@@ -43,7 +43,7 @@ CInstantSend instantsend;
 void CInstantSend::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
 {
     if(fLiteMode) return; // disable all Terracoin specific functionality
-    if(!sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_ENABLED)) return;
+    if(!sporkManager.IsSporkActive(SPORK_1_INSTANTSEND_ENABLED)) return;
 
     // Ignore any InstantSend messages until masternode list is synced
     if(!masternodeSync.IsMasternodeListSynced()) return;
@@ -694,7 +694,7 @@ bool CInstantSend::GetTxLockVote(const uint256& hash, CTxLockVote& txLockVoteRet
 bool CInstantSend::IsInstantSendReadyToLock(const uint256& txHash)
 {
     if(!fEnableInstantSend || fLargeWorkForkFound || fLargeWorkInvalidChainFound ||
-        !sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_ENABLED)) return false;
+        !sporkManager.IsSporkActive(SPORK_1_INSTANTSEND_ENABLED)) return false;
 
     LOCK(cs_instantsend);
     // There must be a successfully verified lock request
@@ -706,7 +706,7 @@ bool CInstantSend::IsInstantSendReadyToLock(const uint256& txHash)
 bool CInstantSend::IsLockedInstantSendTransaction(const uint256& txHash)
 {
     if(!fEnableInstantSend || fLargeWorkForkFound || fLargeWorkInvalidChainFound ||
-        !sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_ENABLED)) return false;
+        !sporkManager.IsSporkActive(SPORK_1_INSTANTSEND_ENABLED)) return false;
 
     LOCK(cs_instantsend);
 
@@ -732,7 +732,7 @@ int CInstantSend::GetTransactionLockSignatures(const uint256& txHash)
 {
     if(!fEnableInstantSend) return -1;
     if(fLargeWorkForkFound || fLargeWorkInvalidChainFound) return -2;
-    if(!sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_ENABLED)) return -3;
+    if(!sporkManager.IsSporkActive(SPORK_1_INSTANTSEND_ENABLED)) return -3;
 
     LOCK(cs_instantsend);
 
@@ -912,7 +912,7 @@ bool CTxLockRequest::IsValid(bool fRequireUnspent) const
         nValueIn += nValue;
     }
 
-    if(nValueOut > sporkManager.GetSporkValue(SPORK_5_INSTANTSEND_MAX_VALUE)*COIN) {
+    if(nValueOut > sporkManager.GetSporkValue(SPORK_3_INSTANTSEND_MAX_VALUE)*COIN) {
         LogPrint("instantsend", "CTxLockRequest::IsValid -- Transaction value too high: nValueOut=%d, tx=%s", nValueOut, ToString());
         return false;
     }

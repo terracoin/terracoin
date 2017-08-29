@@ -3761,7 +3761,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
 
     // TERRACOIN : CHECK TRANSACTIONS FOR INSTANTSEND
 
-    if(sporkManager.IsSporkActive(SPORK_3_INSTANTSEND_BLOCK_FILTERING)) {
+    if(sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_BLOCK_FILTERING)) {
         // We should never accept block which conflicts with completed transaction lock,
         // that's why this is in CheckBlock unlike coinbase payee/amount.
         // Require other nodes to comply, send them some data in case they are missing it.

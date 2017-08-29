@@ -624,7 +624,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     }
     result.push_back(Pair("masternode", masternodeObj));
     result.push_back(Pair("masternode_payments_started", pindexPrev->nHeight + 1 > Params().GetConsensus().nMasternodePaymentsStartBlock));
-    result.push_back(Pair("masternode_payments_enforced", sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)));
+    result.push_back(Pair("masternode_payments_enforced", sporkManager.IsSporkActive(SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT)));
 
     UniValue superblockObjArray(UniValue::VARR);
     if(pblock->voutSuperblock.size()) {
@@ -641,7 +641,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     }
     result.push_back(Pair("superblock", superblockObjArray));
     result.push_back(Pair("superblocks_started", pindexPrev->nHeight + 1 > Params().GetConsensus().nSuperblockStartBlock));
-    result.push_back(Pair("superblocks_enabled", sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED)));
+    result.push_back(Pair("superblocks_enabled", sporkManager.IsSporkActive(SPORK_5_SUPERBLOCKS_ENABLED)));
 
     return result;
 }

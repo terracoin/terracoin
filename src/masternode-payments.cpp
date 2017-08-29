@@ -97,7 +97,7 @@ bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockRewar
 
     // we are synced, let's try to check as much data as we can
 
-    if(sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED)) {
+    if(sporkManager.IsSporkActive(SPORK_5_SUPERBLOCKS_ENABLED)) {
         if(CSuperblockManager::IsSuperblockTriggered(nBlockHeight)) {
             if(CSuperblockManager::IsValid(block.vtx[0], nBlockHeight, blockReward)) {
                 LogPrint("gobject", "IsBlockValueValid -- Valid superblock at height %d: %s", nBlockHeight, block.vtx[0].ToString());
@@ -162,7 +162,7 @@ bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount bloc
             return true;
         }
 
-        if(sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
+        if(sporkManager.IsSporkActive(SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT)) {
             LogPrintf("IsBlockPayeeValid -- ERROR: Invalid masternode payment detected at height %d: %s", nBlockHeight, txNew.ToString());
             return false;
         }
@@ -174,7 +174,7 @@ bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount bloc
     // superblocks started
     // SEE IF THIS IS A VALID SUPERBLOCK
 
-    if(sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED)) {
+    if(sporkManager.IsSporkActive(SPORK_5_SUPERBLOCKS_ENABLED)) {
         if(CSuperblockManager::IsSuperblockTriggered(nBlockHeight)) {
             if(CSuperblockManager::IsValid(txNew, nBlockHeight, blockReward)) {
                 LogPrint("gobject", "IsBlockPayeeValid -- Valid superblock at height %d: %s", nBlockHeight, txNew.ToString());
@@ -198,7 +198,7 @@ bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount bloc
         return true;
     }
 
-    if(sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
+    if(sporkManager.IsSporkActive(SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT)) {
         LogPrintf("IsBlockPayeeValid -- ERROR: Invalid masternode payment detected at height %d: %s", nBlockHeight, txNew.ToString());
         return false;
     }
@@ -211,7 +211,7 @@ void FillBlockPayments(CMutableTransaction& txNew, int nBlockHeight, CAmount blo
 {
     // only create superblocks if spork is enabled AND if superblock is actually triggered
     // (height should be validated inside)
-    if(sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED) &&
+    if(sporkManager.IsSporkActive(SPORK_5_SUPERBLOCKS_ENABLED) &&
         CSuperblockManager::IsSuperblockTriggered(nBlockHeight)) {
             LogPrint("gobject", "FillBlockPayments -- triggered superblock creation at height %d\n", nBlockHeight);
             CSuperblockManager::CreateSuperblock(txNew, nBlockHeight, voutSuperblockRet);

@@ -3007,8 +3007,8 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wt
                         strFailReason = _("Insufficient funds.");
                     }
                     if (fUseInstantSend) {
-                        if (nValueIn > sporkManager.GetSporkValue(SPORK_5_INSTANTSEND_MAX_VALUE)*COIN) {
-                            strFailReason += " " + strprintf(_("InstantSend doesn't support sending values that high yet. Transactions are currently limited to %1 TERRACOIN."), sporkManager.GetSporkValue(SPORK_5_INSTANTSEND_MAX_VALUE));
+                        if (nValueIn > sporkManager.GetSporkValue(SPORK_3_INSTANTSEND_MAX_VALUE)*COIN) {
+                            strFailReason += " " + strprintf(_("InstantSend doesn't support sending values that high yet. Transactions are currently limited to %1 TERRACOIN."), sporkManager.GetSporkValue(SPORK_3_INSTANTSEND_MAX_VALUE));
                         } else {
                             // could be not true but most likely that's the reason
                             strFailReason += " " + strprintf(_("InstantSend requires inputs with at least %d confirmations, you might need to wait a few minutes and try again."), INSTANTSEND_CONFIRMATIONS_REQUIRED);
