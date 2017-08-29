@@ -129,9 +129,7 @@ bool CSporkManager::IsSporkActive(int nSporkID)
             case SPORK_3_INSTANTSEND_MAX_VALUE:             r = SPORK_3_INSTANTSEND_MAX_VALUE_DEFAULT; break;
             case SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT:    r = SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT; break;
             case SPORK_5_SUPERBLOCKS_ENABLED:               r = SPORK_5_SUPERBLOCKS_ENABLED_DEFAULT; break;
-            case SPORK_10_MASTERNODE_PAY_UPDATED_NODES:     r = SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT; break;
             case SPORK_6_RECONSIDER_BLOCKS:                 r = SPORK_6_RECONSIDER_BLOCKS_DEFAULT; break;
-            case SPORK_13_OLD_SUPERBLOCK_FLAG:              r = SPORK_13_OLD_SUPERBLOCK_FLAG_DEFAULT; break;
             case SPORK_7_REQUIRE_SENTINEL_FLAG:             r = SPORK_7_REQUIRE_SENTINEL_FLAG_DEFAULT; break;
             default:
                 LogPrint("spork", "CSporkManager::IsSporkActive -- Unknown Spork ID %d\n", nSporkID);
