@@ -674,11 +674,17 @@ void CGovernanceObject::UpdateSentinelVariables()
 
     // CALCULATE THE MINUMUM VOTE COUNT REQUIRED FOR FULL SIGNAL
 
-    // todo - 12.1 - should be set to `10` after governance vote compression is implemented
-    int nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nMnCount / 10);
-    int nAbsDeleteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, (2 * nMnCount) / 3);
-    // todo - 12.1 - Temporarily set to 1 for testing - reverted
-    //nAbsVoteReq = 1;
+    int nAbsVoteReq, nAbsDeleteReq;
+    if(Params().NetworkIDString() == CBaseChainParams::MAIN)
+    {
+        nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nMnCount / 10);
+        nAbsDeleteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, (2 * nMnCount) / 3);
+    }
+    else
+    {
+        nAbsVoteReq = Params().GetConsensus().nGovernanceMinQuorum;
+        nAbsDeleteReq = Params().GetConsensus().nGovernanceMinQuorum;
+    }
 
     // SET SENTINEL FLAGS TO FALSE
 
@@ -686,6 +692,10 @@ void CGovernanceObject::UpdateSentinelVariables()
     fCachedValid = true; //default to valid
     fCachedEndorsed = false;
     fDirtyCache = false;
+
+    LogPrint("gobject", "CGovernanceObject::UpdateSentinelVariables %s %d %d %d %d (%d %d)\n",
+	GetHash().ToString(), GetAbsoluteYesCount(VOTE_SIGNAL_FUNDING), GetAbsoluteYesCount(VOTE_SIGNAL_DELETE),
+        GetAbsoluteYesCount(VOTE_SIGNAL_ENDORSED), GetAbsoluteNoCount(VOTE_SIGNAL_VALID), nAbsVoteReq, nAbsDeleteReq);
 
     // SET SENTINEL FLAGS TO TRUE IF MIMIMUM SUPPORT LEVELS ARE REACHED
     // ARE ANY OF THESE FLAGS CURRENTLY ACTIVATED?
