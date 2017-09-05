@@ -91,8 +91,6 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     
     /* Theme selector */
     ui->theme->addItem(QString("TERRACOIN-light"), QVariant("light"));
-    ui->theme->addItem(QString("TERRACOIN-blue"), QVariant("drkblue"));
-    ui->theme->addItem(QString("TERRACOIN-Crownium"), QVariant("crownium"));
     ui->theme->addItem(QString("TERRACOIN-traditional"), QVariant("trad"));
     
     /* Language selector */

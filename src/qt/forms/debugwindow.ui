@@ -488,7 +488,7 @@
            </property>
            <property name="icon">
             <iconset resource="../terracoin.qrc">
-             <normaloff>:/icons/drkblue/remove</normaloff>:/icons/drkblue/remove</iconset>
+             <normaloff>:/icons/trad/remove</normaloff>:/icons/trad/remove</iconset>
            </property>
            <property name="shortcut">
             <string notr="true">Ctrl+L</string>

@@ -166,102 +166,6 @@ BITCOIN_QT_H = \
 RES_ICONS = \
   qt/res/icons/bitcoin.ico \
   qt/res/icons/bitcoin.png \
-  qt/res/icons/drkblue/add.png \
-  qt/res/icons/drkblue/address-book.png \
-  qt/res/icons/drkblue/browse.png \
-  qt/res/icons/drkblue/clock1.png \
-  qt/res/icons/drkblue/clock2.png \
-  qt/res/icons/drkblue/clock3.png \
-  qt/res/icons/drkblue/clock4.png \
-  qt/res/icons/drkblue/clock5.png \
-  qt/res/icons/drkblue/configure.png \
-  qt/res/icons/drkblue/connect0_16.png \
-  qt/res/icons/drkblue/connect1_16.png \
-  qt/res/icons/drkblue/connect2_16.png \
-  qt/res/icons/drkblue/connect3_16.png \
-  qt/res/icons/drkblue/connect4_16.png \
-  qt/res/icons/drkblue/debugwindow.png \
-  qt/res/icons/drkblue/drkblue_editpaste.png \
-  qt/res/icons/drkblue/drkblue_address-book.png \
-  qt/res/icons/drkblue/drkblue_editcopy.png \
-  qt/res/icons/drkblue/drkblue_remove.png \
-  qt/res/icons/drkblue/edit.png \
-  qt/res/icons/drkblue/editcopy.png \
-  qt/res/icons/drkblue/editpaste.png \
-  qt/res/icons/drkblue/export.png \
-  qt/res/icons/drkblue/eye.png \
-  qt/res/icons/drkblue/eye_minus.png \
-  qt/res/icons/drkblue/eye_plus.png \
-  qt/res/icons/drkblue/filesave.png \
-  qt/res/icons/drkblue/history.png \
-  qt/res/icons/drkblue/key.png \
-  qt/res/icons/drkblue/lock_closed.png \
-  qt/res/icons/drkblue/lock_open.png \
-  qt/res/icons/drkblue/masternodes.png \
-  qt/res/icons/drkblue/overview.png \
-  qt/res/icons/drkblue/quit.png \
-  qt/res/icons/drkblue/receive.png \
-  qt/res/icons/drkblue/remove.png \
-  qt/res/icons/drkblue/send.png \
-  qt/res/icons/drkblue/synced.png \
-  qt/res/icons/drkblue/transaction0.png \
-  qt/res/icons/drkblue/transaction2.png \
-  qt/res/icons/drkblue/transaction_conflicted.png \
-  qt/res/icons/drkblue/tx_inout.png \
-  qt/res/icons/drkblue/tx_input.png \
-  qt/res/icons/drkblue/tx_output.png \
-  qt/res/icons/drkblue/tx_mined.png \
-  qt/res/icons/drkblue/about.png \
-  qt/res/icons/drkblue/about_qt.png \
-  qt/res/icons/drkblue/verify.png \
-  qt/res/icons/crownium/add.png \
-  qt/res/icons/crownium/address-book.png \
-  qt/res/icons/crownium/browse.png \
-  qt/res/icons/crownium/clock1.png \
-  qt/res/icons/crownium/clock2.png \
-  qt/res/icons/crownium/clock3.png \
-  qt/res/icons/crownium/clock4.png \
-  qt/res/icons/crownium/clock5.png \
-  qt/res/icons/crownium/configure.png \
-  qt/res/icons/crownium/connect0_16.png \
-  qt/res/icons/crownium/connect1_16.png \
-  qt/res/icons/crownium/connect2_16.png \
-  qt/res/icons/crownium/connect3_16.png \
-  qt/res/icons/crownium/connect4_16.png \
-  qt/res/icons/crownium/debugwindow.png \
-  qt/res/icons/crownium/drkblue_editpaste.png \
-  qt/res/icons/crownium/drkblue_address-book.png \
-  qt/res/icons/crownium/drkblue_editcopy.png \
-  qt/res/icons/crownium/drkblue_remove.png \
-  qt/res/icons/crownium/edit.png \
-  qt/res/icons/crownium/editcopy.png \
-  qt/res/icons/crownium/editpaste.png \
-  qt/res/icons/crownium/export.png \
-  qt/res/icons/crownium/eye.png \
-  qt/res/icons/crownium/eye_minus.png \
-  qt/res/icons/crownium/eye_plus.png \
-  qt/res/icons/crownium/filesave.png \
-  qt/res/icons/crownium/history.png \
-  qt/res/icons/crownium/key.png \
-  qt/res/icons/crownium/lock_closed.png \
-  qt/res/icons/crownium/lock_open.png \
-  qt/res/icons/crownium/masternodes.png \
-  qt/res/icons/crownium/overview.png \
-  qt/res/icons/crownium/quit.png \
-  qt/res/icons/crownium/receive.png \
-  qt/res/icons/crownium/remove.png \
-  qt/res/icons/crownium/send.png \
-  qt/res/icons/crownium/synced.png \
-  qt/res/icons/crownium/transaction0.png \
-  qt/res/icons/crownium/transaction2.png \
-  qt/res/icons/crownium/transaction_conflicted.png \
-  qt/res/icons/crownium/tx_inout.png \
-  qt/res/icons/crownium/tx_input.png \
-  qt/res/icons/crownium/tx_output.png \
-  qt/res/icons/crownium/tx_mined.png \
-  qt/res/icons/crownium/about.png \
-  qt/res/icons/crownium/about_qt.png \
-  qt/res/icons/crownium/verify.png \
   qt/res/icons/light/add.png \
   qt/res/icons/light/address-book.png \
   qt/res/icons/light/browse.png \
@@ -419,32 +323,6 @@ BITCOIN_QT_CPP += \
 endif
 
 RES_IMAGES = \
-  qt/res/images/drkblue/about.png \
-  qt/res/images/drkblue/splash.png \
-  qt/res/images/drkblue/splash_testnet.png \
-  qt/res/images/drkblue/terracoin_logo_horizontal.png \
-  qt/res/images/drkblue/unchecked.png \
-  qt/res/images/drkblue/checked.png \
-  qt/res/images/drkblue/drkblue_downArrow.png \
-  qt/res/images/drkblue/drkblue_downArrow_small.png \
-  qt/res/images/drkblue/drkblue_upArrow_small.png \
-  qt/res/images/drkblue/drkblue_leftArrow_small.png \
-  qt/res/images/drkblue/drkblue_rightArrow_small.png \
-  qt/res/images/drkblue/drkblue_qtreeview_selected.png \
-  qt/res/images/drkblue/drkblue_walletFrame_bg.png \
-  qt/res/images/crownium/about.png \
-  qt/res/images/crownium/splash.png \
-  qt/res/images/crownium/splash_testnet.png \
-  qt/res/images/crownium/terracoin_logo_horizontal.png \
-  qt/res/images/crownium/unchecked.png \
-  qt/res/images/crownium/checked.png \
-  qt/res/images/crownium/drkblue_downArrow.png \
-  qt/res/images/crownium/drkblue_downArrow_small.png \
-  qt/res/images/crownium/drkblue_upArrow_small.png \
-  qt/res/images/crownium/drkblue_leftArrow_small.png \
-  qt/res/images/crownium/drkblue_rightArrow_small.png \
-  qt/res/images/crownium/drkblue_qtreeview_selected.png \
-  qt/res/images/crownium/drkblue_walletFrame_bg.png \
   qt/res/images/light/about.png \
   qt/res/images/light/splash.png \
   qt/res/images/light/splash_testnet.png \
@@ -471,8 +349,6 @@ RES_IMAGES = \
   qt/res/images/trad/drkblue_walletFrame_bg.png
 
 RES_CSS = \
-  qt/res/css/drkblue.css \
-  qt/res/css/crownium.css \
   qt/res/css/light.css
 
 RES_MOVIES = $(wildcard qt/res/movies/spinner-*.png)
