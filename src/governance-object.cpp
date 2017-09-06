@@ -538,17 +538,13 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
         return false;
     }
 
-    // LOOK FOR SPECIALIZED GOVERNANCE SCRIPT (PROOF OF BURN)
+    // LOOK FOR SPECIALIZED GOVERNANCE SCRIPT
 
     CScript findScript;
     findScript << OP_RETURN << ToByteVector(nExpectedHash);
 
-    DBG( cout << "IsCollateralValid txCollateral.vout.size() = " << txCollateral.vout.size() << endl; );
-
-    DBG( cout << "IsCollateralValid: findScript = " << ScriptToAsmStr( findScript, false ) << endl; );
-
-    DBG( cout << "IsCollateralValid: nMinFee = " << nMinFee << endl; );
-
+    LogPrint("gobject", "IsCollateralValid txCollateral.vout.size() = %d, nMinFee = %lu, findScript = %s\n",
+        txCollateral.vout.size(), nMinFee, ScriptToAsmStr( findScript, false ));
 
     bool foundOpReturn = false;
     BOOST_FOREACH(const CTxOut o, txCollateral.vout) {
@@ -556,12 +552,14 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
              << ", o.nValue = " << o.nValue
              << ", o.scriptPubKey = " << ScriptToAsmStr( o.scriptPubKey, false )
              << endl; );
+
         if(!o.scriptPubKey.IsNormalPaymentScript() && !o.scriptPubKey.IsUnspendable()){
             strError = strprintf("Invalid Script %s", txCollateral.ToString());
             LogPrintf ("CGovernanceObject::IsCollateralValid -- %s\n", strError);
             return false;
         }
-        if(o.scriptPubKey == findScript && o.nValue >= nMinFee) {
+
+        if(o.scriptPubKey == findScript) {
             DBG( cout << "IsCollateralValid foundOpReturn = true" << endl; );
             foundOpReturn = true;
         }
@@ -575,6 +573,17 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
         strError = strprintf("Couldn't find opReturn %s in %s", nExpectedHash.ToString(), txCollateral.ToString());
         LogPrintf ("CGovernanceObject::IsCollateralValid -- %s\n", strError);
         return false;
+    }
+
+    // UNLIKE IN DASH, WE DON'T BURN THE COLLATERAL
+
+    CCoinsViewCache view(pcoinsTip);
+    CAmount txFee = view.GetValueIn(txCollateral) - txCollateral.GetValueOut();
+
+    if(txFee < nMinFee)
+    {
+         LogPrintf ("CGovernanceObject::IsCollateralValid Collateral fee too low txFee = %lu nMinFee = %lu\n", txFee, nMinFee);
+         return false;
     }
 
     // GET CONFIRMATIONS FOR TRANSACTION
