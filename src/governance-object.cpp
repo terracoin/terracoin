@@ -577,12 +577,33 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
 
     // UNLIKE IN DASH, WE DON'T BURN THE COLLATERAL
 
-    CCoinsViewCache view(pcoinsTip);
-    CAmount txFee = view.GetValueIn(txCollateral) - txCollateral.GetValueOut();
+    CAmount nValueIn = 0;
+    CAmount nValueOut = 0;
+    bool fMissingTx = false;
 
-    if(txFee < nMinFee)
+    BOOST_FOREACH(const CTxOut txout, txCollateral.vout) {
+        nValueOut += txout.nValue;
+    }
+
+    BOOST_FOREACH(const CTxIn txin, txCollateral.vin) {
+        CTransaction txPrev;
+        uint256 hash;
+        if(GetTransaction(txin.prevout.hash, txPrev, Params().GetConsensus(), hash, true)) {
+            if(txPrev.vout.size() > txin.prevout.n)
+                nValueIn += txPrev.vout[txin.prevout.n].nValue;
+        } else {
+            fMissingTx = true;
+        }
+    }
+
+    if(fMissingTx) {
+        LogPrintf ("CGovernanceObject::IsCollateralValid -- Unknown inputs in collateral transaction, txCollateral=%s", txCollateral.ToString());
+        return false;
+    }
+
+    if(nValueOut > nValueIn || (nValueIn - nValueOut) < nMinFee)
     {
-         LogPrintf ("CGovernanceObject::IsCollateralValid Collateral fee too low txFee = %lu nMinFee = %lu\n", txFee, nMinFee);
+         LogPrintf ("CGovernanceObject::IsCollateralValid Collateral fee too low txFee = %lu nMinFee = %lu\n",  (nValueIn - nValueOut), nMinFee);
          return false;
     }
 
