@@ -110,7 +110,7 @@ public:
         consensus.fStrictChainId = false;
         consensus.nLegacyBlocksBefore = -1;
     
-        consensus.nDashRulesStartHeight = 1083330;
+        consensus.nDashRulesStartHeight = 1087500;
         consensus.nSuperblockStartBlock = consensus.nDashRulesStartHeight;
 
         /**
