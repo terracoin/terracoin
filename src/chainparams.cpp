@@ -273,7 +273,7 @@ public:
         consensus.fStrictChainId = false;
         consensus.nLegacyBlocksBefore = -1;
 
-        consensus.nDashRulesStartHeight = 0;
+        consensus.nDashRulesStartHeight = 50500;
 
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
