@@ -1815,7 +1815,7 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
     CAmount nSubsidy = 20 * COIN;
     nSubsidy >>= halvings; // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
 
-    CAmount nSuperblockPart = (nHeight > consensusParams.nDashRulesStartHeight) ? nSubsidy/10 : 0;
+    CAmount nSuperblockPart = (nHeight >= consensusParams.nDashRulesStartHeight) ? nSubsidy/10 : 0;
     return fSuperblockPartOnly ? nSuperblockPart : nSubsidy - nSuperblockPart;
 }
 
@@ -5319,6 +5319,22 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         return true;
     }
 
+    int nMinVersion;
+    if(chainActive.Height() >= chainparams.GetConsensus().nDashRulesStartHeight)
+        nMinVersion = MIN_PEER_PROTO_VERSION_NEW;
+    else
+        nMinVersion = MIN_PEER_PROTO_VERSION_OLD;
+
+    if(pfrom->nVersion != 0 && pfrom->nVersion < nMinVersion)
+    {
+        // disconnect from peers older than this proto version
+        LogPrintf("peer=%d using obsolete version %i; disconnecting\n", pfrom->id, pfrom->nVersion);
+        pfrom->PushMessage(NetMsgType::REJECT, strCommand, REJECT_OBSOLETE,
+                           strprintf("Version must be %d or greater", nMinVersion));
+        pfrom->fDisconnect = true;
+        return false;
+    }
+
     if (!(nLocalServices & NODE_BLOOM) &&
               (strCommand == NetMsgType::FILTERLOAD ||
                strCommand == NetMsgType::FILTERADD ||
@@ -5349,12 +5365,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         CAddress addrFrom;
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+
+        if (pfrom->nVersion < nMinVersion)
         {
             // disconnect from peers older than this proto version
             LogPrintf("peer=%d using obsolete version %i; disconnecting\n", pfrom->id, pfrom->nVersion);
             pfrom->PushMessage(NetMsgType::REJECT, strCommand, REJECT_OBSOLETE,
-                               strprintf("Version must be %d or greater", MIN_PEER_PROTO_VERSION));
+                               strprintf("Version must be %d or greater", nMinVersion));
             pfrom->fDisconnect = true;
             return false;
         }

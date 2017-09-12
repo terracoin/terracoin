@@ -840,7 +840,7 @@ public:
 class CTransaction;
 void RelayTransaction(const CTransaction& tx);
 void RelayTransaction(const CTransaction& tx, const CDataStream& ss);
-void RelayInv(CInv &inv, const int minProtoVersion = MIN_PEER_PROTO_VERSION);
+void RelayInv(CInv &inv, const int minProtoVersion = MIN_PEER_PROTO_VERSION_OLD);
 
 /** Access to the (IP) address database (peers.dat) */
 class CAddrDB
