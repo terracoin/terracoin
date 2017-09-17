@@ -63,11 +63,11 @@
     </message>
     <message>
         <source>These are your Terracoin addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>這些是你要付款過去的達世幣位址。在付錢之前，務必要檢查金額和收款位址是否正確。</translation>
+        <translation>這些是你要付款過去的Terracoin位址。在付錢之前，務必要檢查金額和收款位址是否正確。</translation>
     </message>
     <message>
         <source>These are your Terracoin addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>這些是你用來收款的達世幣位址。建議在每次交易時，都使用一個新的收款位址。</translation>
+        <translation>這些是你用來收款的Terracoin位址。建議在每次交易時，都使用一個新的收款位址。</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -173,7 +173,7 @@
     </message>
     <message>
         <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR TERRACOIN&lt;/b&gt;!</source>
-        <translation>警告: 如果把錢包加密後又忘記密碼，你就會從此&lt;b&gt;失去其中所有的達世幣了&lt;/b&gt;！</translation>
+        <translation>警告: 如果把錢包加密後又忘記密碼，你就會從此&lt;b&gt;失去其中所有的Terracoin了&lt;/b&gt;！</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -189,7 +189,7 @@
     </message>
     <message>
         <source>Terracoin Core will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your terracoins from being stolen by malware infecting your computer.</source>
-        <translation>達世幣核心現在要關閉，以便完成加密程序。請注意，加密錢包不能完全防止入侵你的電腦的惡意程式偷取達世幣。</translation>
+        <translation>Terracoin核心現在要關閉，以便完成加密程序。請注意，加密錢包不能完全防止入侵你的電腦的惡意程式偷取Terracoin。</translation>
     </message>
     <message>
         <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
@@ -239,7 +239,7 @@
     <name>BitcoinGUI</name>
     <message>
         <source>Terracoin Core</source>
-        <translation>達世幣核心</translation>
+        <translation>Terracoin核心</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -263,7 +263,7 @@
     </message>
     <message>
         <source>Send coins to a Terracoin address</source>
-        <translation>付錢給一個達世幣位址</translation>
+        <translation>付錢給一個Terracoin位址</translation>
     </message>
     <message>
         <source>&amp;Receive</source>
@@ -271,7 +271,7 @@
     </message>
     <message>
         <source>Request payments (generates QR codes and terracoin: URIs)</source>
-        <translation>要求付款(產生 QR Code 和達世幣付款協議的 URI)</translation>
+        <translation>要求付款(產生 QR Code 和Terracoin付款協議的 URI)</translation>
     </message>
     <message>
         <source>&amp;Transactions</source>
@@ -299,11 +299,11 @@
     </message>
     <message>
         <source>&amp;About Terracoin Core</source>
-        <translation>關於達世幣核心(&amp;A)</translation>
+        <translation>關於Terracoin核心(&amp;A)</translation>
     </message>
     <message>
         <source>Show information about Terracoin Core</source>
-        <translation>顯示達世幣核心的相關資訊</translation>
+        <translation>顯示Terracoin核心的相關資訊</translation>
     </message>
     <message>
         <source>About &amp;Qt</source>
@@ -367,7 +367,7 @@
     </message>
     <message>
         <source>Sign messages with your Terracoin addresses to prove you own them</source>
-        <translation>用達世幣位址簽署訊息來證明位址是你的</translation>
+        <translation>用Terracoin位址簽署訊息來證明位址是你的</translation>
     </message>
     <message>
         <source>&amp;Verify message...</source>
@@ -375,7 +375,7 @@
     </message>
     <message>
         <source>Verify messages to ensure they were signed with specified Terracoin addresses</source>
-        <translation>驗證訊息是用來確定訊息是用指定的達世幣位址簽署的</translation>
+        <translation>驗證訊息是用來確定訊息是用指定的Terracoin位址簽署的</translation>
     </message>
     <message>
         <source>&amp;Information</source>
@@ -451,7 +451,7 @@
     </message>
     <message>
         <source>Open a terracoin: URI or payment request</source>
-        <translation>開啓一個達世幣協議的 URI 或付款要求</translation>
+        <translation>開啓一個Terracoin協議的 URI 或付款要求</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -459,7 +459,7 @@
     </message>
     <message>
         <source>Terracoin Core client</source>
-        <translation>達世幣核心客戶端軟體</translation>
+        <translation>Terracoin核心客戶端軟體</translation>
     </message>
     <message>
         <source>Synchronizing additional data: %p%</source>
@@ -487,7 +487,7 @@
     </message>
     <message numerus="yes">
         <source>%n active connection(s) to Terracoin network</source>
-        <translation><numerusform>%n 個運作中的達世幣網路連線</numerusform></translation>
+        <translation><numerusform>%n 個運作中的Terracoin網路連線</numerusform></translation>
     </message>
     <message>
         <source>Synchronizing with network...</source>
@@ -515,7 +515,7 @@
     </message>
     <message>
         <source>Modify configuration options for Terracoin Core</source>
-        <translation>修改達世幣核心的設定選項</translation>
+        <translation>修改Terracoin核心的設定選項</translation>
     </message>
     <message>
         <source>Open Wallet &amp;Configuration File</source>
@@ -531,7 +531,7 @@
     </message>
     <message>
         <source>Show the Terracoin Core help message to get a list with possible Terracoin Core command-line options</source>
-        <translation>顯示達世幣核心的說明訊息，來取得可用命令列選項的列表</translation>
+        <translation>顯示Terracoin核心的說明訊息，來取得可用命令列選項的列表</translation>
     </message>
     <message>
         <source>&amp;PrivateSend information</source>
@@ -914,11 +914,11 @@
     </message>
     <message>
         <source>Use 2 separate masternodes to mix funds up to 1000 TERRACOIN</source>
-        <translation>使用2個獨立的主節點來混合最高達1000達世幣的資金</translation>
+        <translation>使用2個獨立的主節點來混合最高達1000Terracoin的資金</translation>
     </message>
     <message>
         <source>Use 8 separate masternodes to mix funds up to 1000 TERRACOIN</source>
-        <translation>使用8個獨立的主節點來混合最高達1000達世幣的資金</translation>
+        <translation>使用8個獨立的主節點來混合最高達1000Terracoin的資金</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
@@ -926,15 +926,15 @@
     </message>
     <message>
         <source>This option is the quickest and will cost about ~0.025 TERRACOIN to anonymize 1000 TERRACOIN</source>
-        <translation>這個是最快的選項，將耗費約~0.025達世幣作為匿名處理1000達世幣的費用</translation>
+        <translation>這個是最快的選項，將耗費約~0.025Terracoin作為匿名處理1000Terracoin的費用</translation>
     </message>
     <message>
         <source>This option is moderately fast and will cost about 0.05 TERRACOIN to anonymize 1000 TERRACOIN</source>
-        <translation>這個是一般的選項，將耗費約0.05達世幣作為匿名處理1000達世幣的費用</translation>
+        <translation>這個是一般的選項，將耗費約0.05Terracoin作為匿名處理1000Terracoin的費用</translation>
     </message>
     <message>
         <source>0.1 TERRACOIN per 1000 TERRACOIN you anonymize.</source>
-        <translation>每1000達世幣耗費0.1達世幣作為匿名處理費用</translation>
+        <translation>每1000Terracoin耗費0.1Terracoin作為匿名處理費用</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
@@ -946,15 +946,15 @@
     </message>
     <message>
         <source>PrivateSend was successfully set to basic (%1 and 2 rounds). You can change this at any time by opening Terracoin's configuration screen.</source>
-        <translation>匿名發送已成功設置為一般(%1 到2次循環)。你可以隨時打開達世幣配置窗口來修改。</translation>
+        <translation>匿名發送已成功設置為一般(%1 到2次循環)。你可以隨時打開Terracoin配置窗口來修改。</translation>
     </message>
     <message>
         <source>PrivateSend was successfully set to high (%1 and 8 rounds). You can change this at any time by opening Terracoin's configuration screen.</source>
-        <translation>匿名發送已成功設置為高(%1 到8次循環)。你可以隨時打開達世幣配置窗口來修改。</translation>
+        <translation>匿名發送已成功設置為高(%1 到8次循環)。你可以隨時打開Terracoin配置窗口來修改。</translation>
     </message>
     <message>
         <source>PrivateSend was successfully set to maximum (%1 and 16 rounds). You can change this at any time by opening Terracoin's configuration screen.</source>
-        <translation>匿名發送已成功設置為最高(%1 到16次循環)。你可以隨時打開達世幣配置窗口來修改。</translation>
+        <translation>匿名發送已成功設置為最高(%1 到16次循環)。你可以隨時打開Terracoin配置窗口來修改。</translation>
     </message>
 </context>
 <context>
@@ -997,7 +997,7 @@
     </message>
     <message>
         <source>The entered address "%1" is not a valid Terracoin address.</source>
-        <translation>輸入的位址 %1 並不是有效的達世幣位址。</translation>
+        <translation>輸入的位址 %1 並不是有效的Terracoin位址。</translation>
     </message>
     <message>
         <source>The entered address "%1" is already in the address book.</source>
@@ -1039,7 +1039,7 @@
     <name>HelpMessageDialog</name>
     <message>
         <source>Terracoin Core</source>
-        <translation>達世幣核心</translation>
+        <translation>Terracoin核心</translation>
     </message>
     <message>
         <source>version</source>
@@ -1051,7 +1051,7 @@
     </message>
     <message>
         <source>About Terracoin Core</source>
-        <translation>關於達世幣核心</translation>
+        <translation>關於Terracoin核心</translation>
     </message>
     <message>
         <source>Command-line options</source>
@@ -1106,15 +1106,15 @@
     </message>
     <message>
         <source>Welcome to Terracoin Core.</source>
-        <translation>歡迎使用達世幣核心</translation>
+        <translation>歡迎使用Terracoin核心</translation>
     </message>
     <message>
         <source>As this is the first time the program is launched, you can choose where Terracoin Core will store its data.</source>
-        <translation>因為這是程式第一次啓動，你可以選擇達世幣核心儲存資料的地方。</translation>
+        <translation>因為這是程式第一次啓動，你可以選擇Terracoin核心儲存資料的地方。</translation>
     </message>
     <message>
         <source>Terracoin Core will download and store a copy of the Terracoin block chain. At least %1GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>達世幣核心會下載並儲存一份達世幣區塊鏈的副本。至少有 %1GB 的資料會儲存到這個目錄中，並且還會持續增長。另外錢包資料也會儲存在這個目錄。</translation>
+        <translation>Terracoin核心會下載並儲存一份Terracoin區塊鏈的副本。至少有 %1GB 的資料會儲存到這個目錄中，並且還會持續增長。另外錢包資料也會儲存在這個目錄。</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -1126,7 +1126,7 @@
     </message>
     <message>
         <source>Terracoin Core</source>
-        <translation>達世幣核心</translation>
+        <translation>Terracoin核心</translation>
     </message>
     <message>
         <source>Error: Specified data directory "%1" cannot be created.</source>
@@ -1295,7 +1295,7 @@
     </message>
     <message>
         <source>Amount of Terracoin to keep anonymized</source>
-        <translation>保持匿名的達世幣數量</translation>
+        <translation>保持匿名的Terracoin數量</translation>
     </message>
     <message>
         <source>W&amp;allet</source>
@@ -1303,7 +1303,7 @@
     </message>
     <message>
         <source>Automatically start Terracoin Core after logging in to the system.</source>
-        <translation>在登入系統後自動啓動達世幣核心。</translation>
+        <translation>在登入系統後自動啓動Terracoin核心。</translation>
     </message>
     <message>
         <source>Show Masternodes Tab</source>
@@ -1327,7 +1327,7 @@
     </message>
     <message>
         <source>Automatically open the Terracoin Core client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>自動在路由器上開放達世幣核心客戶端的通訊埠。只有在你的路由器支援且開啓「通用即插即用」協定(UPnP)時才有作用。</translation>
+        <translation>自動在路由器上開放Terracoin核心客戶端的通訊埠。只有在你的路由器支援且開啓「通用即插即用」協定(UPnP)時才有作用。</translation>
     </message>
     <message>
         <source>Accept connections from outside</source>
@@ -1339,7 +1339,7 @@
     </message>
     <message>
         <source>Connect to the Terracoin network through a SOCKS5 proxy.</source>
-        <translation>透過 SOCKS5 代理伺服器來連線到達世幣網路。</translation>
+        <translation>透過 SOCKS5 代理伺服器來連線到Terracoin網路。</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1351,7 +1351,7 @@
     </message>
     <message>
         <source>The user interface language can be set here. This setting will take effect after restarting Terracoin Core.</source>
-        <translation>可以在這裡設定用戶介面的語言。這個設定在重啓達世幣核心後才會生效。</translation>
+        <translation>可以在這裡設定用戶介面的語言。這個設定在重啓Terracoin核心後才會生效。</translation>
     </message>
     <message>
         <source>Third party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items.&lt;br/&gt;%s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -1415,7 +1415,7 @@
     </message>
     <message>
         <source>Connect to the Terracoin network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>透過另一個SOCKS5 代理伺服器作為Tor隱藏服務來連線到達世幣網路。</translation>
+        <translation>透過另一個SOCKS5 代理伺服器作為Tor隱藏服務來連線到Terracoin網路。</translation>
     </message>
     <message>
         <source>&amp;Window</source>
@@ -1524,7 +1524,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Terracoin network after a connection is established, but this process has not completed yet.</source>
-        <translation>顯示的資訊可能是過期的。跟達世幣網路的連線建立後，你的錢包會自動和網路同步，但是這個步驟還沒完成。</translation>
+        <translation>顯示的資訊可能是過期的。跟Terracoin網路的連線建立後，你的錢包會自動和網路同步，但是這個步驟還沒完成。</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -1624,7 +1624,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>0 TERRACOIN / 0 Rounds</source>
-        <translation>0 達世幣 / 0 循環次數</translation>
+        <translation>0 Terracoin / 0 循環次數</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -1777,7 +1777,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Cannot start terracoin: click-to-pay handler</source>
-        <translation>無法啟動達世幣 : 點擊支付處理程序</translation>
+        <translation>無法啟動Terracoin : 點擊支付處理程序</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -1801,7 +1801,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>URI cannot be parsed! This can be caused by an invalid Terracoin address or malformed URI parameters.</source>
-        <translation>沒辦法解析 URI 位址！可能是因為達世幣位址無效，或是 URI 參數格式錯誤。</translation>
+        <translation>沒辦法解析 URI 位址！可能是因為Terracoin位址無效，或是 URI 參數格式錯誤。</translation>
     </message>
     <message>
         <source>Payment request file cannot be read! This can be caused by an invalid payment request file.</source>
@@ -1879,7 +1879,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Enter a Terracoin address (e.g. %1)</source>
-        <translation>輸入達世幣位址 (例如 %1)</translation>
+        <translation>輸入Terracoin位址 (例如 %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -2017,7 +2017,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Open the Terracoin Core debug log file from the current data directory. This can take a few seconds for large log files.</source>
-        <translation>從目前的資料目錄下開啓達世幣核心的除錯紀錄檔。當紀錄檔很大時，可能會花好幾秒的時間。</translation>
+        <translation>從目前的資料目錄下開啓Terracoin核心的除錯紀錄檔。當紀錄檔很大時，可能會花好幾秒的時間。</translation>
     </message>
     <message>
         <source>&amp;Console</source>
@@ -2173,7 +2173,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Welcome to the Terracoin Core RPC console.</source>
-        <translation>歡迎使用達世幣核心 RPC 主控台。</translation>
+        <translation>歡迎使用Terracoin核心 RPC 主控台。</translation>
     </message>
     <message>
         <source>Use up and down arrows to navigate history, and &lt;b&gt;Ctrl-L&lt;/b&gt; to clear screen.</source>
@@ -2244,7 +2244,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Terracoin network.</source>
-        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。注意: 這個訊息不會隨著付款送到達世幣網路上。</translation>
+        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。注意: 這個訊息不會隨著付款送到Terracoin網路上。</translation>
     </message>
     <message>
         <source>&amp;Message:</source>
@@ -2256,7 +2256,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the Terracoin network.</source>
-        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。&lt;br&gt;注意: 這個訊息不會隨著付款送到達世幣網路上。</translation>
+        <translation>附加在付款要求中的訊息，可以不填，打開要求內容時會顯示。&lt;br&gt;注意: 這個訊息不會隨著付款送到Terracoin網路上。</translation>
     </message>
     <message>
         <source>Use this form to request payments. All fields are &lt;b&gt;optional&lt;/b&gt;.</source>
@@ -2705,7 +2705,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Warning: Invalid Terracoin address</source>
-        <translation>警告: 無效的達世幣位址</translation>
+        <translation>警告: 無效的Terracoin位址</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -2728,7 +2728,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>The Terracoin address to send the payment to</source>
-        <translation>接收付款的達世幣位址</translation>
+        <translation>接收付款的Terracoin位址</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2768,7 +2768,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>A message that was attached to the terracoin: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Terracoin network.</source>
-        <translation>附加在達世幣付款協議 URI 中的訊息，會和交易內容一起存起來，給你自己做參考。注意: 這個訊息不會送到達世幣網路上。</translation>
+        <translation>附加在Terracoin付款協議 URI 中的訊息，會和交易內容一起存起來，給你自己做參考。注意: 這個訊息不會送到Terracoin網路上。</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -2787,7 +2787,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     <name>ShutdownWindow</name>
     <message>
         <source>Terracoin Core is shutting down...</source>
-        <translation>達世幣核心正在關閉中...</translation>
+        <translation>Terracoin核心正在關閉中...</translation>
     </message>
     <message>
         <source>Do not shut down the computer until this window disappears.</source>
@@ -2806,7 +2806,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>The Terracoin address to sign the message with</source>
-        <translation>用來簽署訊息的達世幣位址</translation>
+        <translation>用來簽署訊息的Terracoin位址</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2838,7 +2838,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Sign the message to prove you own this Terracoin address</source>
-        <translation>簽署這個訊息來證明這個達世幣位址是你的</translation>
+        <translation>簽署這個訊息來證明這個Terracoin位址是你的</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -2858,11 +2858,11 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>The Terracoin address the message was signed with</source>
-        <translation>簽署這個訊息的達世幣位址</translation>
+        <translation>簽署這個訊息的Terracoin位址</translation>
     </message>
     <message>
         <source>Verify the message to ensure it was signed with the specified Terracoin address</source>
-        <translation>驗證這個訊息來確定是用指定的達世幣位址簽署的</translation>
+        <translation>驗證這個訊息來確定是用指定的Terracoin位址簽署的</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -2929,7 +2929,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     <name>SplashScreen</name>
     <message>
         <source>Terracoin Core</source>
-        <translation>達世幣核心</translation>
+        <translation>Terracoin核心</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -2941,7 +2941,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>The Terracoin Core developers</source>
-        <translation>達世幣核心開發人員</translation>
+        <translation>Terracoin核心開發人員</translation>
     </message>
     <message>
         <source>[testnet]</source>
@@ -3479,7 +3479,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Cannot obtain a lock on data directory %s. Terracoin Core is probably already running.</source>
-        <translation>沒辦法鎖定資料目錄 %s。達世幣核心可能已經在執行了。</translation>
+        <translation>沒辦法鎖定資料目錄 %s。Terracoin核心可能已經在執行了。</translation>
     </message>
     <message>
         <source>Error: Listening for incoming connections failed (listen returned error %s)</source>
@@ -3519,11 +3519,11 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Unable to bind to %s on this computer. Terracoin Core is probably already running.</source>
-        <translation>沒辦法繫結在這台電腦上的 %s 。達世幣核心可能已經在執行了。</translation>
+        <translation>沒辦法繫結在這台電腦上的 %s 。Terracoin核心可能已經在執行了。</translation>
     </message>
     <message>
         <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>警告: 達世幣網路對於區塊鏈結的決定目前有分歧！看來有些礦工會有問題。</translation>
+        <translation>警告: Terracoin網路對於區塊鏈結的決定目前有分歧！看來有些礦工會有問題。</translation>
     </message>
     <message>
         <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
@@ -3779,7 +3779,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Copyright (C) 2014-%i The Terracoin Core Developers</source>
-        <translation>版權為達世幣核心開發人員自西元 2014 至 %i 年起所有</translation>
+        <translation>版權為Terracoin核心開發人員自西元 2014 至 %i 年起所有</translation>
     </message>
     <message>
         <source>Enable the client to act as a masternode (0-1, default: %u)</source>
@@ -3791,7 +3791,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Error loading wallet.dat: Wallet requires newer version of Terracoin Core</source>
-        <translation>載入 wallet.dat 檔案時發生錯誤: 這個錢包需要新版的達世幣核心</translation>
+        <translation>載入 wallet.dat 檔案時發生錯誤: 這個錢包需要新版的Terracoin核心</translation>
     </message>
     <message>
         <source>Found enough users, signing ( waiting %s )</source>
@@ -3803,7 +3803,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Generate coins (default: %u)</source>
-        <translation>生產達世幣(預設值: %u)</translation>
+        <translation>生產Terracoin(預設值: %u)</translation>
     </message>
     <message>
         <source>How many blocks to check at startup (default: %u, 0 = all)</source>
@@ -3835,7 +3835,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Initialization sanity check failed. Terracoin Core is shutting down.</source>
-        <translation>初始化時的基本檢查失敗了。達世幣核心即將關閉。</translation>
+        <translation>初始化時的基本檢查失敗了。Terracoin核心即將關閉。</translation>
     </message>
     <message>
         <source>Input is not valid.</source>
@@ -4031,7 +4031,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Wallet needed to be rewritten: restart Terracoin Core to complete</source>
-        <translation>錢包需要重寫: 請重新啓動達世幣核心來完成</translation>
+        <translation>錢包需要重寫: 請重新啓動Terracoin核心來完成</translation>
     </message>
     <message>
         <source>Will retry...</source>
@@ -4075,7 +4075,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Keep N TERRACOIN anonymized (default: %u)</source>
-        <translation>保留 N 個已經匿名處理的達世幣 (預設值: %u)</translation>
+        <translation>保留 N 個已經匿名處理的Terracoin (預設值: %u)</translation>
     </message>
     <message>
         <source>Keep at most &lt;n&gt; unconnectable transactions in memory (default: %u)</source>
@@ -4083,7 +4083,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Disable all Terracoin specific functionality (Masternodes, PrivateSend, InstantSend, Governance) (0-1, default: %u)</source>
-        <translation>禁止所有達世幣的附加功能 (主節點，匿名發送，即時到帳，預算案) (0-1，預設值: %u)</translation>
+        <translation>禁止所有Terracoin的附加功能 (主節點，匿名發送，即時到帳，預算案) (0-1，預設值: %u)</translation>
     </message>
     <message>
         <source>Discover own IP addresses (default: 1 when listening and no -externalip or -proxy)</source>
@@ -4111,7 +4111,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Please check that your computer's date and time are correct! If your clock is wrong Terracoin Core will not work properly.</source>
-        <translation>請檢查電腦日期和時間是否正確！達世幣核心沒辦法在時鐘不準的情況下正常運作。</translation>
+        <translation>請檢查電腦日期和時間是否正確！Terracoin核心沒辦法在時鐘不準的情況下正常運作。</translation>
     </message>
     <message>
         <source>PrivateSend uses exact denominated amounts to send funds, you might simply need to anonymize some more coins.</source>
