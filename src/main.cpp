@@ -5320,7 +5320,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     }
 
     int nMinVersion;
-    if(chainActive.Height() >= chainparams.GetConsensus().nDashRulesStartHeight)
+    if(chainActive.Height() >= chainparams.GetConsensus().nDashRulesStartHeight || pfrom->fInbound)
         nMinVersion = MIN_PEER_PROTO_VERSION_NEW;
     else
         nMinVersion = MIN_PEER_PROTO_VERSION_OLD;
