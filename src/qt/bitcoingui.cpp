@@ -994,6 +994,10 @@ void BitcoinGUI::setAdditionalDataSyncProgress(double nSyncProgress)
     if(!clientModel)
         return;
 
+    // No additional data sync should be happening while blockchain is not synced, nothing to update
+    if(!masternodeSync.IsBlockchainSynced())
+        return;
+
     // Prevent orphan statusbar messages (e.g. hover Quit in main menu, wait until chain-sync starts -> garbelled text)
     statusBar()->clearMessage();
 
@@ -1001,10 +1005,6 @@ void BitcoinGUI::setAdditionalDataSyncProgress(double nSyncProgress)
 
     // Set icon state: spinning if catching up, tick otherwise
     QString theme = GUIUtil::getThemeName();
-
-    //Don't set tootips to empty, just return
-    if(!masternodeSync.IsBlockchainSynced())
-	return;
 
     QString strSyncStatus;
     tooltip = tr("Up to date") + QString(".<br>") + tooltip;
