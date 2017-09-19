@@ -5376,6 +5376,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             return false;
         }
 
+        //Whitelist new peers pre-fork - sync aid - remove this later
+        if(chainActive.Height() < chainparams.GetConsensus().nDashRulesStartHeight && pfrom->nVersion == PROTOCOL_VERSION)
+        {
+            LogPrint("net", "Whitelisting new peer=%d\n", pfrom->id);
+            pfrom->fWhitelisted = true;
+        }
+
+
         if (pfrom->nVersion == 10300)
             pfrom->nVersion = 300;
         if (!vRecv.empty())
