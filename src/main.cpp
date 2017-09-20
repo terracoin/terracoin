@@ -319,7 +319,7 @@ void UpdatePreferredDownload(CNode* node, CNodeState* state)
     nPreferredDownload -= state->fPreferredDownload;
 
     // Whether this node should be marked as a preferred download node.
-    state->fPreferredDownload = (!node->fInbound || node->fWhitelisted) && !node->fOneShot && !node->fClient;
+    state->fPreferredDownload = (!node->fInbound || node->fWhitelisted || node->fHasNewVersion) && !node->fOneShot && !node->fClient;
 
     nPreferredDownload += state->fPreferredDownload;
 }
@@ -5063,7 +5063,7 @@ void static ProcessGetData(CNode* pfrom, const Consensus::Params& consensusParam
                 // disconnect node in case we have reached the outbound limit for serving historical blocks
                 // never disconnect whitelisted nodes
                 static const int nOneWeek = 7 * 24 * 60 * 60; // assume > 1 week = historical
-                if (send && CNode::OutboundTargetReached(true) && ( ((pindexBestHeader != NULL) && (pindexBestHeader->GetBlockTime() - mi->second->GetBlockTime() > nOneWeek)) || inv.type == MSG_FILTERED_BLOCK) && !pfrom->fWhitelisted)
+                if (send && CNode::OutboundTargetReached(true) && ( ((pindexBestHeader != NULL) && (pindexBestHeader->GetBlockTime() - mi->second->GetBlockTime() > nOneWeek)) || inv.type == MSG_FILTERED_BLOCK) && !pfrom->fWhitelisted && !pfrom->fHasNewVersion)
                 {
                     LogPrint("net", "historical block serving limit reached, disconnect peer=%d\n", pfrom->GetId());
 
@@ -5376,11 +5376,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             return false;
         }
 
-        //Whitelist new peers pre-fork - sync aid - remove this later
+        // Mark new peers pre-fork - sync aid
         if(chainActive.Height() < chainparams.GetConsensus().nDashRulesStartHeight && pfrom->nVersion == PROTOCOL_VERSION)
         {
-            LogPrint("net", "Whitelisting new peer=%d\n", pfrom->id);
-            pfrom->fWhitelisted = true;
+            LogPrint("net", "New version marked - peer=%d\n", pfrom->id);
+            pfrom->fHasNewVersion = true;
         }
 
 
@@ -5743,7 +5743,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         vRecv >> locator >> hashStop;
 
         LOCK(cs_main);
-        if (IsInitialBlockDownload() && !pfrom->fWhitelisted) {
+        if (IsInitialBlockDownload() && !pfrom->fWhitelisted && !pfrom->fHasNewVersion) {
             LogPrint("net", "Ignoring getheaders from peer=%d because node is in initial block download\n", pfrom->id);
             return true;
         }
@@ -6154,7 +6154,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
     else if (strCommand == NetMsgType::MEMPOOL)
     {
-        if (CNode::OutboundTargetReached(false) && !pfrom->fWhitelisted)
+        if (CNode::OutboundTargetReached(false) && !pfrom->fWhitelisted && !pfrom->fHasNewVersion)
         {
             LogPrint("net", "mempool request with bandwidth limit reached, disconnect peer=%d\n", pfrom->GetId());
             pfrom->fDisconnect = true;

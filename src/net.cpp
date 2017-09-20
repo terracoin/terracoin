@@ -851,6 +851,8 @@ static bool AttemptToEvictConnection(bool fPreferNewConnection) {
             CNode* pnode = vNodes[i];
             if (pnode->fWhitelisted)
                 continue;
+            if (pnode->fHasNewVersion)
+                continue;
             if (!pnode->fInbound)
                 continue;
             if (pnode->fDisconnect)
@@ -2412,6 +2414,7 @@ CNode::CNode(SOCKET hSocketIn, const CAddress& addrIn, const std::string& addrNa
     nLastWarningTime = 0;
     strSubVer = "";
     fWhitelisted = false;
+    fHasNewVersion = false;
     fOneShot = false;
     fClient = false; // set by version message
     fInbound = fInboundIn;
