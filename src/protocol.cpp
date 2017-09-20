@@ -65,6 +65,7 @@ const char *MNGOVERNANCESYNC="govsync";
 const char *MNGOVERNANCEOBJECT="govobj";
 const char *MNGOVERNANCEOBJECTVOTE="govobjvote";
 const char *MNVERIFY="mnv";
+const char *SENDCMPCT ="sendcmpct";
 };
 
 static const char* ppszTypeName[] =

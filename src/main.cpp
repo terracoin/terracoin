@@ -6367,6 +6367,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
         }
     }
+    else if (strCommand == NetMsgType::SENDCMPCT)
+    {
+        LogPrint("net", "Ignoring sendcmpct command.\n");
+    }
     else
     {
         bool found = false;
