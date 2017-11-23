@@ -151,14 +151,14 @@ UniValue mnsync(const UniValue& params, bool fHelp)
 
     if(strMode == "status") {
         UniValue objStatus(UniValue::VOBJ);
-        objStatus.push_back(Pair("AssetID", masternodeSync.GetAssetID()));
-        objStatus.push_back(Pair("AssetName", masternodeSync.GetAssetName()));
+        objStatus.push_back(Pair("Asset", masternodeSync.GetAssetID()));
+        objStatus.push_back(Pair("Name", masternodeSync.GetAssetName()));
         objStatus.push_back(Pair("Attempt", masternodeSync.GetAttempt()));
-        objStatus.push_back(Pair("IsBlockchainSynced", masternodeSync.IsBlockchainSynced()));
-        objStatus.push_back(Pair("IsMasternodeListSynced", masternodeSync.IsMasternodeListSynced()));
-        objStatus.push_back(Pair("IsWinnersListSynced", masternodeSync.IsWinnersListSynced()));
-        objStatus.push_back(Pair("IsSynced", masternodeSync.IsSynced()));
-        objStatus.push_back(Pair("IsFailed", masternodeSync.IsFailed()));
+        objStatus.push_back(Pair("BlockchainSynced", masternodeSync.IsBlockchainSynced()));
+        objStatus.push_back(Pair("MasternodeListSynced", masternodeSync.IsMasternodeListSynced()));
+        objStatus.push_back(Pair("WinnersListSynced", masternodeSync.IsWinnersListSynced()));
+        objStatus.push_back(Pair("Synced", masternodeSync.IsSynced()));
+        objStatus.push_back(Pair("Failed", masternodeSync.IsFailed()));
         return objStatus;
     }
 
