@@ -1550,6 +1550,9 @@ void CMasternodeMan::UpdateWatchdogVoteTime(const CTxIn& vin)
 
 bool CMasternodeMan::IsWatchdogActive()
 {
+    if(!sporkManager.IsSporkActive(SPORK_7_REQUIRE_SENTINEL_FLAG))
+        return false;
+
     LOCK(cs);
     // Check if any masternodes have voted recently, otherwise return false
     return (GetTime() - nLastWatchdogVoteTime) <= MASTERNODE_WATCHDOG_MAX_SECONDS;
