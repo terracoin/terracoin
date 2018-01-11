@@ -1,6 +1,6 @@
 Terracoin Core version 0.12.1 is now available from:
 
-  <https://www.terracoin.org/downloads/>
+  <https://www.terracoin.io/downloads/>
 
 
 

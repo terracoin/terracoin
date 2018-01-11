@@ -12,8 +12,8 @@ When a "Transaction Lock" occurs the hash of the related transaction is broadcas
 * `zmqpubhashtxlock`: publishes the transaction hash when locked via InstantSend
 
 This mechanism has been integrated into Bitcore-Node-Terracoin which allows for notification to be broadcast through Insight API in one of two ways:
-* WebSocket: [https://github.com/terracoinpay/insight-api-terracoin#web-socket-api](https://github.com/terracoinpay/insight-api-terracoin#web-socket-api) 
-* API: [https://github.com/terracoinpay/insight-api-terracoin#instantsend-transactions](https://github.com/terracoinpay/insight-api-terracoin#instantsend-transactions) 
+* WebSocket: [https://github.com/terracoin/insight-api-terracoin#web-socket-api](https://github.com/terracoin/insight-api-terracoin#web-socket-api) 
+* API: [https://github.com/terracoin/insight-api-terracoin#instantsend-transactions](https://github.com/terracoin/insight-api-terracoin#instantsend-transactions) 
 
 ####Command line option
 

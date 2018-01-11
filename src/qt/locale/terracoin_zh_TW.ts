@@ -822,8 +822,8 @@
         <translation>當任何一個收款金額小於 %1 時文字會變紅色。</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>每組輸入可能有 +/- %1 個 duff(s) 的誤差。</translation>
+        <source>Can vary +/- %1 satoshi(s) per input.</source>
+        <translation>每組輸入可能有 +/- %1 個 satoshi(s) 的誤差。</translation>
     </message>
     <message>
         <source>n/a</source>
@@ -913,11 +913,11 @@
         <translation>請選擇穩私級別。</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 1000 TERRACOIN</source>
+        <source>Use 2 separate masternodes to mix funds up to 1000 TRC</source>
         <translation>使用2個獨立的主節點來混合最高達1000Terracoin的資金</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 1000 TERRACOIN</source>
+        <source>Use 8 separate masternodes to mix funds up to 1000 TRC</source>
         <translation>使用8個獨立的主節點來混合最高達1000Terracoin的資金</translation>
     </message>
     <message>
@@ -925,15 +925,15 @@
         <translation>使用16個獨立的主節點</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 TERRACOIN to anonymize 1000 TERRACOIN</source>
+        <source>This option is the quickest and will cost about ~0.025 TRC to anonymize 1000 TRC</source>
         <translation>這個是最快的選項，將耗費約~0.025Terracoin作為匿名處理1000Terracoin的費用</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 TERRACOIN to anonymize 1000 TERRACOIN</source>
+        <source>This option is moderately fast and will cost about 0.05 TRC to anonymize 1000 TRC</source>
         <translation>這個是一般的選項，將耗費約0.05Terracoin作為匿名處理1000Terracoin的費用</translation>
     </message>
     <message>
-        <source>0.1 TERRACOIN per 1000 TERRACOIN you anonymize.</source>
+        <source>0.1 TRC per 1000 TRC you anonymize.</source>
         <translation>每1000Terracoin耗費0.1Terracoin作為匿名處理費用</translation>
     </message>
     <message>
@@ -1623,7 +1623,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>金額和循環次數:</translation>
     </message>
     <message>
-        <source>0 TERRACOIN / 0 Rounds</source>
+        <source>0 TRC / 0 Rounds</source>
         <translation>0 Terracoin / 0 循環次數</translation>
     </message>
     <message>
@@ -2504,12 +2504,12 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>即時到帳</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>如果自訂手續費設定為 1000 duffs ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 duffs 的手續費，&lt;br /&gt;而「至少」會支付 1000 duffs。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
+        <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee,&lt;br /&gt;while "at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>如果自訂手續費設定為 1000 satoshis ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 satoshis 的手續費，&lt;br /&gt;而「至少」會支付 1000 satoshis。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "total at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>如果自訂手續費設定為 1000 duffs ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 duffs 的手續費，&lt;br /&gt;而「總共至少」會支付 1000 duffs。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
+        <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee,&lt;br /&gt;while "total at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>如果自訂手續費設定為 1000 satoshis ，而交易資料大小只有 250 個位元組的話，那麽選擇「每千位元組」就只會付 250 satoshis 的手續費，&lt;br /&gt;而「總共至少」會支付 1000 satoshis。但是如果交易資料大小超過一千個位元組，那麽兩者都是每千位元組的費用。</translation>
     </message>
     <message>
         <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for terracoin transactions than the network can process.</source>
@@ -3428,8 +3428,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>付款</translation>
     </message>
     <message>
-        <source>InstantSend doesn't support sending values that high yet. Transactions are currently limited to %1 TERRACOIN.</source>
-        <translation>即時到帳系統暫時並不支援這麼高的交易金額。目前的金額僅限於%1 TERRACOIN。</translation>
+        <source>InstantSend doesn't support sending values that high yet. Transactions are currently limited to %1 TRC.</source>
+        <translation>即時到帳系統暫時並不支援這麼高的交易金額。目前的金額僅限於%1 TRC。</translation>
     </message>
     </context>
 <context>
@@ -3734,8 +3734,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>此產品也包含了由 OpenSSL Project 所開發的 OpenSSL Toolkit 軟體 &lt;https://www.openssl.org/&gt;, 和由 Eric Young 撰寫的加解密軟體，以及由 Thomas Bernard 所撰寫的 UPnP 軟體。</translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 1000 TERRACOIN.</source>
-        <translation>在本次交易中，無法找到不等於 1000 TERRACOIN 的足夠資金用。</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 1000 TRC.</source>
+        <translation>在本次交易中，無法找到不等於 1000 TRC 的足夠資金用。</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -4074,7 +4074,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>KeePassHttp  的密鑰，用作與KeePass 的AES加密通信</translation>
     </message>
     <message>
-        <source>Keep N TERRACOIN anonymized (default: %u)</source>
+        <source>Keep N TRC anonymized (default: %u)</source>
         <translation>保留 N 個已經匿名處理的Terracoin (預設值: %u)</translation>
     </message>
     <message>
@@ -4102,8 +4102,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>當建立交易時，如果每千位元組(%s/Kb)的手續費比這個值低，就視為沒付手續費 (預設值: %s)</translation>
     </message>
     <message>
-        <source>InstantSend doesn't support sending values that high yet. Transactions are currently limited to %1 TERRACOIN.</source>
-        <translation>即時到帳系統暫時並不支援這麼高的交易金額。目前的金額僅限於%1 TERRACOIN。</translation>
+        <source>InstantSend doesn't support sending values that high yet. Transactions are currently limited to %1 TRC.</source>
+        <translation>即時到帳系統暫時並不支援這麼高的交易金額。目前的金額僅限於%1 TRC。</translation>
     </message>
     <message>
         <source>InstantSend requires inputs with at least %d confirmations, you might need to wait a few minutes and try again.</source>

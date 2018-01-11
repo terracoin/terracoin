@@ -1,7 +1,7 @@
 Terracoin Core 0.12.1
 =====================
 
-This is the official reference wallet for Terracoin digital currency and comprises the backbone of the Terracoin peer-to-peer network. You can [download Terracoin Core](https://www.terracoin.org/downloads/) or [build it yourself](#building) using the guides below.
+This is the official reference wallet for Terracoin digital currency and comprises the backbone of the Terracoin peer-to-peer network. You can [download Terracoin Core](https://www.terracoin.io/downloads/) or [build it yourself](#building) using the guides below.
 
 Running
 ---------------------
@@ -24,9 +24,9 @@ Drag Terracoin-Qt to your applications folder, and then run Terracoin-Qt.
 
 ### Need Help?
 
-* See the [Terracoin documentation](https://terracoinpay.atlassian.net/wiki/display/DOC)
+* See the [Terracoin documentation](https://terracoin.atlassian.net/wiki/display/DOC)
 for help and more information.
-* Ask for help on [#terracoinpay](http://webchat.freenode.net?channels=terracoinpay) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=terracoinpay).
+* Ask for help on [#terracoin](http://webchat.freenode.net?channels=terracoin) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=terracoin).
 * Ask for help on the [TerracoinTalk](https://terracointalk.org/) forums.
 
 Building
@@ -58,7 +58,7 @@ The Terracoin Core repo's [root README](/README.md) contains relevant informatio
 
 ### Resources
 * Discuss on the [TerracoinTalk](https://terracointalk.org/) forums, in the Development & Technical Discussion board.
-* Discuss on [#terracoinpay](http://webchat.freenode.net/?channels=terracoinpay) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=terracoinpay).
+* Discuss on [#terracoin](http://webchat.freenode.net/?channels=terracoin) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=terracoin).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)

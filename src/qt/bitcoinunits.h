@@ -57,10 +57,10 @@ public:
      */
     enum Unit
     {
-        TERRACOIN,
-        mTERRACOIN,
-        uTERRACOIN,
-        duffs
+        TRC,
+        mTRC,
+        uTRC,
+        satoshis
     };
 
     enum SeparatorStyle

@@ -27,7 +27,7 @@ import collections
 PATTERN_IPV4 = re.compile(r"^((\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})):(\d+)$")
 PATTERN_IPV6 = re.compile(r"^\[([0-9a-z:]+)\]:(\d+)$")
 PATTERN_ONION = re.compile(r"^([abcdefghijklmnopqrstuvwxyz234567]{16}\.onion):(\d+)$")
-PATTERN_AGENT = re.compile(r"^(\/Satoshi:0\.8\.6\/|\/Satoshi:0\.9\.(2|3|4|5)\/|\/Core:0.1(0|1|2).\d{1,2}.\d{1,2}\/)$")
+PATTERN_AGENT = re.compile(r"^(/Terracoin Core:0.12.1.(5|6)/)$")
 
 def parseline(line):
     sline = line.split()
@@ -75,6 +75,12 @@ def parseline(line):
     lastsuccess = int(sline[2])
     # Extract protocol version.
     version = int(sline[10])
+    # User agent has a spaces in it
+    if len(sline) > 11:
+        tmp_agent = sline[11]
+        for i in range(12, len(sline)):
+            tmp_agent = tmp_agent + ' ' + sline[i]
+        sline[11] = tmp_agent
     # Extract user agent.
     agent = sline[11][1:-1]
     # Extract service flags.

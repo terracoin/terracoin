@@ -29,7 +29,7 @@ static const int SPORK_7_REQUIRE_SENTINEL_FLAG                          = 10007;
 
 static const int64_t SPORK_1_INSTANTSEND_ENABLED_DEFAULT                = 4070908800ULL;// OFF
 static const int64_t SPORK_2_INSTANTSEND_BLOCK_FILTERING_DEFAULT        = 0;            // ON
-static const int64_t SPORK_3_INSTANTSEND_MAX_VALUE_DEFAULT              = 20000;        // 20000 TERRACOIN
+static const int64_t SPORK_3_INSTANTSEND_MAX_VALUE_DEFAULT              = 20000;        // 20000 TRC
 static const int64_t SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT     = 4070908800ULL;// OFF
 static const int64_t SPORK_5_SUPERBLOCKS_ENABLED_DEFAULT                = 4070908800ULL;// OFF
 static const int64_t SPORK_6_RECONSIDER_BLOCKS_DEFAULT                  = 0;            // 0 BLOCKS
