@@ -15,7 +15,7 @@
 #include <math.h>
 
 unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consensus::Params& params) {
-    /* current difficulty formula, terracoin - DarkGravity v3, written by Evan Duffield - evan@terracoinpay.io */
+    /* current difficulty formula, terracoin - DarkGravity v3, written by Evan Duffield - evan@dashpay.io */
     const CBlockIndex *BlockLastSolved = pindexLast;
     const CBlockIndex *BlockReading = pindexLast;
     int64_t nActualTimespan = 0;

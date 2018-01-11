@@ -3,7 +3,7 @@ Construct a linear, no-fork, best version of the blockchain.
 
 ## Step 0: Install terracoin_hash
 
-https://github.com/terracoinpay/terracoin_hash
+https://github.com/terracoin/terracoin_hash
 
 ## Step 1: Download hash list
 

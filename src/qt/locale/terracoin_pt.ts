@@ -757,8 +757,8 @@ Endereço: %4
         <translation>média-alta</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Pode variar +/- %1 duff(s) por input</translation>
+        <source>Can vary +/- %1 satoshi(s) per input.</source>
+        <translation>Pode variar +/- %1 satoshi(s) por input</translation>
     </message>
     <message>
         <source>n/a</source>
@@ -860,11 +860,11 @@ Endereço: %4
         <translation>Por favor seleccione um nível de privacidade.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 1000 TERRACOIN</source>
+        <source>Use 2 separate masternodes to mix funds up to 1000 TRC</source>
         <translation>Usar 2 masternodes distintos para misturar os fundos até 1000DRK</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 1000 TERRACOIN</source>
+        <source>Use 8 separate masternodes to mix funds up to 1000 TRC</source>
         <translation>Usar 8 masternodes distintos para misturar os fundos até 1000DRK</translation>
     </message>
     <message>
@@ -872,16 +872,16 @@ Endereço: %4
         <translation>Usar 16 masternodes</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 TERRACOIN to anonymize 1000 TERRACOIN</source>
-        <translation>Esta opção é a mais rápida e irá custar cerca de ~0.025 TERRACOIN para anonimizar 1000 TERRACOIN</translation>
+        <source>This option is the quickest and will cost about ~0.025 TRC to anonymize 1000 TRC</source>
+        <translation>Esta opção é a mais rápida e irá custar cerca de ~0.025 TRC para anonimizar 1000 TRC</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 TERRACOIN to anonymize 1000 TERRACOIN</source>
-        <translation>Esta opção é relativamente rápida e irá custar cerca de ~0.05 TERRACOIN para anonimizar 1000 TERRACOIN</translation>
+        <source>This option is moderately fast and will cost about 0.05 TRC to anonymize 1000 TRC</source>
+        <translation>Esta opção é relativamente rápida e irá custar cerca de ~0.05 TRC para anonimizar 1000 TRC</translation>
     </message>
     <message>
-        <source>0.1 TERRACOIN per 1000 TERRACOIN you anonymize.</source>
-        <translation>0.1 TERRACOIN por cada 1000 TERRACOIN a anonimizar.</translation>
+        <source>0.1 TRC per 1000 TRC you anonymize.</source>
+        <translation>0.1 TRC por cada 1000 TRC a anonimizar.</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
@@ -1427,8 +1427,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Quantia e Voltas:</translation>
     </message>
     <message>
-        <source>0 TERRACOIN / 0 Rounds</source>
-        <translation>0 TERRACOIN / 0 Voltas</translation>
+        <source>0 TRC / 0 Rounds</source>
+        <translation>0 TRC / 0 Voltas</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -3260,8 +3260,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Enviar Moedas</translation>
     </message>
     <message>
-        <source>InstantX doesn't support sending values that high yet. Transactions are currently limited to %1 TERRACOIN.</source>
-        <translation>O InstantX não suporta valores tão elevados neste momento. As transacções estão limitadas a %1 TERRACOIN.</translation>
+        <source>InstantX doesn't support sending values that high yet. Transactions are currently limited to %1 TRC.</source>
+        <translation>O InstantX não suporta valores tão elevados neste momento. As transacções estão limitadas a %1 TRC.</translation>
     </message>
 </context>
 <context>
@@ -3374,7 +3374,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Não foi possível localizar fundos Darksend denominados suficientes para esta transacção.</translation>
     </message>
     <message>
-        <source>Unable to locate enough Darksend non-denominated funds for this transaction that are not equal 1000 TERRACOIN.</source>
+        <source>Unable to locate enough Darksend non-denominated funds for this transaction that are not equal 1000 TRC.</source>
         <translation>Não foi possível localizar fundos Darksend não denominados suficientes para esta transacção que não sejam igual a 1000DRK.</translation>
     </message>
     <message>
@@ -3590,8 +3590,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Activar o uso de darksend automatizado para os fundos guardados nesta carteira (0-1, default: %u)</translation>
     </message>
     <message>
-        <source>Fees (in TERRACOIN/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
-        <translation>Taxas (em TERRACOIN/Kb) inferiores a esta serão consideradas zero para retransmissão (default: %s)</translation>
+        <source>Fees (in TRC/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
+        <translation>Taxas (em TRC/Kb) inferiores a esta serão consideradas zero para retransmissão (default: %s)</translation>
     </message>
     <message>
         <source>Flush database activity from memory pool to disk log every &lt;n&gt; megabytes (default: %u)</source>
@@ -3638,7 +3638,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Este produto inclui software desenvolvido pelo Projecto OpenSSL para uso no OpenSSL Toolkit &lt;https://www.openssl.org/&gt;, software criptográfico escrito por Eric Young e software UPnP escrito por Thomas Bernard.</translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 1000 TERRACOIN.</source>
+        <source>Unable to locate enough funds for this transaction that are not equal 1000 TRC.</source>
         <translation>Não foi possível localizar fundos suficientes para esta transacção que não sejam igual a 1000DRK.</translation>
     </message>
     <message>
@@ -3744,8 +3744,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Erro: Argument não suportado -tor encontrado, utilize -onion</translation>
     </message>
     <message>
-        <source>Fee (in TERRACOIN/kB) to add to transactions you send (default: %s)</source>
-        <translation>Taxas (em TERRACOIN/Kb) a adicionar às transacções que envia (omissão: %s)</translation>
+        <source>Fee (in TRC/kB) to add to transactions you send (default: %s)</source>
+        <translation>Taxas (em TRC/Kb) a adicionar às transacções que envia (omissão: %s)</translation>
     </message>
     <message>
         <source>Finalizing transaction.</source>
@@ -4104,8 +4104,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Chave KeePassHttp para usar na comunicação cifrada AES com o KeePass</translation>
     </message>
     <message>
-        <source>Keep N TERRACOIN anonymized (default: %u)</source>
-        <translation>Manter N TERRACOIN anonimizados (default: %u)</translation>
+        <source>Keep N TRC anonymized (default: %u)</source>
+        <translation>Manter N TRC anonimizados (default: %u)</translation>
     </message>
     <message>
         <source>Keep at most &lt;n&gt; unconnectable transactions in memory (default: %u)</source>

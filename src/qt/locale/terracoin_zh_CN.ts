@@ -761,8 +761,8 @@ Address: %4
         <translation>中高</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>每笔输入可能会有 +/- %1个duff(s)的偏差.</translation>
+        <source>Can vary +/- %1 satoshi(s) per input.</source>
+        <translation>每笔输入可能会有 +/- %1个satoshi(s)的偏差.</translation>
     </message>
     <message>
         <source>n/a</source>
@@ -864,11 +864,11 @@ Address: %4
         <translation>请选择隐私等级。</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 1000 TERRACOIN</source>
+        <source>Use 2 separate masternodes to mix funds up to 1000 TRC</source>
         <translation>使用2个独立的主节点混合资金最多1000Terracoin</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 1000 TERRACOIN</source>
+        <source>Use 8 separate masternodes to mix funds up to 1000 TRC</source>
         <translation>使用8个独立的主节点混合资金最多1000Terracoin</translation>
     </message>
     <message>
@@ -876,15 +876,15 @@ Address: %4
         <translation>使用16个独立主节点</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 TERRACOIN to anonymize 1000 TERRACOIN</source>
+        <source>This option is the quickest and will cost about ~0.025 TRC to anonymize 1000 TRC</source>
         <translation>此选项为最快速度，需要支付0.025Terracoin/1000Terracoin的匿名处理费用。</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 TERRACOIN to anonymize 1000 TERRACOIN</source>
+        <source>This option is moderately fast and will cost about 0.05 TRC to anonymize 1000 TRC</source>
         <translation>此选项为一般速度，需要支付0.05Terracoin/1000Terracoin的匿名处理费用。</translation>
     </message>
     <message>
-        <source>0.1 TERRACOIN per 1000 TERRACOIN you anonymize.</source>
+        <source>0.1 TRC per 1000 TRC you anonymize.</source>
         <translation>0.1Terracoin/1000Terracoin的匿名处理费用。</translation>
     </message>
     <message>
@@ -1432,7 +1432,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>数量与循环次数:</translation>
     </message>
     <message>
-        <source>0 TERRACOIN / 0 Rounds</source>
+        <source>0 TRC / 0 Rounds</source>
         <translation>0 Terracoin / 0 循环数</translation>
     </message>
     <message>
@@ -1457,7 +1457,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>The denominations you submitted to the Masternode.&lt;br&gt;To mix, other users must submit the exact same denominations.</source>
-        <translation>您向主节点所提交的用以面额化混合的TERRACOIN,&lt;br&gt;当其他用户提交相同的面额化TERRACOIN数量时,将开始混合.</translation>
+        <translation>您向主节点所提交的用以面额化混合的TRC,&lt;br&gt;当其他用户提交相同的面额化TRC数量时,将开始混合.</translation>
     </message>
     <message>
         <source>(Last Message)</source>
@@ -2277,15 +2277,15 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>最小化</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee,&lt;br /&gt;while "at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
         <translation>
-如果自定手续费设定为1000 duffs,而交易信息只有250字节的话,那么选择"每千位字节"就只会支付250 duffs的手续费,&lt;br /&gt;而"至少"会支付1000 duffs.
+如果自定手续费设定为1000 satoshis,而交易信息只有250字节的话,那么选择"每千位字节"就只会支付250 satoshis的手续费,&lt;br /&gt;而"至少"会支付1000 satoshis.
 但如果交易信息大于一千字节,那么两者都要支付千字节费用.</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "total at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee,&lt;br /&gt;while "total at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
         <translation>
-如果自定手续费设定为1000 duffs,而交易信息只有250字节的话,那么选择"每千位字节"就只会支付250 duffs的手续费,&lt;br /&gt;而"总共至少"会支付1000 duffs.
+如果自定手续费设定为1000 satoshis,而交易信息只有250字节的话,那么选择"每千位字节"就只会支付250 satoshis的手续费,&lt;br /&gt;而"总共至少"会支付1000 satoshis.
 但如果交易信息大于一千字节,那么两者都要支付千字节费用.</translation>
     </message>
     <message>
@@ -3257,7 +3257,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>发送Terracoin</translation>
     </message>
     <message>
-        <source>InstantX doesn't support sending values that high yet. Transactions are currently limited to %1 TERRACOIN.</source>
+        <source>InstantX doesn't support sending values that high yet. Transactions are currently limited to %1 TRC.</source>
         <translation>即时支付功能目前还不支持发送如此高的金额.目前限制在%1 Terracoin.</translation>
     </message>
 </context>
@@ -3344,11 +3344,11 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Unable to locate enough Darksend denominated funds for this transaction.</source>
-        <translation>无法找到足够的已匿名化资金来完成交易,不足1000 TERRACOIN.</translation>
+        <translation>无法找到足够的已匿名化资金来完成交易,不足1000 TRC.</translation>
     </message>
     <message>
-        <source>Unable to locate enough Darksend non-denominated funds for this transaction that are not equal 1000 TERRACOIN.</source>
-        <translation>无法找到足够的未匿名化资金来完成交易,不足1000 TERRACOIN.</translation>
+        <source>Unable to locate enough Darksend non-denominated funds for this transaction that are not equal 1000 TRC.</source>
+        <translation>无法找到足够的未匿名化资金来完成交易,不足1000 TRC.</translation>
     </message>
     <message>
         <source>Warning: -paytxfee is set very high! This is the transaction fee you will pay if you send a transaction.</source>
@@ -3543,11 +3543,11 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>允许存储在这个钱包内的资金自动使用匿名发送(0-1, 默认: %u)</translation>
     </message>
     <message>
-        <source>Fees (in TERRACOIN/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
+        <source>Fees (in TRC/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
         <translation>如果手续费比这个值低,就视为没有付手续费(当产生交易时)(默认: %s)</translation>
     </message>
     <message>
-        <source>Fees (in TERRACOIN/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
+        <source>Fees (in TRC/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
         <translation>如果手续费比这个值低,就视为没有付手续费(当产生交易时)(默认: %s)</translation>
     </message>
     <message>
@@ -3591,8 +3591,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>此产品包括了由OpenSSL Project所开发的OpenSSL Toolkit 软件&lt;https://www.openssl.org/&gt;, 和由Eric Young 编写的加密软件, 以及由Thomas Bernard 编写的UPnP软件.</translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 1000 TERRACOIN.</source>
-        <translation>无法找到足够的资金完成交易,不足1000 TERRACOIN.</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 1000 TRC.</source>
+        <translation>无法找到足够的资金完成交易,不足1000 TRC.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -3987,7 +3987,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>检测到无效脚本。</translation>
     </message>
     <message>
-        <source>Keep N TERRACOIN anonymized (default: %u)</source>
+        <source>Keep N TRC anonymized (default: %u)</source>
         <translation>保持定量Terracoin匿名化(默认: %u)</translation>
     </message>
     <message>

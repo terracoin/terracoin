@@ -7,7 +7,7 @@ Use the autogen script to prepare the build environment.
     make
 
 Precompiled binaries are available at github, see
-https://github.com/terracoinpay/terracoin-binaries
+https://github.com/terracoin/terracoin-binaries
 
 Always verify the signatures and checksums.
 

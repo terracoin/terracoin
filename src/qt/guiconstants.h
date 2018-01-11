@@ -48,7 +48,7 @@ static const int MAX_URI_LENGTH = 255;
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "Terracoin"
-#define QAPP_ORG_DOMAIN "terracoin.org"
+#define QAPP_ORG_DOMAIN "terracoin.io"
 #define QAPP_APP_NAME_DEFAULT "Terracoin-Qt"
 #define QAPP_APP_NAME_TESTNET "Terracoin-Qt-testnet"
 

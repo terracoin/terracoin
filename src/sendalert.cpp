@@ -57,7 +57,7 @@ void ThreadSendAlert()
     //  Higher numbers mean higher priority
     alert.nPriority     = 5000;
     alert.strComment    = "";
-    alert.strStatusBar  = "URGENT: Upgrade required: see https://www.terracoin.org";
+    alert.strStatusBar  = "URGENT: Upgrade required: see https://www.terracoin.io";
 
     // Set specific client version/versions here. If setSubVer is empty, no filtering on subver is done:
     // alert.setSubVer.insert(std::string("/Terracoin Core:0.12.0.58/"));

@@ -4,11 +4,11 @@
 
 Terracoin Core version 0.12.0 is now available from:
 
-  https://terracoinpay.io/downloads
+  https://terracoin.io/downloads
 
 Please report bugs using the issue tracker at github:
 
-  https://github.com/terracoinpay/terracoin/issues
+  https://github.com/terracoin/terracoin/issues
 
 
 How to Upgrade

@@ -118,7 +118,7 @@ public Q_SLOTS:
     /** Show progress dialog e.g. for rescan */
     void showProgress(const QString &title, int nProgress);
 
-    /** Update selected TERRACOIN amount from transactionview */
+    /** Update selected TRC amount from transactionview */
     void trxAmount(QString amount);
 
 Q_SIGNALS:

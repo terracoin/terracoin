@@ -113,7 +113,7 @@ QT_TRANSLATE_NOOP("terracoin-core", ""
 "confirmation on average within n blocks (default: %u)"),
 QT_TRANSLATE_NOOP("terracoin-core", ""
 "InstantSend doesn't support sending values that high yet. Transactions are "
-"currently limited to %1 TERRACOIN."),
+"currently limited to %1 TRC."),
 QT_TRANSLATE_NOOP("terracoin-core", ""
 "InstantSend requires inputs with at least %d confirmations, you might need "
 "to wait a few minutes and try again."),
@@ -217,10 +217,10 @@ QT_TRANSLATE_NOOP("terracoin-core", ""
 "Unable to locate enough PrivateSend denominated funds for this transaction."),
 QT_TRANSLATE_NOOP("terracoin-core", ""
 "Unable to locate enough PrivateSend non-denominated funds for this "
-"transaction that are not equal 1000 TERRACOIN."),
+"transaction that are not equal 1000 TRC."),
 QT_TRANSLATE_NOOP("terracoin-core", ""
 "Unable to locate enough funds for this transaction that are not equal 1000 "
-"TERRACOIN."),
+"TRC."),
 QT_TRANSLATE_NOOP("terracoin-core", ""
 "Unsupported argument -socks found. Setting SOCKS version isn't possible "
 "anymore, only SOCKS5 proxies are supported."),
@@ -377,7 +377,7 @@ QT_TRANSLATE_NOOP("terracoin-core", "Invalid port detected in masternode.conf"),
 QT_TRANSLATE_NOOP("terracoin-core", "Invalid script detected."),
 QT_TRANSLATE_NOOP("terracoin-core", "KeePassHttp id for the established association"),
 QT_TRANSLATE_NOOP("terracoin-core", "KeePassHttp key for AES encrypted communication with KeePass"),
-QT_TRANSLATE_NOOP("terracoin-core", "Keep N TERRACOIN anonymized (default: %u)"),
+QT_TRANSLATE_NOOP("terracoin-core", "Keep N TRC anonymized (default: %u)"),
 QT_TRANSLATE_NOOP("terracoin-core", "Keep at most <n> unconnectable transactions in memory (default: %u)"),
 QT_TRANSLATE_NOOP("terracoin-core", "Keep the transaction memory pool below <n> megabytes (default: %u)"),
 QT_TRANSLATE_NOOP("terracoin-core", "Last PrivateSend was too recent."),

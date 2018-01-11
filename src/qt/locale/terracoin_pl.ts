@@ -734,7 +734,7 @@ Adres: %4
     </message>
     <message>
         <source>Copy dust</source>
-        <translation>Kopiuj pył (kwota poniżej 5460 duffów)</translation>
+        <translation>Kopiuj pył (kwota poniżej 5460 satoshiów)</translation>
     </message>
     <message>
         <source>Copy change</source>
@@ -761,8 +761,8 @@ Adres: %4
         <translation>średnio wysoki</translation>
     </message>
     <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>Może się różnić około +/- %1 duff(ów) na transację.</translation>
+        <source>Can vary +/- %1 satoshi(s) per input.</source>
+        <translation>Może się różnić około +/- %1 satoshi(ów) na transację.</translation>
     </message>
     <message>
         <source>n/a</source>
@@ -864,28 +864,28 @@ Adres: %4
         <translation>Proszę wybrać poziom bezpieczeństwa.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 1000 TERRACOIN</source>
-        <translation>Użyj 2 oddzielnych masternodów aby wymieszać środki max. do 1000 TERRACOIN</translation>
+        <source>Use 2 separate masternodes to mix funds up to 1000 TRC</source>
+        <translation>Użyj 2 oddzielnych masternodów aby wymieszać środki max. do 1000 TRC</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 1000 TERRACOIN</source>
-        <translation>Użyj 8 oddzielnych masternodów aby wymieszać środki max. do 1000 TERRACOIN</translation>
+        <source>Use 8 separate masternodes to mix funds up to 1000 TRC</source>
+        <translation>Użyj 8 oddzielnych masternodów aby wymieszać środki max. do 1000 TRC</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Użyj 16 oddzielnych masternodów</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 TERRACOIN to anonymize 1000 TERRACOIN</source>
-        <translation>Ta opcja jest najszybsza i kosztuje około 0.025 TERRACOIN za zanonimizowanie 1000 TERRACOIN</translation>
+        <source>This option is the quickest and will cost about ~0.025 TRC to anonymize 1000 TRC</source>
+        <translation>Ta opcja jest najszybsza i kosztuje około 0.025 TRC za zanonimizowanie 1000 TRC</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 TERRACOIN to anonymize 1000 TERRACOIN</source>
-        <translation>Ta opcja jest w miarę szybka i kosztuje około 0.05 TERRACOIN za zanonimizowanie 1000 TERRACOIN</translation>
+        <source>This option is moderately fast and will cost about 0.05 TRC to anonymize 1000 TRC</source>
+        <translation>Ta opcja jest w miarę szybka i kosztuje około 0.05 TRC za zanonimizowanie 1000 TRC</translation>
     </message>
     <message>
-        <source>0.1 TERRACOIN per 1000 TERRACOIN you anonymize.</source>
-        <translation>0.1 TERRACOIN za każde 1000 TERRACOIN które zanonimizujesz.</translation>
+        <source>0.1 TRC per 1000 TRC you anonymize.</source>
+        <translation>0.1 TRC za każde 1000 TRC które zanonimizujesz.</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
@@ -1431,8 +1431,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Ilość oraz Rundy:</translation>
     </message>
     <message>
-        <source>0 TERRACOIN / 0 Rounds</source>
-        <translation>0 TERRACOIN / 0 Rund</translation>
+        <source>0 TRC / 0 Rounds</source>
+        <translation>0 TRC / 0 Rund</translation>
     </message>
     <message>
         <source>Submitted Denom:</source>
@@ -2284,12 +2284,12 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Zminimalizuj</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Jeśli ręcznie ustalona opłata wynosi 1000 Duffów a sama transakcja ma tylko 250 bajtów, to opłata jako "za kilobajt" wynosi tylko 250 duffów. &lt;br/&gt;Dzieje się tak dla każdej transakcji poniżej 1000 duffów. W przypadku transakcji większych niż jedn kilobajt opłata jest naliczana od kilobajta. </translation>
+        <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee,&lt;br /&gt;while "at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Jeśli ręcznie ustalona opłata wynosi 1000 Duffów a sama transakcja ma tylko 250 bajtów, to opłata jako "za kilobajt" wynosi tylko 250 satoshiów. &lt;br/&gt;Dzieje się tak dla każdej transakcji poniżej 1000 satoshiów. W przypadku transakcji większych niż jedn kilobajt opłata jest naliczana od kilobajta. </translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 duffs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 duffs in fee,&lt;br /&gt;while "total at least" pays 1000 duffs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Jeśli ręcznie ustalona opłata wynosi 1000 Duffów a sama transakcja ma tylko 250 bitów, to opłata jako "za kilobajt" wynosi tylko 250 duffów.&lt;br/&gt; Dzieje się tak dla każdej transakcji poniżej 1000 duffów. W przypadku transakcji większych niż jedn kilobajt opłata jest naliczana od kilobajta.</translation>
+        <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee,&lt;br /&gt;while "total at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>Jeśli ręcznie ustalona opłata wynosi 1000 Duffów a sama transakcja ma tylko 250 bitów, to opłata jako "za kilobajt" wynosi tylko 250 satoshiów.&lt;br/&gt; Dzieje się tak dla każdej transakcji poniżej 1000 satoshiów. W przypadku transakcji większych niż jedn kilobajt opłata jest naliczana od kilobajta.</translation>
     </message>
     <message>
         <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for terracoin transactions than the network can process.</source>
@@ -2401,7 +2401,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Copy dust</source>
-        <translation>skopiuj drobne (poniżej 5460 duffów)</translation>
+        <translation>skopiuj drobne (poniżej 5460 satoshiów)</translation>
     </message>
     <message>
         <source>Copy change</source>
@@ -3276,8 +3276,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Wyślij płatność</translation>
     </message>
     <message>
-        <source>InstantX doesn't support sending values that high yet. Transactions are currently limited to %1 TERRACOIN.</source>
-        <translation>InstantX jescze nie może przesłać tak wysokich kwot. Obecnie transakcje są ograniczone tylko do %1 TERRACOIN:</translation>
+        <source>InstantX doesn't support sending values that high yet. Transactions are currently limited to %1 TRC.</source>
+        <translation>InstantX jescze nie może przesłać tak wysokich kwot. Obecnie transakcje są ograniczone tylko do %1 TRC:</translation>
     </message>
 </context>
 <context>
@@ -3390,8 +3390,8 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Nie znaleziono wystarczających denominowanych środków Darksend do wykonania tej transakcji.</translation>
     </message>
     <message>
-        <source>Unable to locate enough Darksend non-denominated funds for this transaction that are not equal 1000 TERRACOIN.</source>
-        <translation>Nie znaleziono wystarczającej ilości nie zdenominowanych środków Darksend dla tej transakcji, które nie równają się 1000 TERRACOIN</translation>
+        <source>Unable to locate enough Darksend non-denominated funds for this transaction that are not equal 1000 TRC.</source>
+        <translation>Nie znaleziono wystarczającej ilości nie zdenominowanych środków Darksend dla tej transakcji, które nie równają się 1000 TRC</translation>
     </message>
     <message>
         <source>Warning: -paytxfee is set very high! This is the transaction fee you will pay if you send a transaction.</source>
@@ -3634,12 +3634,12 @@ https://www.transifex.com/projects/p/terracoin/</translation>
         <translation>Błąd: niewspierany argument, znaleziono -socks. Ustawienie wersji SOCKS nie jest już możliwa, wspierane są tylkobramki  proxy SOCKS5.</translation>
     </message>
     <message>
-        <source>Fees (in TERRACOIN/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
-        <translation>Opłaty (TERRACOIN/Kb) za retransmisje mniejsze niż ta, uważane są za równoznaczne z brakiem opłat (domyślnie: %s)</translation>
+        <source>Fees (in TRC/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
+        <translation>Opłaty (TRC/Kb) za retransmisje mniejsze niż ta, uważane są za równoznaczne z brakiem opłat (domyślnie: %s)</translation>
     </message>
     <message>
-        <source>Fees (in TERRACOIN/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
-        <translation>Opłaty (TERRACOIN/Kb) mniejsze niż ta, są uważane są za równoznaczne z brakiem opłat za stworzenie transakcji (domyślnie: %s)</translation>
+        <source>Fees (in TRC/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
+        <translation>Opłaty (TRC/Kb) mniejsze niż ta, są uważane są za równoznaczne z brakiem opłat za stworzenie transakcji (domyślnie: %s)</translation>
     </message>
     <message>
         <source>Flush database activity from memory pool to disk log every &lt;n&gt; megabytes (default: %u)</source>
@@ -3733,8 +3733,8 @@ Zaleca się również aby ustawić alarm powiadomień tzw. alertnotify, aby dać
 </translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 1000 TERRACOIN.</source>
-        <translation>Niemożliwe jest zlokalizowanie wystarczającej ilości środków dla tej transakcji, które nie są równe 1000 TERRACOIN.</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 1000 TRC.</source>
+        <translation>Niemożliwe jest zlokalizowanie wystarczającej ilości środków dla tej transakcji, które nie są równe 1000 TRC.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -3847,8 +3847,8 @@ Zaleca się również aby ustawić alarm powiadomień tzw. alertnotify, aby dać
         <translation>Błąd: Znaleziono niewspierany argument -tor, użyj -onion.</translation>
     </message>
     <message>
-        <source>Fee (in TERRACOIN/kB) to add to transactions you send (default: %s)</source>
-        <translation>Opłata (TERRACOIN/kB) do dodania do transakcji, którą chcesz wysłać (domyślnie: %s)</translation>
+        <source>Fee (in TRC/kB) to add to transactions you send (default: %s)</source>
+        <translation>Opłata (TRC/kB) do dodania do transakcji, którą chcesz wysłać (domyślnie: %s)</translation>
     </message>
     <message>
         <source>Finalizing transaction.</source>
@@ -4215,7 +4215,7 @@ Zaleca się również aby ustawić alarm powiadomień tzw. alertnotify, aby dać
         <translation>Klucz KeePassHttp dla zaszyfrowanego metodą AES połączenia z KeePass</translation>
     </message>
     <message>
-        <source>Keep N TERRACOIN anonymized (default: %u)</source>
+        <source>Keep N TRC anonymized (default: %u)</source>
         <translation>Utrzymuj N zanonimizowanych terracoin (domyślnie: %u)</translation>
     </message>
     <message>

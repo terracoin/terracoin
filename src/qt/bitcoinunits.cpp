@@ -19,10 +19,10 @@ BitcoinUnits::BitcoinUnits(QObject *parent):
 QList<BitcoinUnits::Unit> BitcoinUnits::availableUnits()
 {
     QList<BitcoinUnits::Unit> unitlist;
-    unitlist.append(TERRACOIN);
-    unitlist.append(mTERRACOIN);
-    unitlist.append(uTERRACOIN);
-    unitlist.append(duffs);
+    unitlist.append(TRC);
+    unitlist.append(mTRC);
+    unitlist.append(uTRC);
+    unitlist.append(satoshis);
     return unitlist;
 }
 
@@ -30,10 +30,10 @@ bool BitcoinUnits::valid(int unit)
 {
     switch(unit)
     {
-    case TERRACOIN:
-    case mTERRACOIN:
-    case uTERRACOIN:
-    case duffs:
+    case TRC:
+    case mTRC:
+    case uTRC:
+    case satoshis:
         return true;
     default:
         return false;
@@ -46,10 +46,10 @@ QString BitcoinUnits::name(int unit)
     {
         switch(unit)
         {
-            case TERRACOIN: return QString("TERRACOIN");
-            case mTERRACOIN: return QString("mTERRACOIN");
-            case uTERRACOIN: return QString::fromUtf8("μTERRACOIN");
-            case duffs: return QString("duffs");
+            case TRC: return QString("TRC");
+            case mTRC: return QString("mTRC");
+            case uTRC: return QString::fromUtf8("μTRC");
+            case satoshis: return QString("satoshis");
             default: return QString("???");
         }
     }
@@ -57,10 +57,10 @@ QString BitcoinUnits::name(int unit)
     {
         switch(unit)
         {
-            case TERRACOIN: return QString("tTERRACOIN");
-            case mTERRACOIN: return QString("mtTERRACOIN");
-            case uTERRACOIN: return QString::fromUtf8("μtTERRACOIN");
-            case duffs: return QString("tduffs");
+            case TRC: return QString("tTRC");
+            case mTRC: return QString("mtTRC");
+            case uTRC: return QString::fromUtf8("μtTRC");
+            case satoshis: return QString("tsatoshis");
             default: return QString("???");
         }
     }
@@ -72,10 +72,10 @@ QString BitcoinUnits::description(int unit)
     {
         switch(unit)
         {
-            case TERRACOIN: return QString("Terracoin");
-            case mTERRACOIN: return QString("Milli-Terracoin (1 / 1" THIN_SP_UTF8 "000)");
-            case uTERRACOIN: return QString("Micro-Terracoin (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-            case duffs: return QString("Ten Nano-Terracoin (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case TRC: return QString("Terracoin");
+            case mTRC: return QString("Milli-Terracoin (1 / 1" THIN_SP_UTF8 "000)");
+            case uTRC: return QString("Micro-Terracoin (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case satoshis: return QString("Ten Nano-Terracoin (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
             default: return QString("???");
         }
     }
@@ -83,10 +83,10 @@ QString BitcoinUnits::description(int unit)
     {
         switch(unit)
         {
-            case TERRACOIN: return QString("TestTerracoins");
-            case mTERRACOIN: return QString("Milli-TestTerracoin (1 / 1" THIN_SP_UTF8 "000)");
-            case uTERRACOIN: return QString("Micro-TestTerracoin (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-            case duffs: return QString("Ten Nano-TestTerracoin (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case TRC: return QString("TestTerracoins");
+            case mTRC: return QString("Milli-TestTerracoin (1 / 1" THIN_SP_UTF8 "000)");
+            case uTRC: return QString("Micro-TestTerracoin (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case satoshis: return QString("Ten Nano-TestTerracoin (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
             default: return QString("???");
         }
     }
@@ -96,10 +96,10 @@ qint64 BitcoinUnits::factor(int unit)
 {
     switch(unit)
     {
-    case TERRACOIN:  return 100000000;
-    case mTERRACOIN: return 100000;
-    case uTERRACOIN: return 100;
-    case duffs: return 1;
+    case TRC:  return 100000000;
+    case mTRC: return 100000;
+    case uTRC: return 100;
+    case satoshis: return 1;
     default:   return 100000000;
     }
 }
@@ -108,10 +108,10 @@ int BitcoinUnits::decimals(int unit)
 {
     switch(unit)
     {
-    case TERRACOIN: return 8;
-    case mTERRACOIN: return 5;
-    case uTERRACOIN: return 2;
-    case duffs: return 0;
+    case TRC: return 8;
+    case mTRC: return 5;
+    case uTRC: return 2;
+    case satoshis: return 0;
     default: return 0;
     }
 }
