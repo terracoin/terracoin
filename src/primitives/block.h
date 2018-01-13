@@ -116,14 +116,7 @@ public:
 
     CBlockHeader GetBlockHeader() const
     {
-        CBlockHeader block;
-        block.nVersion       = nVersion;
-        block.hashPrevBlock  = hashPrevBlock;
-        block.hashMerkleRoot = hashMerkleRoot;
-        block.nTime          = nTime;
-        block.nBits          = nBits;
-        block.nNonce         = nNonce;
-        return block;
+        return *this;
     }
 
     // Build the in-memory merkle tree for this block and return the merkle root.
