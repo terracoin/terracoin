@@ -123,6 +123,7 @@ public:
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
+        block.auxpow         = auxpow;
         return block;
     }
 
