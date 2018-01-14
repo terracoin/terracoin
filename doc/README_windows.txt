@@ -19,5 +19,5 @@ depending on the speed of your computer and network connection, the synchronizat
 process can take anywhere from a few hours to a day or more.
 
 See the terracoin wiki at:
-  https://terracoin.atlassian.net/wiki/
+  https://wiki.terracoin.io/
 for more help and information.

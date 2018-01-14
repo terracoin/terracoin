@@ -57,8 +57,7 @@ The Terracoin Core repo's [root README](/README.md) contains relevant informatio
 - [Dnsseed Policy](dnsseed-policy.md)
 
 ### Resources
-* Discuss on the [TerracoinTalk](https://terracointalk.org/) forums, in the Development & Technical Discussion board.
-* Discuss on [#terracoin](http://webchat.freenode.net/?channels=terracoin) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=terracoin).
+* Discuss on the [Terracoin Mattermost](https://mattermost.terracoin.io/).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)
