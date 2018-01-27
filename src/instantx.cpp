@@ -854,7 +854,7 @@ bool CTxLockRequest::IsValid(bool fRequireUnspent) const
     BOOST_FOREACH(const CTxOut& txout, vout) {
         // InstantSend supports normal scripts and unspendable (i.e. data) scripts.
         // TODO: Look into other script types that are normal and can be included
-        if(!txout.scriptPubKey.IsNormalPaymentScript() && !txout.scriptPubKey.IsUnspendable()) {
+        if(!txout.scriptPubKey.IsPayToPublicKeyHash() && !txout.scriptPubKey.IsUnspendable()) {
             LogPrint("instantsend", "CTxLockRequest::IsValid -- Invalid Script %s", ToString());
             return false;
         }

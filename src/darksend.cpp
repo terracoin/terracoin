@@ -212,7 +212,7 @@ void CDarksendPool::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataS
                     PushStatus(pfrom, STATUS_REJECTED, ERR_NON_STANDARD_PUBKEY);
                     return;
                 }
-                if(!txout.scriptPubKey.IsNormalPaymentScript()) {
+                if(!txout.scriptPubKey.IsPayToPublicKeyHash()) {
                     LogPrintf("DSVIN -- invalid script! scriptPubKey=%s\n", ScriptToAsmStr(txout.scriptPubKey));
                     PushStatus(pfrom, STATUS_REJECTED, ERR_INVALID_SCRIPT);
                     return;
@@ -901,7 +901,7 @@ bool CDarksendPool::IsCollateralValid(const CTransaction& txCollateral)
     BOOST_FOREACH(const CTxOut txout, txCollateral.vout) {
         nValueOut += txout.nValue;
 
-        if(!txout.scriptPubKey.IsNormalPaymentScript()) {
+        if(!txout.scriptPubKey.IsPayToPublicKeyHash()) {
             LogPrintf ("CDarksendPool::IsCollateralValid -- Invalid Script, txCollateral=%s", txCollateral.ToString());
             return false;
         }

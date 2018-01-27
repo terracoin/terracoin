@@ -133,3 +133,4 @@ terracoin-cli
 terracoind
 terracoin-qt
 make
+wallet-utility
