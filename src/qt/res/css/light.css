@@ -785,7 +785,7 @@ QWidget .QFrame#frame .QLabel#label_5 { /* Wallet Label */
 qproperty-alignment: 'AlignVCenter | AlignRight';
 min-width:160px;
 background-color:transparent;
-color:#f4f4f5;
+font-weight: bold;
 margin-right:5px;
 padding-right:5px;
 }
@@ -1116,12 +1116,11 @@ background-repeat:none;
 
 QWidget .QFrame#frame_2 .QLabel#label_4 { /* Recent Transactions Label */
 min-width:180px;
-color:#999;
 margin-left:67px;
 margin-top:83px;
 margin-right:5px;
 padding-right:5px;
-font-weight:normal;
+font-weight:bold;
 font-size:15px;
 min-height:24px;
 }
