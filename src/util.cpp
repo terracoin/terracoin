@@ -116,6 +116,7 @@ int nWalletBackups = 10;
 
 const char * const BITCOIN_CONF_FILENAME = "terracoin.conf";
 const char * const BITCOIN_PID_FILENAME = "terracoind.pid";
+const char * const DEFAULT_DEBUGLOGFILE = "debug.log";
 
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
@@ -221,16 +222,28 @@ static void DebugPrintInit()
     vMsgsBeforeOpenLog = new list<string>;
 }
 
-void OpenDebugLog()
+boost::filesystem::path GetDebugLogPath()
+{
+    boost::filesystem::path logfile(GetArg("-debuglogfile", DEFAULT_DEBUGLOGFILE));
+    if (!logfile.is_absolute())
+        logfile = GetDataDir() / logfile;
+
+    return logfile;
+}
+
+bool OpenDebugLog()
 {
     boost::call_once(&DebugPrintInit, debugPrintInitFlag);
     boost::mutex::scoped_lock scoped_lock(*mutexDebugLog);
 
     assert(fileout == NULL);
     assert(vMsgsBeforeOpenLog);
-    boost::filesystem::path pathDebug = GetDataDir() / "debug.log";
+    boost::filesystem::path pathDebug = GetDebugLogPath();
     fileout = fopen(pathDebug.string().c_str(), "a");
-    if (fileout) setbuf(fileout, NULL); // unbuffered
+    if (!fileout)
+        return false;
+
+    setbuf(fileout, NULL); // unbuffered
 
     // dump buffered messages from before we opened the log
     while (!vMsgsBeforeOpenLog->empty()) {
@@ -240,6 +253,8 @@ void OpenDebugLog()
 
     delete vMsgsBeforeOpenLog;
     vMsgsBeforeOpenLog = NULL;
+
+    return true;
 }
 
 bool LogAcceptCategory(const char* category)
@@ -372,7 +387,7 @@ int LogPrintStr(const std::string &str)
             // reopen the log file, if requested
             if (fReopenDebugLog) {
                 fReopenDebugLog = false;
-                boost::filesystem::path pathDebug = GetDataDir() / "debug.log";
+                boost::filesystem::path pathDebug = GetDebugLogPath();
                 if (freopen(pathDebug.string().c_str(),"a",fileout) != NULL)
                     setbuf(fileout, NULL); // unbuffered
             }
@@ -649,6 +664,8 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
     }
     // If datadir is changed in .conf file:
     ClearDatadirCache();
+    if (!boost::filesystem::is_directory(GetDataDir(false)))
+        throw std::runtime_error(strprintf("specified data directory \"%s\" does not exist.", GetArg("-datadir", "").c_str()));
 }
 
 #ifndef WIN32
@@ -797,7 +814,7 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {
 void ShrinkDebugFile()
 {
     // Scroll debug.log if it's getting too big
-    boost::filesystem::path pathLog = GetDataDir() / "debug.log";
+    boost::filesystem::path pathLog = GetDebugLogPath();
     FILE* file = fopen(pathLog.string().c_str(), "r");
     if (file && boost::filesystem::file_size(pathLog) > 10 * 1000000)
     {
