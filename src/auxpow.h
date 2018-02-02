@@ -1,26 +1,30 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2014 Daniel Kraft
+// Copyright (c) 2014-2016 Daniel Kraft
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_AUXPOW_H
 #define BITCOIN_AUXPOW_H
 
-#include "serialize.h"
-#include "uint256.h"
-
+#include "consensus/params.h"
 #include "primitives/pureheader.h"
 #include "primitives/transaction.h"
+#include "serialize.h"
+#include "uint256.h"
 
 #include <vector>
 
 class CBlock;
+class CBlockHeader;
 class CBlockIndex;
-class CReserveKey;
 
 /** Header for merge-mining data in the coinbase.  */
 static const unsigned char pchMergedMiningHeader[] = { 0xfa, 0xbe, 'm', 'm' };
+
+/* Because it is needed for auxpow, the definition of CMerkleTx is moved
+   here from wallet.h.  */
 
 /** A transaction with a merkle branch linking it to the block chain. */
 class CMerkleTx : public CTransaction
@@ -40,9 +44,6 @@ public:
      */
     int nIndex;
 
-    // memory only
-    mutable bool fMerkleVerified;
-
     CMerkleTx()
     {
         Init();
@@ -57,7 +58,6 @@ public:
     {
         hashBlock = uint256();
         nIndex = -1;
-        fMerkleVerified = false;
     }
 
     ADD_SERIALIZE_METHODS;
@@ -80,7 +80,7 @@ public:
      * >=1 : this many blocks deep in the main chain
      */
     int GetDepthInMainChain(const CBlockIndex* &pindexRet, bool enableIX = true) const;
-    int GetDepthInMainChain(bool enableIX = true) const { const CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet, enableIX); }
+    int GetDepthInMainChain(bool enableIX = true) const { const CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet); }
     bool IsInMainChain() const { const CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet) > 0; }
     int GetBlocksToMaturity() const;
     bool AcceptToMemoryPool(bool fLimitFree=true, bool fRejectAbsurdFee=true);
@@ -98,6 +98,7 @@ public:
 class CAuxPow : public CMerkleTx
 {
 
+/* Public for the unit tests.  */
 public:
 
   /** The merkle branch connecting the aux block to our coinbase.  */
@@ -111,6 +112,7 @@ public:
 
 public:
 
+  /* Prevent accidental conversion.  */
   inline explicit CAuxPow (const CTransaction& txIn)
     : CMerkleTx (txIn)
   {}
@@ -139,9 +141,11 @@ public:
    * just confirms that all the merkle branches are valid.
    * @param hashAuxBlock Hash of the merge-mined block.
    * @param nChainId The auxpow chain ID of the block to check.
+   * @param params Consensus parameters.
    * @return True if the auxpow is valid.
    */
-  bool check (const uint256& hashAuxBlock, int nChainId) const;
+  bool check (const uint256& hashAuxBlock, int nChainId,
+              const Consensus::Params& params) const;
 
   /**
    * Get the parent block's hash.  This is used to verify that it
@@ -155,18 +159,6 @@ public:
   }
 
   /**
-   * Return parent block.  This is only used for the temporary parentblock
-   * auxpow version check.
-   * @return The parent block.
-   */
-  /* FIXME: Remove after the hardfork.  */
-  inline const CPureBlockHeader&
-  getParentBlock () const
-  {
-    return parentBlock;
-  }
-
-  /**
    * Calculate the expected index in the merkle tree.  This is also used
    * for the test-suite.
    * @param nNonce The coinbase's nonce value.
@@ -175,6 +167,23 @@ public:
    * @return The expected index for the aux hash.
    */
   static int getExpectedIndex (uint32_t nNonce, int nChainId, unsigned h);
+
+  /**
+   * Check a merkle branch.  This used to be in CBlock, but was removed
+   * upstream.  Thus include it here now.
+   */
+  static uint256 CheckMerkleBranch (uint256 hash,
+                                    const std::vector<uint256>& vMerkleBranch,
+                                    int nIndex);
+
+  /**
+   * Initialise the auxpow of the given block header.  This constructs
+   * a minimal CAuxPow object with a minimal parent block and sets
+   * it on the block header.  The auxpow is not necessarily valid, but
+   * can be "mined" to make it valid.
+   * @param header The header to set the auxpow on.
+   */
+  static void initAuxPow (CBlockHeader& header);
 
 };
 

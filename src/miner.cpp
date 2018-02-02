@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2017 The Terracoin Core developers
+// Copyright (c) 2014-2017 The Dash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -36,7 +36,7 @@ using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// TerracoinMiner
+// BitcoinMiner
 //
 
 //
@@ -89,10 +89,10 @@ CBlockTemplate* CreateNewBlock(const CChainParams& chainparams, const CScript& s
     txNew.vout.resize(1);
     txNew.vout[0].scriptPubKey = scriptPubKeyIn;
 
-
-    /* Initialise the block version.  */
-    const int32_t nChainId = Params().GetConsensus().nAuxpowChainId;
-    pblock->nVersion.SetBaseVersion(CBlockHeader::CURRENT_VERSION, nChainId);
+    // Add dummy coinbase tx as first transaction
+    pblock->vtx.push_back(CTransaction());
+    pblocktemplate->vTxFees.push_back(-1); // updated at end
+    pblocktemplate->vTxSigOps.push_back(-1); // updated at end
 
     // Largest block you're willing to create:
     unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
@@ -135,19 +135,19 @@ CBlockTemplate* CreateNewBlock(const CChainParams& chainparams, const CScript& s
         pblock->nTime = GetAdjustedTime();
         const int64_t nMedianTimePast = pindexPrev->GetMedianTimePast();
 
-        // Add our coinbase tx as first transaction
-        pblock->vtx.push_back(txNew);
-        pblocktemplate->vTxFees.push_back(-1); // updated at end
-        pblocktemplate->vTxSigOps.push_back(-1); // updated at end
+        const int32_t nChainId = chainparams.GetConsensus().nAuxpowChainId;
+        // FIXME: Active version bits after the always-auxpow fork!
+        //const int32_t nVersion = ComputeBlockVersion(pindexPrev, chainparams.getConsensus());
+        const int32_t nVersion = 4;
+        pblock->SetBaseVersion(nVersion, nChainId);
         // -regtest only: allow overriding block.nVersion with
         // -blockversion=N to test forking scenarios
         if (chainparams.MineBlocksOnDemand())
-        	pblock->nVersion.SetBaseVersion(GetArg("-blockversion", pblock->nVersion.GetBaseVersion()), nChainId);
+            pblock->SetBaseVersion(GetArg("-blockversion", pblock->GetBaseVersion()), nChainId);
 
         int64_t nLockTimeCutoff = (STANDARD_LOCKTIME_VERIFY_FLAGS & LOCKTIME_MEDIAN_TIME_PAST)
                                 ? nMedianTimePast
                                 : pblock->GetBlockTime();
-
 
         bool fPriorityBlock = nBlockPrioritySize > 0;
         if (fPriorityBlock) {
@@ -287,14 +287,11 @@ CBlockTemplate* CreateNewBlock(const CChainParams& chainparams, const CScript& s
         txNew.vout[0].nValue = blockReward;
         txNew.vin[0].scriptSig = CScript() << nHeight << OP_0;
 
-        if(nHeight >= Params().GetConsensus().nDashRulesStartHeight)
-        {
-            // Update coinbase transaction with additional info about masternode and governance payments,
-            // get some info back to pass to getblocktemplate
-            FillBlockPayments(txNew, nHeight, blockReward, pblock->txoutMasternode, pblock->voutSuperblock);
-            // LogPrintf("CreateNewBlock -- nBlockHeight %d blockReward %lld txoutMasternode %s txNew %s",
-            //             nHeight, blockReward, pblock->txoutMasternode.ToString(), txNew.ToString());
-        }
+        // Update coinbase transaction with additional info about masternode and governance payments,
+        // get some info back to pass to getblocktemplate
+        FillBlockPayments(txNew, nHeight, blockReward, pblock->txoutMasternode, pblock->voutSuperblock);
+        // LogPrintf("CreateNewBlock -- nBlockHeight %d blockReward %lld txoutMasternode %s txNew %s",
+        //             nHeight, blockReward, pblock->txoutMasternode.ToString(), txNew.ToString());
 
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
@@ -344,41 +341,40 @@ void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned
 // Internal miner
 //
 
-// ***TODO*** ScanHash is not yet used in Terracoin
 //
 // ScanHash scans nonces looking for a hash with at least some zero bits.
 // The nonce is usually preserved between calls, but periodically or if the
 // nonce is 0xffff0000 or above, the block is rebuilt and nNonce starts over at
 // zero.
 //
-//bool static ScanHash(const CBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
-//{
-//    // Write the first 76 bytes of the block header to a double-SHA256 state.
-//    CHash256 hasher;
-//    CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
-//    ss << *pblock;
-//    assert(ss.size() == 80);
-//    hasher.Write((unsigned char*)&ss[0], 76);
+bool static ScanHash(const CPureBlockHeader *pblock, uint32_t& nNonce, uint256 *phash)
+{
+    // Write the first 76 bytes of the block header to a double-SHA256 state.
+    CHash256 hasher;
+    CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+    ss << *pblock;
+    assert(ss.size() == 80);
+    hasher.Write((unsigned char*)&ss[0], 76);
 
-//    while (true) {
-//        nNonce++;
+    while (true) {
+        nNonce++;
 
-//        // Write the last 4 bytes of the block header (the nonce) to a copy of
-//        // the double-SHA256 state, and compute the result.
-//        CHash256(hasher).Write((unsigned char*)&nNonce, 4).Finalize((unsigned char*)phash);
+        // Write the last 4 bytes of the block header (the nonce) to a copy of
+        // the double-SHA256 state, and compute the result.
+        CHash256(hasher).Write((unsigned char*)&nNonce, 4).Finalize((unsigned char*)phash);
 
-//        // Return the nonce if the hash has at least some zero bits,
-//        // caller will check if it has enough to reach the target
-//        if (((uint16_t*)phash)[15] == 0)
-//            return true;
+        // Return the nonce if the hash has at least some zero bits,
+        // caller will check if it has enough to reach the target
+        if (((uint16_t*)phash)[15] == 0)
+            return true;
 
-//        // If nothing found after trying for a while, return -1
-//        if ((nNonce & 0xfff) == 0)
-//            return false;
-//    }
-//}
+        // If nothing found after trying for a while, return -1
+        if ((nNonce & 0xfff) == 0)
+            return false;
+    }
+}
 
-static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainparams)
+bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainparams)
 {
     LogPrintf("%s\n", pblock->ToString());
     LogPrintf("generated %s\n", FormatMoney(pblock->vtx[0].vout[0].nValue));
@@ -387,7 +383,7 @@ static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainpar
     {
         LOCK(cs_main);
         if (pblock->hashPrevBlock != chainActive.Tip()->GetBlockHash())
-            return error("ProcessBlockFound -- generated block is stale");
+            return error("ProcessBlockFound: generated block is stale");
     }
 
     // Inform about the new block
@@ -396,15 +392,14 @@ static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainpar
     // Process this block the same as if we had received it from another node
     CValidationState state;
     if (!ProcessNewBlock(state, chainparams, NULL, pblock, true, NULL))
-        return error("ProcessBlockFound -- ProcessNewBlock() failed, block not accepted");
+        return error("ProcessBlockFound: ProcessNewBlock, block not accepted");
 
     return true;
 }
 
-// ***TODO*** that part changed in bitcoin, we are using a mix with old one here for now
 void static BitcoinMiner(const CChainParams& chainparams)
 {
-    LogPrintf("TerracoinMiner -- started\n");
+    LogPrintf("TerracoinMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("terracoin-miner");
 
@@ -436,7 +431,6 @@ void static BitcoinMiner(const CChainParams& chainparams)
                 } while (true);
             }
 
-
             //
             // Create new block
             //
@@ -447,11 +441,12 @@ void static BitcoinMiner(const CChainParams& chainparams)
             auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlock(chainparams, coinbaseScript->reserveScript));
             if (!pblocktemplate.get())
             {
-                LogPrintf("TerracoinMiner -- Keypool ran out, please call keypoolrefill before restarting the mining thread\n");
+                LogPrintf("TerracoinMiner: Keypool ran out, please call keypoolrefill before restarting the mining thread\n");
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
+            CAuxPow::initAuxPow(*pblock);
 
             LogPrintf("TerracoinMiner -- Running miner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
                 ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
@@ -461,34 +456,31 @@ void static BitcoinMiner(const CChainParams& chainparams)
             //
             int64_t nStart = GetTime();
             arith_uint256 hashTarget = arith_uint256().SetCompact(pblock->nBits);
-            while (true)
-            {
-                unsigned int nHashesDone = 0;
-
-                uint256 hash;
-                while (true)
+            uint256 hash;
+            uint32_t nNonce = 0;
+            while (true) {
+                // Check if something found
+                if (ScanHash(&pblock->auxpow->parentBlock, nNonce, &hash))
                 {
-                    hash = pblock->GetHash();
                     if (UintToArith256(hash) <= hashTarget)
                     {
                         // Found a solution
+                        pblock->auxpow->parentBlock.nNonce = nNonce;
+                        assert(hash == pblock->auxpow->getParentBlockHash());
+
                         SetThreadPriority(THREAD_PRIORITY_NORMAL);
-                        LogPrintf("TerracoinMiner:\n  proof-of-work found\n  hash: %s\n  target: %s\n", hash.GetHex(), hashTarget.GetHex());
+                        LogPrintf("TerracoinMiner:\n");
+                        LogPrintf("proof-of-work found  \n  hash: %s  \ntarget: %s\n", hash.GetHex(), hashTarget.GetHex());
                         ProcessBlockFound(pblock, chainparams);
                         SetThreadPriority(THREAD_PRIORITY_LOWEST);
                         coinbaseScript->KeepScript();
 
-                        // In regression test mode, stop mining after a block is found. This
-                        // allows developers to controllably generate a block on demand.
+                        // In regression test mode, stop mining after a block is found.
                         if (chainparams.MineBlocksOnDemand())
                             throw boost::thread_interrupted();
 
                         break;
                     }
-                    pblock->nNonce += 1;
-                    nHashesDone += 1;
-                    if ((pblock->nNonce & 0xFF) == 0)
-                        break;
                 }
 
                 // Check for stop or if block needs to be rebuilt
@@ -496,7 +488,7 @@ void static BitcoinMiner(const CChainParams& chainparams)
                 // Regtest mode doesn't require peers
                 if (vNodes.empty() && chainparams.MiningRequiresPeers())
                     break;
-                if (pblock->nNonce >= 0xffff0000)
+                if (nNonce >= 0xffff0000)
                     break;
                 if (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast && GetTime() - nStart > 60)
                     break;
@@ -512,17 +504,21 @@ void static BitcoinMiner(const CChainParams& chainparams)
                     // Changing pblock->nTime can change work required on testnet:
                     hashTarget.SetCompact(pblock->nBits);
                 }
+
+                /* If we updated the block above, we also have to update
+                   the auxpow object to match the new block hash.  */
+                CAuxPow::initAuxPow(*pblock);
             }
         }
     }
     catch (const boost::thread_interrupted&)
     {
-        LogPrintf("TerracoinMiner -- terminated\n");
+        LogPrintf("TerracoinMiner terminated\n");
         throw;
     }
     catch (const std::runtime_error &e)
     {
-        LogPrintf("TerracoinMiner -- runtime error: %s\n", e.what());
+        LogPrintf("TerracoinMiner runtime error: %s\n", e.what());
         return;
     }
 }

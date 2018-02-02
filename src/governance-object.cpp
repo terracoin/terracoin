@@ -1,4 +1,5 @@
-// Copyright (c) 2014-2017 The Terracoin Core developers
+// Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -543,8 +544,12 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
     CScript findScript;
     findScript << OP_RETURN << ToByteVector(nExpectedHash);
 
-    LogPrint("gobject", "IsCollateralValid txCollateral.vout.size() = %d, nMinFee = %lu, findScript = %s\n",
-        txCollateral.vout.size(), nMinFee, ScriptToAsmStr( findScript, false ));
+    DBG( cout << "IsCollateralValid txCollateral.vout.size() = " << txCollateral.vout.size() << endl; );
+
+    DBG( cout << "IsCollateralValid: findScript = " << ScriptToAsmStr( findScript, false ) << endl; );
+
+    DBG( cout << "IsCollateralValid: nMinFee = " << nMinFee << endl; );
+
 
     bool foundOpReturn = false;
     BOOST_FOREACH(const CTxOut o, txCollateral.vout) {
@@ -559,7 +564,7 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
             return false;
         }
 
-        if(o.scriptPubKey == findScript) {
+        if(o.scriptPubKey == findScript && o.nValue >= nMinFee) {
             DBG( cout << "IsCollateralValid foundOpReturn = true" << endl; );
             foundOpReturn = true;
         }
@@ -722,10 +727,6 @@ void CGovernanceObject::UpdateSentinelVariables()
     fCachedValid = true; //default to valid
     fCachedEndorsed = false;
     fDirtyCache = false;
-
-    LogPrint("gobject", "CGovernanceObject::UpdateSentinelVariables %s %d %d %d %d (%d %d)\n",
-	GetHash().ToString(), GetAbsoluteYesCount(VOTE_SIGNAL_FUNDING), GetAbsoluteYesCount(VOTE_SIGNAL_DELETE),
-        GetAbsoluteYesCount(VOTE_SIGNAL_ENDORSED), GetAbsoluteNoCount(VOTE_SIGNAL_VALID), nAbsVoteReq, nAbsDeleteReq);
 
     // SET SENTINEL FLAGS TO TRUE IF MIMIMUM SUPPORT LEVELS ARE REACHED
     // ARE ANY OF THESE FLAGS CURRENTLY ACTIVATED?

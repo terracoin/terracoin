@@ -15,7 +15,7 @@
 #include <math.h>
 
 unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consensus::Params& params) {
-    /* current difficulty formula, terracoin - DarkGravity v3, written by Evan Duffield - evan@dashpay.io */
+    /* current difficulty formula, terracoin - DarkGravity v3, written by Evan Duffield - evan@dash.org */
     const CBlockIndex *BlockLastSolved = pindexLast;
     const CBlockIndex *BlockReading = pindexLast;
     int64_t nActualTimespan = 0;
@@ -25,11 +25,9 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consens
     int64_t CountBlocks = 0;
     arith_uint256 PastDifficultyAverage;
     arith_uint256 PastDifficultyAveragePrev;
-    unsigned int nProofOfWorkLimit = UintToArith256(params.powLimit).GetCompact();
-    const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
 
     if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMin) {
-	return nProofOfWorkLimit;
+	return UintToArith256(params.powLimit).GetCompact();
     }
 
     for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
@@ -65,8 +63,9 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consens
     bnNew *= nActualTimespan;
     bnNew /= _nTargetTimespan;
 
-    if (bnNew > bnPowLimit)
-        bnNew = bnPowLimit;
+    if (bnNew > UintToArith256(params.powLimit)){
+        bnNew = UintToArith256(params.powLimit);
+    }
 
     return bnNew.GetCompact();
 }

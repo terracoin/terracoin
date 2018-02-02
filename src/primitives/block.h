@@ -7,8 +7,8 @@
 #define BITCOIN_PRIMITIVES_BLOCK_H
 
 #include "auxpow.h"
-#include "primitives/pureheader.h"
 #include "primitives/transaction.h"
+#include "primitives/pureheader.h"
 #include "serialize.h"
 #include "uint256.h"
 
@@ -24,6 +24,7 @@
 class CBlockHeader : public CPureBlockHeader
 {
 public:
+
     // auxpow (if this is a merge-minded block)
     boost::shared_ptr<CAuxPow> auxpow;
 
@@ -37,8 +38,9 @@ public:
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(*(CPureBlockHeader*)this);
-        nVersion = this->nVersion.GetBaseVersion();
-        if (this->nVersion.IsAuxpow())
+        nVersion = this->GetBaseVersion();
+
+        if (this->IsAuxpow())
         {
             if (ser_action.ForRead())
                 auxpow.reset (new CAuxPow());
@@ -52,16 +54,6 @@ public:
     {
         CPureBlockHeader::SetNull();
         auxpow.reset();
-        hashPrevBlock.SetNull();
-        hashMerkleRoot.SetNull();
-        nTime = 0;
-        nBits = 0;
-        nNonce = 0;
-    }
-
-    bool IsNull() const
-    {
-        return (nBits == 0);
     }
 
     /**
@@ -82,7 +74,6 @@ public:
     // memory only
     mutable CTxOut txoutMasternode; // masternode payment
     mutable std::vector<CTxOut> voutSuperblock; // superblock payment
-    mutable std::vector<uint256> vMerkleTree;
     mutable bool fChecked;
 
     CBlock()
@@ -111,7 +102,6 @@ public:
         txoutMasternode = CTxOut();
         voutSuperblock.clear();
         fChecked = false;
-        vMerkleTree.clear();
     }
 
     CBlockHeader GetBlockHeader() const
@@ -126,15 +116,6 @@ public:
         block.auxpow         = auxpow;
         return block;
     }
-
-    // Build the in-memory merkle tree for this block and return the merkle root.
-    // If non-NULL, *mutated is set to whether mutation was detected in the merkle
-    // tree (a duplication of transactions in the block leading to an identical
-    // merkle root).
-    uint256 BuildMerkleTree(bool* mutated = NULL) const;
-
-    std::vector<uint256> GetMerkleBranch(int nIndex) const;
-    static uint256 CheckMerkleBranch(uint256 hash, const std::vector<uint256>& vMerkleBranch, int nIndex);
 
     std::string ToString() const;
 };

@@ -1,6 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2017 The Terracoin Core developers
+// Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,11 +24,14 @@
 #include "util.h"
 #ifdef ENABLE_WALLET
 #include "masternode-sync.h"
+#include "wallet/wallet.h"
 #endif
 #include "utilstrencodings.h"
 #include "validationinterface.h"
 
 #include <stdint.h>
+#include <memory>
+#include <utility>
 
 #include <boost/assign/list_of.hpp>
 #include <boost/shared_ptr.hpp>
@@ -172,10 +176,12 @@ UniValue generate(const UniValue& params, bool fHelp)
             LOCK(cs_main);
             IncrementExtraNonce(pblock, chainActive.Tip(), nExtraNonce);
         }
-        while (!CheckProofOfWork(pblock->GetHash(), pblock->nBits, Params().GetConsensus())) {
+        CAuxPow::initAuxPow(*pblock);
+        CPureBlockHeader& miningHeader = pblock->auxpow->parentBlock;
+        while (!CheckProofOfWork(miningHeader.GetHash(), pblock->nBits, Params().GetConsensus())) {
             // Yes, there is a chance every nonce could fail to satisfy the -regtest
             // target -- 1 in 2^(2^32). That ain't gonna happen.
-            ++pblock->nNonce;
+            ++miningHeader.nNonce;
         }
         CValidationState state;
         if (!ProcessNewBlock(state, Params(), NULL, pblock, true, NULL))
@@ -325,6 +331,11 @@ static UniValue BIP22ValidationResult(const CValidationState& state)
     // Should be impossible
     return "valid?";
 }
+
+#if 0
+getblocktemplate is disabled for merge-mining, since getauxblock should
+be used instead.  All blocks are required to be merge-mined, thus GBT
+makes no sense.
 
 UniValue getblocktemplate(const UniValue& params, bool fHelp)
 {
@@ -645,6 +656,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
 
     return result;
 }
+#endif // Disabled getblocktemplate
 
 class submitblock_StateCatcher : public CValidationInterface
 {
@@ -751,7 +763,7 @@ UniValue estimatefee(const UniValue& params, bool fHelp)
 
     CFeeRate feeRate = mempool.estimateFee(nBlocks);
     if (feeRate == CFeeRate(0))
-        return -1.0;
+        feeRate = CFeeRate(DEFAULT_FALLBACK_FEE);
 
     return ValueFromAmount(feeRate.GetFeePerK());
 }
@@ -814,8 +826,14 @@ UniValue estimatesmartfee(const UniValue& params, bool fHelp)
     UniValue result(UniValue::VOBJ);
     int answerFound;
     CFeeRate feeRate = mempool.estimateSmartFee(nBlocks, &answerFound);
-    result.push_back(Pair("feerate", feeRate == CFeeRate(0) ? -1.0 : ValueFromAmount(feeRate.GetFeePerK())));
-    result.push_back(Pair("blocks", answerFound));
+    if (feeRate == CFeeRate(0)) {
+        result.push_back(Pair("feerate", ValueFromAmount(CFeeRate(DEFAULT_FALLBACK_FEE).GetFeePerK())));
+        result.push_back(Pair("blocks", nBlocks));
+    } else {
+        result.push_back(Pair("feerate", ValueFromAmount(feeRate.GetFeePerK())));
+        result.push_back(Pair("blocks", answerFound));
+    }
+
     return result;
 }
 
@@ -854,6 +872,9 @@ UniValue estimatesmartpriority(const UniValue& params, bool fHelp)
     result.push_back(Pair("blocks", answerFound));
     return result;
 }
+
+/* ************************************************************************** */
+/* Merge mining.  */
 
 UniValue getauxblock(const UniValue& params, bool fHelp)
 {
@@ -898,11 +919,11 @@ UniValue getauxblock(const UniValue& params, bool fHelp)
 
     if (vNodes.empty() && !Params().MineBlocksOnDemand())
         throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED,
-                           "Terracoin is not connected!");
+                           "Namecoin is not connected!");
 
     if (IsInitialBlockDownload() && !Params().MineBlocksOnDemand())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD,
-                           "Terracoin is downloading blocks...");
+                           "Namecoin is downloading blocks...");
     
     /* This should never fail, since the chain is already
        past the point of merge-mining start.  Check nevertheless.  */
@@ -926,7 +947,7 @@ UniValue getauxblock(const UniValue& params, bool fHelp)
         static unsigned nTransactionsUpdatedLast;
         static const CBlockIndex* pindexPrev = NULL;
         static uint64_t nStart;
-        static CBlockTemplate* pblocktmpl = NULL;
+        static CBlockTemplate* pblocktemplate;
         static unsigned nExtraNonce = 0;
 
         // Update block
@@ -938,17 +959,16 @@ UniValue getauxblock(const UniValue& params, bool fHelp)
         {
             if (pindexPrev != chainActive.Tip())
             {
-                // Clear old blocks since they're obsolete now.
+                // Deallocate old blocks since they're obsolete now
                 mapNewBlock.clear();
                 BOOST_FOREACH(CBlockTemplate* pbt, vNewBlockTemplate)
                     delete pbt;
                 vNewBlockTemplate.clear();
-                pblocktmpl = NULL;
             }
 
             // Create new block with nonce = 0 and extraNonce = 1
-            pblocktmpl = CreateNewBlock(Params(), coinbaseScript->reserveScript);
-            if (!pblocktmpl)
+            pblocktemplate = CreateNewBlock(Params(), coinbaseScript->reserveScript);
+            if (!pblocktemplate)
                 throw JSONRPCError(RPC_OUT_OF_MEMORY, "out of memory");
 
             // Update state only when CreateNewBlock succeeded
@@ -957,29 +977,30 @@ UniValue getauxblock(const UniValue& params, bool fHelp)
             nStart = GetTime();
 
             // Finalise it by setting the version and building the merkle root
-            IncrementExtraNonce(&pblocktmpl->block, pindexPrev, nExtraNonce);
-            pblocktmpl->block.nVersion.SetAuxpow(true);
+            CBlock* pblock = &pblocktemplate->block;
+            IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
+            pblock->SetAuxpowVersion(true);
 
             // Save
-            mapNewBlock[pblocktmpl->block.GetHash()] = &pblocktmpl->block;
-            vNewBlockTemplate.push_back(pblocktmpl);
+            mapNewBlock[pblock->GetHash()] = pblock;
+            vNewBlockTemplate.push_back(pblocktemplate);
         }
         }
 
-	CBlock* pblock = &pblocktmpl->block;
+        const CBlock& block = pblocktemplate->block;
 
         arith_uint256 target;
         bool fNegative, fOverflow;
-        target.SetCompact(pblock->nBits, &fNegative, &fOverflow);
+        target.SetCompact(block.nBits, &fNegative, &fOverflow);
         if (fNegative || fOverflow || target == 0)
             throw std::runtime_error("invalid difficulty bits in block");
 
         UniValue result(UniValue::VOBJ);
-        result.push_back(Pair("hash", pblock->GetHash().GetHex()));
-        result.push_back(Pair("chainid", pblock->nVersion.GetChainId()));
-        result.push_back(Pair("previousblockhash", pblock->hashPrevBlock.GetHex()));
-        result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0].vout[0].nValue));
-        result.push_back(Pair("bits", strprintf("%08x", pblock->nBits)));
+        result.push_back(Pair("hash", block.GetHash().GetHex()));
+        result.push_back(Pair("chainid", block.GetChainId()));
+        result.push_back(Pair("previousblockhash", block.hashPrevBlock.GetHex()));
+        result.push_back(Pair("coinbasevalue", (int64_t)block.vtx[0].vout[0].nValue));
+        result.push_back(Pair("bits", strprintf("%08x", block.nBits)));
         result.push_back(Pair("height", static_cast<int64_t> (pindexPrev->nHeight + 1)));
         result.push_back(Pair("_target", HexStr(BEGIN(target), END(target))));
 
@@ -987,7 +1008,7 @@ UniValue getauxblock(const UniValue& params, bool fHelp)
     }
 
     /* Submit a block instead.  Note that this need not lock cs_main,
-       since ProcessNewBlock below locks it instead.  */
+       since ProcessBlockFound below locks it instead.  */
 
     assert(params.size() == 2);
     uint256 hash;
@@ -1005,16 +1026,9 @@ UniValue getauxblock(const UniValue& params, bool fHelp)
     block.SetAuxpow(new CAuxPow(pow));
     assert(block.GetHash() == hash);
 
-    CValidationState state;
-    submitblock_StateCatcher sc(block.GetHash());
-    RegisterValidationInterface(&sc);
-    bool fAccepted = ProcessNewBlock(state, Params(), NULL, &block,
-                                     true, NULL);
-    UnregisterValidationInterface(&sc);
-
-    if (fAccepted)
+    const bool ok = ProcessBlockFound(&block, Params());
+    if (ok)
         coinbaseScript->KeepScript();
 
-    return fAccepted;
+    return ok;
 }
-

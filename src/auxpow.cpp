@@ -1,41 +1,30 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2011 Vince Durham
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2014 Daniel Kraft
+// Copyright (c) 2014-2016 Daniel Kraft
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
 #include "auxpow.h"
-#include "base58.h"
-#include "checkpoints.h"
-#include "chain.h"
-#include "coincontrol.h"
-#include "key.h"
-#include "keystore.h"
-#include "net.h"
-#include "policy/policy.h"
-#include "primitives/block.h"
-#include "primitives/transaction.h"
-#include "script/script.h"
-#include "script/sign.h"
+
 #include "compat/endian.h"
 #include "consensus/consensus.h"
+#include "consensus/merkle.h"
 #include "consensus/validation.h"
-#include "darksend.h"
-#include "governance.h"
-#include "instantx.h"
-#include "keepass.h"
-#include "spork.h"
+#include "hash.h"
 #include "main.h"
+#include "script/script.h"
 #include "txmempool.h"
 #include "util.h"
-#include "utilmoneystr.h"
-#include "script/script.h"
+#include "utilstrencodings.h"
 
 #include <algorithm>
 
+/* Moved from wallet.cpp.  CMerkleTx is necessary for auxpow, independent
+   of an enabled (or disabled) wallet.  Always include the code.  */
+
 const uint256 CMerkleTx::ABANDON_HASH(uint256S("0000000000000000000000000000000000000000000000000000000000000001"));
-typedef vector<unsigned char> valtype;
 
 int CMerkleTx::SetMerkleBranch(const CBlock& block)
 {
@@ -51,15 +40,14 @@ int CMerkleTx::SetMerkleBranch(const CBlock& block)
             break;
     if (nIndex == (int)block.vtx.size())
     {
-	vMerkleBranch.clear();
+        vMerkleBranch.clear();
         nIndex = -1;
         LogPrintf("ERROR: SetMerkleBranch(): couldn't find tx in block\n");
         return 0;
     }
 
-
     // Fill in merkle branch
-    vMerkleBranch = block.GetMerkleBranch(nIndex);
+    vMerkleBranch = BlockMerkleBranch (block, nIndex);
 
     // Is the tx in a block that's in the main chain
     BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
@@ -74,44 +62,31 @@ int CMerkleTx::SetMerkleBranch(const CBlock& block)
 
 int CMerkleTx::GetDepthInMainChain(const CBlockIndex* &pindexRet, bool enableIX) const
 {
-    int nResult;
-
     if (hashUnset())
-        nResult = 0;
-    else {
-        AssertLockHeld(cs_main);
+        return 0;
 
-        // Find the block it claims to be in
-        BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
-        if (mi == mapBlockIndex.end())
-            nResult = 0;
-        else {
-            CBlockIndex* pindex = (*mi).second;
-            if (!pindex || !chainActive.Contains(pindex))
-                nResult = 0;
-            else {
-                pindexRet = pindex;
-                nResult = ((nIndex == -1) ? (-1) : 1) * (chainActive.Height() - pindex->nHeight + 1);
+    AssertLockHeld(cs_main);
 
-                if (nResult == 0 && !mempool.exists(GetHash()))
-                    return -1; // Not in chain, not in mempool
-            }
-        }
-    }
+    // Find the block it claims to be in
+    BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
+    if (mi == mapBlockIndex.end())
+        return 0;
+    CBlockIndex* pindex = (*mi).second;
+    if (!pindex || !chainActive.Contains(pindex))
+        return 0;
 
-    if(enableIX && nResult < 6 && instantsend.IsLockedInstantSendTransaction(GetHash()))
-        return nInstantSendDepth + nResult;
+    if (!mempool.exists(GetHash()))
+        return -1; // Not in chain, not in mempool
 
-    return nResult;
+    return ((nIndex == -1) ? (-1) : 1) * (chainActive.Height() - pindex->nHeight + 1);
 }
 
 int CMerkleTx::GetBlocksToMaturity() const
 {
     if (!IsCoinBase())
         return 0;
-    return max(0, (COINBASE_MATURITY+1) - GetDepthInMainChain());
+    return std::max(0, (COINBASE_MATURITY+1) - GetDepthInMainChain());
 }
-
 
 bool CMerkleTx::AcceptToMemoryPool(bool fLimitFree, bool fRejectAbsurdFee)
 {
@@ -119,30 +94,31 @@ bool CMerkleTx::AcceptToMemoryPool(bool fLimitFree, bool fRejectAbsurdFee)
     return ::AcceptToMemoryPool(mempool, state, *this, fLimitFree, NULL, false, fRejectAbsurdFee);
 }
 
+/* ************************************************************************** */
+
 bool
-CAuxPow::check (const uint256& hashAuxBlock, int nChainId) const
+CAuxPow::check (const uint256& hashAuxBlock, int nChainId,
+                const Consensus::Params& params) const
 {
     if (nIndex != 0)
         return error("AuxPow is not a generate");
 
-    if (Params().GetConsensus().fStrictChainId
-        && parentBlock.nVersion.GetChainId() == nChainId)
+    if (params.fStrictChainId && parentBlock.GetChainId () == nChainId)
         return error("Aux POW parent has our chain ID");
 
     if (vChainMerkleBranch.size() > 30)
         return error("Aux POW chain merkle branch too long");
 
     // Check that the chain merkle root is in the coinbase
-    const uint256 nRootHash = CBlock::CheckMerkleBranch (hashAuxBlock, vChainMerkleBranch, nChainIndex);
+    const uint256 nRootHash
+      = CheckMerkleBranch (hashAuxBlock, vChainMerkleBranch, nChainIndex);
     valtype vchRootHash(nRootHash.begin (), nRootHash.end ());
     std::reverse (vchRootHash.begin (), vchRootHash.end ()); // correct endian
 
     // Check that we are in the parent block merkle tree
-    if (CBlock::CheckMerkleBranch(GetHash(), vMerkleBranch, nIndex) != parentBlock.hashMerkleRoot)
-    {
-	//LogPrintf("Aux POW: H1 %s H2 %s W %s %u %d\n", nRootHash.ToString(), nRootHash2.ToString(), parentBlock.hashMerkleRoot.ToString(), vMerkleBranch.size(), nIndex);
+    if (CheckMerkleBranch(GetHash(), vMerkleBranch, nIndex)
+          != parentBlock.hashMerkleRoot)
         return error("Aux POW merkle root incorrect");
-    }
 
     const CScript script = vin[0].scriptSig;
 
@@ -186,7 +162,7 @@ CAuxPow::check (const uint256& hashAuxBlock, int nChainId) const
     uint32_t nSize;
     memcpy(&nSize, &pc[0], 4);
     nSize = le32toh (nSize);
-    const unsigned merkleHeight = vChainMerkleBranch.size();
+    const unsigned merkleHeight = vChainMerkleBranch.size ();
     if (nSize != (1u << merkleHeight))
         return error("Aux POW merkle branch size does not match parent coinbase");
 
@@ -223,4 +199,60 @@ CAuxPow::getExpectedIndex (uint32_t nNonce, int nChainId, unsigned h)
   rand = rand * 1103515245 + 12345;
 
   return rand % (1 << h);
+}
+
+uint256
+CAuxPow::CheckMerkleBranch (uint256 hash,
+                            const std::vector<uint256>& vMerkleBranch,
+                            int nIndex)
+{
+  if (nIndex == -1)
+    return uint256 ();
+  for (std::vector<uint256>::const_iterator it(vMerkleBranch.begin ());
+       it != vMerkleBranch.end (); ++it)
+  {
+    if (nIndex & 1)
+      hash = Hash (BEGIN (*it), END (*it), BEGIN (hash), END (hash));
+    else
+      hash = Hash (BEGIN (hash), END (hash), BEGIN (*it), END (*it));
+    nIndex >>= 1;
+  }
+  return hash;
+}
+
+void
+CAuxPow::initAuxPow (CBlockHeader& header)
+{
+  /* Set auxpow flag right now, since we take the block hash below.  */
+  header.SetAuxpowVersion(true);
+
+  /* Build a minimal coinbase script input for merge-mining.  */
+  const uint256 blockHash = header.GetHash ();
+  valtype inputData(blockHash.begin (), blockHash.end ());
+  std::reverse (inputData.begin (), inputData.end ());
+  inputData.push_back (1);
+  inputData.insert (inputData.end (), 7, 0);
+
+  /* Fake a parent-block coinbase with just the required input
+     script and no outputs.  */
+  CMutableTransaction coinbase;
+  coinbase.vin.resize (1);
+  coinbase.vin[0].prevout.SetNull ();
+  coinbase.vin[0].scriptSig = (CScript () << inputData);
+  assert (coinbase.vout.empty ());
+
+  /* Build a fake parent block with the coinbase.  */
+  CBlock parent;
+  parent.nVersion = 1;
+  parent.vtx.resize (1);
+  parent.vtx[0] = coinbase;
+  parent.hashMerkleRoot = BlockMerkleRoot (parent);
+
+  /* Construct the auxpow object.  */
+  header.SetAuxpow (new CAuxPow (coinbase));
+  assert (header.auxpow->vChainMerkleBranch.empty ());
+  header.auxpow->nChainIndex = 0;
+  assert (header.auxpow->vMerkleBranch.empty ());
+  header.auxpow->nIndex = 0;
+  header.auxpow->parentBlock = parent;
 }
