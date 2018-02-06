@@ -3885,22 +3885,23 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
         return state.Invalid(error("%s: block's timestamp is too early", __func__),
                              REJECT_INVALID, "time-too-old");
 
-    // Reject block.nVersion=1 blocks when 95% (75% on testnet) of the network has upgraded:
-    if (block.GetBaseVersion() < 2 && IsSuperMajority(2, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
-        return state.Invalid(error("%s: rejected nVersion=1 block", __func__),
-                             REJECT_OBSOLETE, "bad-version");
+    // Don't start checking block versions till new chain starts
+    if (nHeight > consensusParams.nDashRulesStartHeight + consensusParams.nMajorityRejectBlockOutdated) {
+        // Reject block.nVersion=1 blocks when 95% (75% on testnet) of the network has upgraded:
+        if (block.GetBaseVersion() < 2 && IsSuperMajority(2, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
+            return state.Invalid(error("%s: rejected nVersion=1 block", __func__),
+                                 REJECT_OBSOLETE, "bad-version");
 
-#if 0
-    // Reject block.nVersion=2 blocks when 95% (75% on testnet) of the network has upgraded:
-    if (block.GetBaseVersion() < 3 && IsSuperMajority(3, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
-        return state.Invalid(error("%s: rejected nVersion=2 block", __func__),
-                             REJECT_OBSOLETE, "bad-version");
+        // Reject block.nVersion=2 blocks when 95% (75% on testnet) of the network has upgraded:
+        if (block.GetBaseVersion() < 3 && IsSuperMajority(3, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
+           return state.Invalid(error("%s: rejected nVersion=2 block", __func__),
+                                  REJECT_OBSOLETE, "bad-version");
 
-    // Reject block.nVersion=3 blocks when 95% (75% on testnet) of the network has upgraded:
-    if (block.GetBaseVersion() < 4 && IsSuperMajority(4, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
-        return state.Invalid(error("%s : rejected nVersion=3 block", __func__),
-                             REJECT_OBSOLETE, "bad-version");
-#endif
+        // Reject block.nVersion=3 blocks when 95% (75% on testnet) of the network has upgraded:
+        if (block.GetBaseVersion() < 4 && IsSuperMajority(4, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
+            return state.Invalid(error("%s : rejected nVersion=3 block", __func__),
+                                 REJECT_OBSOLETE, "bad-version");
+    }
 
     return true;
 }
@@ -4059,9 +4060,7 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned 
     unsigned int nFound = 0;
     for (int i = 0; i < consensusParams.nMajorityWindow && nFound < nRequired && pstart != NULL; i++)
     {
-        // We enforce it at 1100000 because our chain was messed up before this
-        // someone thought it was wa a good idea to disable checks
-        if (pstart->nVersion >= minVersion && pstart->nHeight >= 1100000)
+        if (pstart->GetBaseVersion() >= minVersion)
             ++nFound;
         pstart = pstart->pprev;
     }
@@ -5789,9 +5788,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             if (nCount >= MAX_HEADERS_RESULTS
                   || pindex->GetBlockHash() == hashStop)
                 break;
-            if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
-                  && nSize >= THRESHOLD_HEADERS_SIZE)
-                break;
+            if (pindex->nHeight < chainparams.GetConsensus().nDashRulesStartHeight) {
+                if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
+                      && nSize >= THRESHOLD_HEADERS_SIZE)
+                    break;
+            }
         }
 
         /* Check maximum headers size before pushing the message
@@ -6047,10 +6048,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             ReadCompactSize(vRecv); // ignore tx count; assume it is 0.
 
             nSize += GetSerializeSize(headers[n], SER_NETWORK, PROTOCOL_VERSION);
-            if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
-                  && nSize > MAX_HEADERS_SIZE) {
-                Misbehaving(pfrom->GetId(), 20);
-                return error("headers message size = %u", nSize);
+            if (chainActive.Height() >= chainparams.GetConsensus().nDashRulesStartHeight) {
+                if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
+                      && nSize > MAX_HEADERS_SIZE) {
+                    Misbehaving(pfrom->GetId(), 20);
+                    return error("headers message size = %u", nSize);
+                }
             }
         }
 
