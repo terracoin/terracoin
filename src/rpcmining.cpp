@@ -919,11 +919,11 @@ UniValue getauxblock(const UniValue& params, bool fHelp)
 
     if (vNodes.empty() && !Params().MineBlocksOnDemand())
         throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED,
-                           "Namecoin is not connected!");
+                           "Terracoin is not connected!");
 
     if (IsInitialBlockDownload() && !Params().MineBlocksOnDemand())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD,
-                           "Namecoin is downloading blocks...");
+                           "Terracoin is downloading blocks...");
     
     /* This should never fail, since the chain is already
        past the point of merge-mining start.  Check nevertheless.  */
