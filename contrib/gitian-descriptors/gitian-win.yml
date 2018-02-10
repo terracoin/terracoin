@@ -1,5 +1,5 @@
 ---
-name: "terracoin-win-0.12.1.6"
+name: "terracoin-win-0.12.1.7"
 enable_cache: true
 suites:
 - "trusty"
