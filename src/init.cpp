@@ -811,6 +811,8 @@ void InitParameterInteraction()
         // masternodes must accept connections from outside
         if (SoftSetBoolArg("-listen", true))
             LogPrintf("%s: parameter interaction: -masternode=1 -> setting -listen=1\n", __func__);
+        if(GetBoolArg("-disablewallet", false))
+            LogPrintf("Warning: running a wallet on a masternode is DEPRECATED and will be removed in a future version, please move your wallet to an other node before this happens.\n");
     }
 
     if (mapArgs.count("-connect") && mapMultiArgs["-connect"].size() > 0) {
@@ -1810,10 +1812,6 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     // ********************************************************* Step 11a: setup PrivateSend
     fMasterNode = GetBoolArg("-masternode", false);
-
-    if(fMasterNode && fDisableWallet == false) {
-        LogPrintf("Warning: running a wallet on a masternode is DEPRECATED and will be removed in a future version, please move your wallet to an other node before this happens.\n");
-    }
 
     if((fMasterNode || masternodeConfig.getCount() > -1) && fTxIndex == false) {
         return InitError("Enabling Masternode support requires turning on transaction indexing."

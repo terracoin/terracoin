@@ -39,7 +39,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 
-
 using namespace std;
 
 /** Transaction fee set by the user */
@@ -49,8 +48,8 @@ unsigned int nTxConfirmTarget = DEFAULT_TX_CONFIRM_TARGET;
 bool bSpendZeroConfChange = DEFAULT_SPEND_ZEROCONF_CHANGE;
 bool fSendFreeTransactions = DEFAULT_SEND_FREE_TRANSACTIONS;
 
-/** 
- * Fees smaller than this (in satoshis) are considered zero fee (for transaction creation)
+/**
+ * Fees smaller than this (in satoshi) are considered zero fee (for transaction creation)
  * Override with -mintxfee
  */
 CFeeRate CWallet::minTxFee = CFeeRate(DEFAULT_TRANSACTION_MINFEE);

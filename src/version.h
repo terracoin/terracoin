@@ -35,7 +35,7 @@ static const int MEMPOOL_GD_VERSION = 60002;
 static const int NO_BLOOM_VERSION = 70011;
 
 //! Version when we switched to a size-based "headers" limit.
-static const int SIZE_HEADERS_LIMIT_VERSION = 70002;
+static const int SIZE_HEADERS_LIMIT_VERSION = 70208;
 
 //! "sendheaders" command and announcing blocks with headers starts with this version
 static const int SENDHEADERS_VERSION = 70002;

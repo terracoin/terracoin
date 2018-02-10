@@ -211,7 +211,7 @@ void CActiveMasternode::ManageStateInitial()
     }
 
     if(pwalletMain->GetBalance() < MASTERNODE_COLLATERAL) {
-        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < 1000 TERRACOIN\n", GetStateString());
+        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < %d TERRACOIN\n", GetStateString(), MASTERNODE_COLLATERAL);
         return;
     }
 

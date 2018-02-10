@@ -1297,7 +1297,8 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
             dFreeCount += nSize;
         }
 
-        if (fRejectAbsurdFee && nFees > ::minRelayTxFee.GetFee(nSize) * 10000)
+        // Terracoin add nFees != GOVERNANCE_PROPOSAL_FEE_TX, why?
+        if (fRejectAbsurdFee && nFees > ::minRelayTxFee.GetFee(nSize) * 10000 && nFees != GOVERNANCE_PROPOSAL_FEE_TX)
             return state.Invalid(false,
                 REJECT_HIGHFEE, "absurdly-high-fee",
                 strprintf("%d > %d", nFees, ::minRelayTxFee.GetFee(nSize) * 10000));
@@ -1669,7 +1670,7 @@ bool CheckProofOfWork(const CBlockHeader& block, const Consensus::Params& params
        the chain ID is correct.  Legacy blocks are not allowed since
        the merge-mining start, which is checked in AcceptBlockHeader
        where the height is known.  */
-    if (!block.IsLegacy() && !Params().GetConsensus().AllowLegacyBlocks(pindex->nHeight)
+    if (!block.IsLegacy() && !params.AllowLegacyBlocks(pindex->nHeight)
         && params.fStrictChainId && block.GetChainId() != params.nAuxpowChainId)
         return error("%s : block does not have our chain ID"
                      " (got %d, expected %d, full nVersion %d)",
@@ -1808,7 +1809,7 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
     CAmount nSubsidy = 20 * COIN;
     nSubsidy >>= halvings; // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
 
-    CAmount nSuperblockPart = (nHeight >= consensusParams.nDashRulesStartHeight - 1) ? nSubsidy/10 : 0;
+    CAmount nSuperblockPart = (nHeight >= consensusParams.nDashRulesStartHeight) ? nSubsidy/10 : 0;
     return fSuperblockPartOnly ? nSuperblockPart : nSubsidy - nSuperblockPart;
 }
 
@@ -3855,9 +3856,9 @@ static bool CheckIndexAgainstCheckpoint(const CBlockIndex* pindexPrev, CValidati
 bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& state, CBlockIndex * const pindexPrev)
 {
     const Consensus::Params& consensusParams = Params().GetConsensus();
+    int nHeight = pindexPrev->nHeight + 1;
 
     // Disallow legacy blocks after merge-mining start.
-    int nHeight = pindexPrev->nHeight+1;
     if (!Params().GetConsensus().AllowLegacyBlocks(nHeight) && block.IsLegacy())
         return state.DoS(100, error("%s : legacy block after auxpow start",
                                     __func__),
@@ -3885,23 +3886,20 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
         return state.Invalid(error("%s: block's timestamp is too early", __func__),
                              REJECT_INVALID, "time-too-old");
 
-    // Don't start checking block versions till new chain starts
-    if (nHeight > consensusParams.nDashRulesStartHeight + consensusParams.nMajorityRejectBlockOutdated) {
-        // Reject block.nVersion=1 blocks when 95% (75% on testnet) of the network has upgraded:
-        if (block.GetBaseVersion() < 2 && IsSuperMajority(2, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
-            return state.Invalid(error("%s: rejected nVersion=1 block", __func__),
-                                 REJECT_OBSOLETE, "bad-version");
+    // Reject block.nVersion=1 blocks when 95% (75% on testnet) of the network has upgraded:
+    if (block.GetBaseVersion() < 2 && IsSuperMajority(2, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
+        return state.Invalid(error("%s: rejected nVersion=1 block", __func__),
+                             REJECT_OBSOLETE, "bad-version");
 
-        // Reject block.nVersion=2 blocks when 95% (75% on testnet) of the network has upgraded:
-        if (block.GetBaseVersion() < 3 && IsSuperMajority(3, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
-           return state.Invalid(error("%s: rejected nVersion=2 block", __func__),
-                                  REJECT_OBSOLETE, "bad-version");
+    // Reject block.nVersion=2 blocks when 95% (75% on testnet) of the network has upgraded:
+    if (block.GetBaseVersion() < 3 && IsSuperMajority(3, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
+        return state.Invalid(error("%s: rejected nVersion=2 block", __func__),
+                             REJECT_OBSOLETE, "bad-version");
 
-        // Reject block.nVersion=3 blocks when 95% (75% on testnet) of the network has upgraded:
-        if (block.GetBaseVersion() < 4 && IsSuperMajority(4, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
-            return state.Invalid(error("%s : rejected nVersion=3 block", __func__),
-                                 REJECT_OBSOLETE, "bad-version");
-    }
+    // Reject block.nVersion=3 blocks when 95% (75% on testnet) of the network has upgraded:
+    if (block.GetBaseVersion() < 4 && IsSuperMajority(4, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
+        return state.Invalid(error("%s : rejected nVersion=3 block", __func__),
+                             REJECT_OBSOLETE, "bad-version");
 
     return true;
 }
@@ -4057,6 +4055,11 @@ static bool AcceptBlock(const CBlock& block, CValidationState& state, const CCha
 
 static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned nRequired, const Consensus::Params& consensusParams)
 {
+    // Don't start till after a specifical marker
+    int nHeight = pstart->nHeight + 1;
+    if (nHeight < consensusParams.nDashRulesStartHeight + consensusParams.nMajorityRejectBlockOutdated)
+	return false;
+
     unsigned int nFound = 0;
     for (int i = 0; i < consensusParams.nMajorityWindow && nFound < nRequired && pstart != NULL; i++)
     {
@@ -5788,11 +5791,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             if (nCount >= MAX_HEADERS_RESULTS
                   || pindex->GetBlockHash() == hashStop)
                 break;
-            if (pindex->nHeight < chainparams.GetConsensus().nDashRulesStartHeight) {
-                if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
-                      && nSize >= THRESHOLD_HEADERS_SIZE)
-                    break;
-            }
+            if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
+                  && nSize >= THRESHOLD_HEADERS_SIZE)
+                break;
         }
 
         /* Check maximum headers size before pushing the message
@@ -6048,12 +6049,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             ReadCompactSize(vRecv); // ignore tx count; assume it is 0.
 
             nSize += GetSerializeSize(headers[n], SER_NETWORK, PROTOCOL_VERSION);
-            if (chainActive.Height() >= chainparams.GetConsensus().nDashRulesStartHeight) {
-                if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
-                      && nSize > MAX_HEADERS_SIZE) {
-                    Misbehaving(pfrom->GetId(), 20);
-                    return error("headers message size = %u", nSize);
-                }
+            if (pfrom->nVersion >= SIZE_HEADERS_LIMIT_VERSION
+                  && nSize > MAX_HEADERS_SIZE) {
+                Misbehaving(pfrom->GetId(), 20);
+                return error("headers message size = %u", nSize);
             }
         }
 
