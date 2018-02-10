@@ -124,12 +124,12 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(block["deltas"][1]["index"], 1)
         assert_equal(block["deltas"][1]["txid"], txid2)
         assert_equal(block["deltas"][1]["inputs"][0]["index"], 0)
-        assert_equal(block["deltas"][1]["inputs"][0]["address"], "yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3")
+        assert_equal(block["deltas"][1]["inputs"][0]["address"], "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW")
         assert_equal(block["deltas"][1]["inputs"][0]["satoshis"], amount * -1)
         assert_equal(block["deltas"][1]["inputs"][0]["prevtxid"], txid)
         assert_equal(block["deltas"][1]["inputs"][0]["prevout"], 0)
         assert_equal(block["deltas"][1]["outputs"][0]["index"], 0)
-        assert_equal(block["deltas"][1]["outputs"][0]["address"], "yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3")
+        assert_equal(block["deltas"][1]["outputs"][0]["address"], "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW")
         assert_equal(block["deltas"][1]["outputs"][0]["satoshis"], amount)
 
         print "Passed\n"

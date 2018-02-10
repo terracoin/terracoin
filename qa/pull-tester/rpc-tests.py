@@ -88,7 +88,8 @@ if ENABLE_ZMQ:
 
 #Tests
 testScripts = [
-    'bip68-112-113-p2p.py',
+    # FIXME: Enable once BIP9 is live for Terracoin.
+    #'bip68-112-113-p2p.py',
     'wallet.py',
     'listtransactions.py',
     'receivedby.py',
@@ -124,7 +125,11 @@ testScripts = [
     'invalidblockrequest.py', # NOTE: needs terracoin_hash to pass
     'invalidtxrequest.py', # NOTE: needs terracoin_hash to pass
     'abandonconflict.py',
-    'p2p-versionbits-warning.py',
+    # FIXME: Enable with versionbits.
+    #'p2p-versionbits-warning.py',
+
+    # auxpow tests
+    'getauxblock.py',
 ]
 if ENABLE_ZMQ:
     testScripts.append('zmq_test.py')
@@ -136,8 +141,6 @@ testScriptsExt = [
     'bip68-sequence.py',
     'bipdersig-p2p.py', # NOTE: needs terracoin_hash to pass
     'bipdersig.py',
-    'getblocktemplate_longpoll.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651
-    'getblocktemplate_proposals.py',
     'txn_doublespend.py',
     'txn_clone.py --mineblock',
     # 'pruning.py', # Prune mode is incompatible with -txindex.
