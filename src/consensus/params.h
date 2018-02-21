@@ -68,8 +68,6 @@ struct Params {
     int64_t nPowTargetSpacing;
     int64_t nPowTargetTimespan;
     int64_t DifficultyAdjustmentInterval() const { return nPowTargetTimespan / nPowTargetSpacing; }
-    /** Dash rules **/
-    int nDashRulesStartHeight;
     /** Auxpow parameters */
     int32_t nAuxpowChainId;
     int nAuxpowStartHeight;

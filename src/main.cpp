@@ -1809,7 +1809,7 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
     CAmount nSubsidy = 20 * COIN;
     nSubsidy >>= halvings; // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
 
-    CAmount nSuperblockPart = (nHeight >= consensusParams.nDashRulesStartHeight) ? nSubsidy/10 : 0;
+    CAmount nSuperblockPart = (nHeight >= consensusParams.nSuperblockStartBlock) ? nSubsidy/10 : 0;
     return fSuperblockPartOnly ? nSuperblockPart : nSubsidy - nSuperblockPart;
 }
 
@@ -2816,7 +2816,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     // the peer who sent us this block is missing some data and wasn't able
     // to recognize that block is actually invalid.
     // TODO: resync data (both ways?) and try to reprocess this block later.
-    if(pindex->nHeight >= Params().GetConsensus().nDashRulesStartHeight) {
+    if(pindex->nHeight >= Params().GetConsensus().nSuperblockStartBlock) {
         CAmount blockReward = nFees + GetBlockSubsidy(pindex->pprev->nBits, pindex->pprev->nHeight, chainparams.GetConsensus());
         std::string strError = "";
         if (!IsBlockValueValid(block, pindex->nHeight, blockReward, strError)) {
@@ -4057,7 +4057,7 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned 
 {
     // Don't start till after a specifical marker
     int nHeight = pstart->nHeight + 1;
-    if (nHeight < consensusParams.nDashRulesStartHeight + consensusParams.nMajorityRejectBlockOutdated)
+    if (nHeight < consensusParams.nSuperblockStartBlock + consensusParams.nMajorityRejectBlockOutdated)
 	return false;
 
     unsigned int nFound = 0;

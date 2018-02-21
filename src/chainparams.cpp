@@ -77,6 +77,7 @@ public:
         consensus.nMasternodePaymentsIncreaseBlock = 158000; // actual historical value
         consensus.nMasternodePaymentsIncreasePeriod = 576*30; // 17280 - actual historical value
         consensus.nInstantSendKeepLock = 24;
+        consensus.nSuperblockStartBlock = 1087500;
         consensus.nSuperblockCycle = 21600; //aprox 30 days
         consensus.nGovernanceMinQuorum = 10;
         consensus.nGovernanceFilterElements = 20000;
@@ -107,9 +108,6 @@ public:
         consensus.nAuxpowStartHeight = 833000;
         consensus.fStrictChainId = true;
         consensus.nLegacyBlocksBefore = 833000;
-
-        consensus.nDashRulesStartHeight = 1087500;
-        consensus.nSuperblockStartBlock = consensus.nDashRulesStartHeight;
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -286,8 +284,6 @@ public:
         consensus.fStrictChainId = false;
         consensus.nLegacyBlocksBefore = -1;
 
-        consensus.nDashRulesStartHeight = 0;
-
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
         pchMessageStart[2] = 0x09;
@@ -384,8 +380,6 @@ public:
         consensus.nAuxpowChainId = 0x0001;
         consensus.fStrictChainId = true;
         consensus.nLegacyBlocksBefore = 0;
-
-        consensus.nDashRulesStartHeight = 0;
 
         pchMessageStart[0] = 0xfa;
         pchMessageStart[1] = 0xbf;
