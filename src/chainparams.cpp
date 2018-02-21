@@ -78,7 +78,7 @@ public:
         consensus.nMasternodePaymentsIncreasePeriod = 576*30; // 17280 - actual historical value
         consensus.nInstantSendKeepLock = 24;
         consensus.nSuperblockStartBlock = 1087500;
-        consensus.nSuperblockCycle = 21600; //aprox 30 days
+        consensus.nSuperblockCycle = 21600; // ~(30*24*60)/2, 30 days
         consensus.nGovernanceMinQuorum = 10;
         consensus.nGovernanceFilterElements = 20000;
         consensus.nMasternodeMinimumConfirmations = 15;
