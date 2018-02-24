@@ -1,11 +1,11 @@
 Sample configuration files for:
 
-SystemD: dashd.service
-Upstart: dashd.conf
-OpenRC:  dashd.openrc
-         dashd.openrcconf
-CentOS:  dashd.init
-OS X:    org.dash.dashd.plist
+SystemD: terracoind.service
+Upstart: terracoind.conf
+OpenRC:  terracoind.openrc
+         terracoind.openrcconf
+CentOS:  terracoind.init
+OS X:    org.terracoin.terracoind.plist
 
 have been made available to assist packagers in creating node packages here.
 

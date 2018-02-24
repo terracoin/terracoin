@@ -1,6 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
 // Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,6 +24,7 @@
 #include "util.h"
 #ifdef ENABLE_WALLET
 #include "masternode-sync.h"
+#include "wallet/wallet.h" // for DEFAULT_FALLBACK_FEE
 #endif
 #include "utilstrencodings.h"
 #include "validationinterface.h"
@@ -172,10 +174,12 @@ UniValue generate(const UniValue& params, bool fHelp)
             LOCK(cs_main);
             IncrementExtraNonce(pblock, chainActive.Tip(), nExtraNonce);
         }
-        while (!CheckProofOfWork(pblock->GetHash(), pblock->nBits, Params().GetConsensus())) {
+        CAuxPow::initAuxPow(*pblock);
+        CPureBlockHeader& miningHeader = pblock->auxpow->parentBlock;
+        while (!CheckProofOfWork(miningHeader.GetHash(), pblock->nBits, Params().GetConsensus())) {
             // Yes, there is a chance every nonce could fail to satisfy the -regtest
             // target -- 1 in 2^(2^32). That ain't gonna happen.
-            ++pblock->nNonce;
+            ++miningHeader.nNonce;
         }
         CValidationState state;
         if (!ProcessNewBlock(state, Params(), NULL, pblock, true, NULL))
@@ -287,8 +291,8 @@ UniValue prioritisetransaction(const UniValue& params, bool fHelp)
             "1. \"txid\"       (string, required) The transaction id.\n"
             "2. priority delta (numeric, required) The priority to add or subtract.\n"
             "                  The transaction selection algorithm considers the tx as it would have a higher priority.\n"
-            "                  (priority of a transaction is calculated: coinage * value_in_duffs / txsize) \n"
-            "3. fee delta      (numeric, required) The fee value (in duffs) to add (or subtract, if negative).\n"
+            "                  (priority of a transaction is calculated: coinage * value_in_satoshis / txsize) \n"
+            "3. fee delta      (numeric, required) The fee value (in satoshis) to add (or subtract, if negative).\n"
             "                  The fee is not actually paid, only the algorithm for selecting transactions into a block\n"
             "                  considers the transaction as it would have paid a higher (or lower) fee.\n"
             "\nResult\n"
@@ -326,6 +330,11 @@ static UniValue BIP22ValidationResult(const CValidationState& state)
     return "valid?";
 }
 
+#if 0
+getblocktemplate is disabled for merge-mining, since getauxblock should
+be used instead.  All blocks are required to be merge-mined, thus GBT
+makes no sense.
+
 UniValue getblocktemplate(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() > 1)
@@ -358,7 +367,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
             "             n                        (numeric) transactions before this one (by 1-based index in 'transactions' list) that must be present in the final block if this one is\n"
             "             ,...\n"
             "         ],\n"
-            "         \"fee\": n,                   (numeric) difference in value between transaction inputs and outputs (in duffs); for coinbase transactions, this is a negative Number of the total collected block fees (ie, not including the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there isn't one\n"
+            "         \"fee\": n,                   (numeric) difference in value between transaction inputs and outputs (in satoshis); for coinbase transactions, this is a negative Number of the total collected block fees (ie, not including the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there isn't one\n"
             "         \"sigops\" : n,               (numeric) total number of SigOps, as counted for purposes of block limits; if key is not present, sigop count is unknown and clients MUST NOT assume there aren't any\n"
             "         \"required\" : true|false     (boolean) if provided and true, this transaction must be in the final block\n"
             "      }\n"
@@ -367,7 +376,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
             "  \"coinbaseaux\" : {                  (json object) data that should be included in the coinbase's scriptSig content\n"
             "      \"flags\" : \"flags\"            (string) \n"
             "  },\n"
-            "  \"coinbasevalue\" : n,               (numeric) maximum allowable input to coinbase transaction, including the generation award and transaction fees (in duffs)\n"
+            "  \"coinbasevalue\" : n,               (numeric) maximum allowable input to coinbase transaction, including the generation award and transaction fees (in satoshis)\n"
             "  \"coinbasetxn\" : { ... },           (json object) information for coinbase transaction\n"
             "  \"target\" : \"xxxx\",               (string) The hash target\n"
             "  \"mintime\" : xxx,                   (numeric) The minimum timestamp appropriate for next block time in seconds since epoch (Jan 1 1970 GMT)\n"
@@ -458,13 +467,13 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");
 
     if (vNodes.empty())
-        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Dash Core is not connected!");
+        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Terracoin Core is not connected!");
 
     if (IsInitialBlockDownload())
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Dash Core is downloading blocks...");
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Terracoin Core is downloading blocks...");
 
     if (!masternodeSync.IsSynced())
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Dash Core is syncing with network...");
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Terracoin Core is syncing with network...");
 
     static unsigned int nTransactionsUpdatedLast;
 
@@ -624,7 +633,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     }
     result.push_back(Pair("masternode", masternodeObj));
     result.push_back(Pair("masternode_payments_started", pindexPrev->nHeight + 1 > Params().GetConsensus().nMasternodePaymentsStartBlock));
-    result.push_back(Pair("masternode_payments_enforced", sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)));
+    result.push_back(Pair("masternode_payments_enforced", sporkManager.IsSporkActive(SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT)));
 
     UniValue superblockObjArray(UniValue::VARR);
     if(pblock->voutSuperblock.size()) {
@@ -641,10 +650,11 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     }
     result.push_back(Pair("superblock", superblockObjArray));
     result.push_back(Pair("superblocks_started", pindexPrev->nHeight + 1 > Params().GetConsensus().nSuperblockStartBlock));
-    result.push_back(Pair("superblocks_enabled", sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED)));
+    result.push_back(Pair("superblocks_enabled", sporkManager.IsSporkActive(SPORK_5_SUPERBLOCKS_ENABLED)));
 
     return result;
 }
+#endif // Disabled getblocktemplate
 
 class submitblock_StateCatcher : public CValidationInterface
 {
@@ -751,7 +761,7 @@ UniValue estimatefee(const UniValue& params, bool fHelp)
 
     CFeeRate feeRate = mempool.estimateFee(nBlocks);
     if (feeRate == CFeeRate(0))
-        return -1.0;
+        feeRate = CFeeRate(DEFAULT_FALLBACK_FEE);
 
     return ValueFromAmount(feeRate.GetFeePerK());
 }
@@ -814,8 +824,14 @@ UniValue estimatesmartfee(const UniValue& params, bool fHelp)
     UniValue result(UniValue::VOBJ);
     int answerFound;
     CFeeRate feeRate = mempool.estimateSmartFee(nBlocks, &answerFound);
-    result.push_back(Pair("feerate", feeRate == CFeeRate(0) ? -1.0 : ValueFromAmount(feeRate.GetFeePerK())));
-    result.push_back(Pair("blocks", answerFound));
+    if (feeRate == CFeeRate(0)) {
+        result.push_back(Pair("feerate", ValueFromAmount(CFeeRate(DEFAULT_FALLBACK_FEE).GetFeePerK())));
+        result.push_back(Pair("blocks", nBlocks));
+    } else {
+        result.push_back(Pair("feerate", ValueFromAmount(feeRate.GetFeePerK())));
+        result.push_back(Pair("blocks", answerFound));
+    }
+
     return result;
 }
 
@@ -853,4 +869,164 @@ UniValue estimatesmartpriority(const UniValue& params, bool fHelp)
     result.push_back(Pair("priority", priority));
     result.push_back(Pair("blocks", answerFound));
     return result;
+}
+
+/* ************************************************************************** */
+/* Merge mining.  */
+
+UniValue getauxblock(const UniValue& params, bool fHelp)
+{
+    if (fHelp || (params.size() != 0 && params.size() != 2))
+        throw std::runtime_error(
+            "getauxblock (hash auxpow)\n"
+            "\nCreate or submit a merge-mined block.\n"
+            "\nWithout arguments, create a new block and return information\n"
+            "required to merge-mine it.  With arguments, submit a solved\n"
+            "auxpow for a previously returned block.\n"
+            "\nArguments:\n"
+            "1. \"hash\"    (string, optional) hash of the block to submit\n"
+            "2. \"auxpow\"  (string, optional) serialised auxpow found\n"
+            "\nResult (without arguments):\n"
+            "{\n"
+            "  \"hash\"               (string) hash of the created block\n"
+            "  \"chainid\"            (numeric) chain ID for this block\n"
+            "  \"previousblockhash\"  (string) hash of the previous block\n"
+            "  \"coinbasevalue\"      (numeric) value of the block's coinbase\n"
+            "  \"bits\"               (string) compressed target of the block\n"
+            "  \"height\"             (numeric) height of the block\n"
+            "  \"_target\"            (string) target in reversed byte order, deprecated\n"
+            "}\n"
+            "\nResult (with arguments):\n"
+            "xxxxx        (boolean) whether the submitted block was correct\n"
+            "\nExamples:\n"
+            + HelpExampleCli("getauxblock", "")
+            + HelpExampleCli("getauxblock", "\"hash\" \"serialised auxpow\"")
+            + HelpExampleRpc("getauxblock", "")
+            );
+
+    boost::shared_ptr<CReserveScript> coinbaseScript;
+    GetMainSignals().ScriptForMining(coinbaseScript);
+
+    // If the keypool is exhausted, no script is returned at all.  Catch this.
+    if (!coinbaseScript)
+        throw JSONRPCError(RPC_WALLET_KEYPOOL_RAN_OUT, "Error: Keypool ran out, please call keypoolrefill first");
+
+    //throw an error if no script was provided
+    if (!coinbaseScript->reserveScript.size())
+        throw JSONRPCError(RPC_INTERNAL_ERROR, "No coinbase script available (mining requires a wallet)");
+
+    if (vNodes.empty() && !Params().MineBlocksOnDemand())
+        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED,
+                           "Terracoin is not connected!");
+
+    if (IsInitialBlockDownload() && !Params().MineBlocksOnDemand())
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD,
+                           "Terracoin is downloading blocks...");
+    
+    /* This should never fail, since the chain is already
+       past the point of merge-mining start.  Check nevertheless.  */
+    {
+        LOCK(cs_main);
+        if (chainActive.Height() + 1 < Params().GetConsensus().nAuxpowStartHeight)
+            throw std::runtime_error("getauxblock method is not yet available");
+    }
+
+    /* The variables below are used to keep track of created and not yet
+       submitted auxpow blocks.  Lock them to be sure even for multiple
+       RPC threads running in parallel.  */
+    static CCriticalSection cs_auxblockCache;
+    LOCK(cs_auxblockCache);
+    static std::map<uint256, CBlock*> mapNewBlock;
+    static std::vector<CBlockTemplate*> vNewBlockTemplate;
+
+    /* Create a new block?  */
+    if (params.size() == 0)
+    {
+        static unsigned nTransactionsUpdatedLast;
+        static const CBlockIndex* pindexPrev = NULL;
+        static uint64_t nStart;
+        static CBlockTemplate* pblocktemplate;
+        static unsigned nExtraNonce = 0;
+
+        // Update block
+        {
+        LOCK(cs_main);
+        if (pindexPrev != chainActive.Tip()
+            || (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast
+                && GetTime() - nStart > 60))
+        {
+            if (pindexPrev != chainActive.Tip())
+            {
+                // Deallocate old blocks since they're obsolete now
+                mapNewBlock.clear();
+                BOOST_FOREACH(CBlockTemplate* pbt, vNewBlockTemplate)
+                    delete pbt;
+                vNewBlockTemplate.clear();
+            }
+
+            // Create new block with nonce = 0 and extraNonce = 1
+            pblocktemplate = CreateNewBlock(Params(), coinbaseScript->reserveScript);
+            if (!pblocktemplate)
+                throw JSONRPCError(RPC_OUT_OF_MEMORY, "out of memory");
+
+            // Update state only when CreateNewBlock succeeded
+            nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
+            pindexPrev = chainActive.Tip();
+            nStart = GetTime();
+
+            // Finalise it by setting the version and building the merkle root
+            CBlock* pblock = &pblocktemplate->block;
+            IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
+            pblock->SetAuxpowVersion(true);
+
+            // Save
+            mapNewBlock[pblock->GetHash()] = pblock;
+            vNewBlockTemplate.push_back(pblocktemplate);
+        }
+        }
+
+        const CBlock& block = pblocktemplate->block;
+
+        arith_uint256 target;
+        bool fNegative, fOverflow;
+        target.SetCompact(block.nBits, &fNegative, &fOverflow);
+        if (fNegative || fOverflow || target == 0)
+            throw std::runtime_error("invalid difficulty bits in block");
+
+        UniValue result(UniValue::VOBJ);
+        result.push_back(Pair("hash", block.GetHash().GetHex()));
+        result.push_back(Pair("chainid", block.GetChainId()));
+        result.push_back(Pair("previousblockhash", block.hashPrevBlock.GetHex()));
+        result.push_back(Pair("coinbasevalue", (int64_t)block.vtx[0].vout[0].nValue));
+        result.push_back(Pair("bits", strprintf("%08x", block.nBits)));
+        result.push_back(Pair("height", static_cast<int64_t> (pindexPrev->nHeight + 1)));
+        result.push_back(Pair("_target", HexStr(BEGIN(target), END(target))));
+
+        return result;
+    }
+
+    /* Submit a block instead.  Note that this need not lock cs_main,
+       since ProcessBlockFound below locks it instead.  */
+
+    assert(params.size() == 2);
+    uint256 hash;
+    hash.SetHex(params[0].get_str());
+
+    const std::map<uint256, CBlock*>::iterator mit = mapNewBlock.find(hash);
+    if (mit == mapNewBlock.end())
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "block hash unknown");
+    CBlock& block = *mit->second;
+
+    const std::vector<unsigned char> vchAuxPow = ParseHex(params[1].get_str());
+    CDataStream ss(vchAuxPow, SER_GETHASH, PROTOCOL_VERSION);
+    CAuxPow pow;
+    ss >> pow;
+    block.SetAuxpow(new CAuxPow(pow));
+    assert(block.GetHash() == hash);
+
+    const bool ok = ProcessBlockFound(&block, Params());
+    if (ok)
+        coinbaseScript->KeepScript();
+
+    return ok;
 }

@@ -31,6 +31,8 @@ static const int MAX_PUBKEYS_PER_MULTISIG = 20;
 // otherwise as UNIX timestamp.
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
+typedef std::vector<unsigned char> valtype;
+
 template <typename T>
 std::vector<unsigned char> ToByteVector(const T& in)
 {
@@ -617,10 +619,12 @@ public:
      */
     unsigned int GetSigOpCount(const CScript& scriptSig) const;
 
-    bool IsNormalPaymentScript() const;
     bool IsPayToPublicKeyHash() const;
 
     bool IsPayToScriptHash() const;
+
+    /** Used for obsolete pay-to-pubkey addresses indexing. */
+    bool IsPayToPublicKey() const;
 
     /** Called by IsStandardTx and P2SH/BIP62 VerifyScript (which makes it consensus-critical). */
     bool IsPushOnly(const_iterator pc) const;

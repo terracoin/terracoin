@@ -123,7 +123,7 @@ public:
 };
 
 /**
- * Dash RPC command dispatcher.
+ * Terracoin RPC command dispatcher.
  */
 class CRPCTable
 {
@@ -202,12 +202,12 @@ extern UniValue generate(const UniValue& params, bool fHelp);
 extern UniValue getnetworkhashps(const UniValue& params, bool fHelp);
 extern UniValue getmininginfo(const UniValue& params, bool fHelp);
 extern UniValue prioritisetransaction(const UniValue& params, bool fHelp);
-extern UniValue getblocktemplate(const UniValue& params, bool fHelp);
 extern UniValue submitblock(const UniValue& params, bool fHelp);
 extern UniValue estimatefee(const UniValue& params, bool fHelp);
 extern UniValue estimatepriority(const UniValue& params, bool fHelp);
 extern UniValue estimatesmartfee(const UniValue& params, bool fHelp);
 extern UniValue estimatesmartpriority(const UniValue& params, bool fHelp);
+extern UniValue getauxblock(const UniValue& params, bool fHelp);
 
 extern UniValue instantsendtoaddress(const UniValue& params, bool fHelp);
 extern UniValue keepass(const UniValue& params, bool fHelp);
@@ -284,6 +284,7 @@ extern UniValue settxfee(const UniValue& params, bool fHelp);
 extern UniValue getmempoolinfo(const UniValue& params, bool fHelp);
 extern UniValue getrawmempool(const UniValue& params, bool fHelp);
 extern UniValue getblockhashes(const UniValue& params, bool fHelp);
+extern UniValue getblockdeltas(const UniValue& params, bool fHelp);
 extern UniValue getblockhash(const UniValue& params, bool fHelp);
 extern UniValue getblockheader(const UniValue& params, bool fHelp);
 extern UniValue getblockheaders(const UniValue& params, bool fHelp);

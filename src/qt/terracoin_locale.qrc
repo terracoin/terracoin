@@ -1,0 +1,20 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/translations">
+        <file alias="bg">locale/terracoin_bg.qm</file>
+        <file alias="de">locale/terracoin_de.qm</file>
+        <file alias="en">locale/terracoin_en.qm</file>
+        <file alias="es">locale/terracoin_es.qm</file>
+        <file alias="fi">locale/terracoin_fi.qm</file>
+        <file alias="fr">locale/terracoin_fr.qm</file>
+        <file alias="it">locale/terracoin_it.qm</file>
+        <file alias="ja">locale/terracoin_ja.qm</file>
+        <file alias="pl">locale/terracoin_pl.qm</file>
+        <file alias="pt">locale/terracoin_pt.qm</file>
+        <file alias="ru">locale/terracoin_ru.qm</file>
+        <file alias="sk">locale/terracoin_sk.qm</file>
+        <file alias="sv">locale/terracoin_sv.qm</file>
+        <file alias="vi">locale/terracoin_vi.qm</file>
+        <file alias="zh_CN">locale/terracoin_zh_CN.qm</file>
+        <file alias="zh_TW">locale/terracoin_zh_TW.qm</file>
+    </qresource>
+</RCC>

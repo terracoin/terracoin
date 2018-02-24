@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,6 +11,7 @@
 #include "net.h"
 #include "spork.h"
 #include "timedata.h"
+#include "amount.h"
 
 class CMasternode;
 class CMasternodeBroadcast;
@@ -23,6 +25,8 @@ static const int MASTERNODE_WATCHDOG_MAX_SECONDS        = 120 * 60;
 static const int MASTERNODE_NEW_START_REQUIRED_SECONDS  = 180 * 60;
 
 static const int MASTERNODE_POSE_BAN_MAX_SCORE          = 5;
+
+static const CAmount MASTERNODE_COLLATERAL = 5000 * COIN;
 //
 // The Masternode Ping Class : Contains a different serialize method for sending pings from masternodes throughout the network
 //
@@ -282,7 +286,7 @@ public:
         if(nActiveState == MASTERNODE_ENABLED) {
             return true;
         }
-        if(!sporkManager.IsSporkActive(SPORK_14_REQUIRE_SENTINEL_FLAG) &&
+        if(!sporkManager.IsSporkActive(SPORK_7_REQUIRE_SENTINEL_FLAG) &&
            (nActiveState == MASTERNODE_WATCHDOG_EXPIRED)) {
             return true;
         }

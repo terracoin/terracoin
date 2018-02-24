@@ -14,8 +14,6 @@
 
 using namespace std;
 
-typedef vector<unsigned char> valtype;
-
 bool fAcceptDatacarrier = DEFAULT_ACCEPT_DATACARRIER;
 unsigned nMaxDatacarrierBytes = MAX_OP_RETURN_RELAY;
 

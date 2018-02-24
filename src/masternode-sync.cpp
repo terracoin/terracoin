@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -254,6 +255,9 @@ void CMasternodeSync::ProcessTick()
 
     //the actual count of masternodes we have currently
     int nMnCount = mnodeman.CountMasternodes();
+
+    //Make it possible to bootstrap the first masternode
+    if(fMasterNode && nMnCount < 1) nMnCount++;
 
     if(fDebug) LogPrintf("CMasternodeSync::ProcessTick -- nTick %d nMnCount %d\n", nTick, nMnCount);
 

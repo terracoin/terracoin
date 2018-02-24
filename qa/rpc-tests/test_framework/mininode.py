@@ -1,4 +1,4 @@
-# mininode.py - Dash P2P network half-a-node
+# mininode.py - Terracoin P2P network half-a-node
 #
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -6,12 +6,12 @@
 # This python code was modified from ArtForz' public domain  half-a-node, as
 # found in the mini-node branch of http://github.com/jgarzik/pynode.
 #
-# NodeConn: an object which manages p2p connectivity to a dash node
+# NodeConn: an object which manages p2p connectivity to a terracoin node
 # NodeConnCB: a base class that describes the interface for receiving
 #             callbacks with network messages from a NodeConn
 # CBlock, CTransaction, CBlockHeader, CTxIn, CTxOut, etc....:
 #     data structures that should map to corresponding structures in
-#     dash/primitives
+#     terracoin/primitives
 # msg_block, msg_tx, msg_headers, etc.:
 #     data structures that represent network messages
 # ser_*, deser_*: functions that handle serialization/deserialization
@@ -32,7 +32,7 @@ from threading import Thread
 import logging
 import copy
 
-import dash_hash
+import terracoin_hash
 
 BIP0031_VERSION = 60000
 MY_VERSION = 70206  # current MIN_PEER_PROTO_VERSION
@@ -42,6 +42,11 @@ MAX_INV_SZ = 50000
 MAX_BLOCK_SIZE = 1000000
 
 COIN = 100000000L # 1 btc in satoshis
+
+# Constants for the auxpow block version.
+VERSION_AUXPOW = (1 << 8)
+VERSION_CHAIN_START = (1 << 16)
+CHAIN_ID = 1
 
 # Keep our own socket map for asyncore, so that we can track disconnects
 # ourselves (to workaround an issue with closing an asyncore socket when 
@@ -64,8 +69,8 @@ def sha256(s):
 def hash256(s):
     return sha256(sha256(s))
 
-def dashhash(s):
-    return dash_hash.getPoWHash(s)
+def terracoinhash(s):
+    return terracoin_hash.getPoWHash(s)
 
 def deser_string(f):
     nit = struct.unpack("<B", f.read(1))[0]
@@ -247,7 +252,7 @@ def FromHex(obj, hex_string):
 def ToHex(obj):
     return hexlify(obj.serialize()).decode('ascii')
 
-# Objects that map to dashd objects, which can be serialized/deserialized
+# Objects that map to terracoind objects, which can be serialized/deserialized
 
 class CAddress(object):
     def __init__(self):
@@ -441,6 +446,35 @@ class CTransaction(object):
         return "CTransaction(nVersion=%i vin=%s vout=%s nLockTime=%i)" \
             % (self.nVersion, repr(self.vin), repr(self.vout), self.nLockTime)
 
+class CAuxPow(CTransaction):
+    def __init__(self):
+        super(CAuxPow, self).__init__()
+        self.hashBlock = 0
+        self.vMerkleBranch = []
+        self.nIndex = 0
+        self.vChainMerkleBranch = []
+        self.nChainIndex = 0
+        self.parentBlock = CBlockHeader()
+
+    def deserialize(self, f):
+        super(CAuxPow, self).deserialize(f)
+        self.hashBlock = deser_uint256(f)
+        self.vMerkleBranch = deser_uint256_vector(f)
+        self.nIndex = struct.unpack("<I", f.read(4))[0]
+        self.vChainMerkleBranch = deser_uint256_vector(f)
+        self.nChainIndex = struct.unpack("<I", f.read(4))[0]
+        self.parentBlock.deserialize(f)
+
+    def serialize(self):
+        r = ""
+        r += super(CAuxPow, self).serialize()
+        r += ser_uint256(self.hashBlock)
+        r += ser_uint256_vector(self.vMerkleBranch)
+        r += struct.pack("<I", self.nIndex)
+        r += ser_uint256_vector(self.vChainMerkleBranch)
+        r += struct.pack("<I", self.nChainIndex)
+        r += self.parentBlock.serialize()
+        return r
 
 class CBlockHeader(object):
     def __init__(self, header=None):
@@ -453,6 +487,7 @@ class CBlockHeader(object):
             self.nTime = header.nTime
             self.nBits = header.nBits
             self.nNonce = header.nNonce
+            self.auxpow = header.auxpow
             self.sha256 = header.sha256
             self.hash = header.hash
             self.calc_sha256()
@@ -464,8 +499,16 @@ class CBlockHeader(object):
         self.nTime = 0
         self.nBits = 0
         self.nNonce = 0
+        self.auxpow = None
         self.sha256 = None
         self.hash = None
+
+    def set_base_version(self, n):
+        assert n < VERSION_AUXPOW
+        self.nVersion = n + CHAIN_ID * VERSION_CHAIN_START
+
+    def is_auxpow(self):
+        return (self.nVersion & VERSION_AUXPOW) > 0
 
     def deserialize(self, f):
         self.nVersion = struct.unpack("<i", f.read(4))[0]
@@ -474,6 +517,9 @@ class CBlockHeader(object):
         self.nTime = struct.unpack("<I", f.read(4))[0]
         self.nBits = struct.unpack("<I", f.read(4))[0]
         self.nNonce = struct.unpack("<I", f.read(4))[0]
+        if self.is_auxpow():
+            self.auxpow = CAuxPow()
+            self.auxpow.deserialize(f)
         self.sha256 = None
         self.hash = None
 
@@ -485,6 +531,8 @@ class CBlockHeader(object):
         r += struct.pack("<I", self.nTime)
         r += struct.pack("<I", self.nBits)
         r += struct.pack("<I", self.nNonce)
+        if self.is_auxpow():
+            r += self.auxpow.serialize()
         return r
 
     def calc_sha256(self):
@@ -496,8 +544,8 @@ class CBlockHeader(object):
             r += struct.pack("<I", self.nTime)
             r += struct.pack("<I", self.nBits)
             r += struct.pack("<I", self.nNonce)
-            self.sha256 = uint256_from_str(dashhash(r))
-            self.hash = encode(dashhash(r)[::-1], 'hex_codec').decode('ascii')
+            self.sha256 = uint256_from_str(terracoinhash(r))
+            self.hash = encode(terracoinhash(r)[::-1], 'hex_codec').decode('ascii')
 
     def rehash(self):
         self.sha256 = None
@@ -541,6 +589,11 @@ class CBlock(CBlockHeader):
     def is_valid(self):
         self.calc_sha256()
         target = uint256_from_compact(self.nBits)
+
+        # FIXME: Validation is not actually used anywhere.  If it is in
+        # the future, need to implement basic auxpow checking.
+        assert not self.is_auxpow()
+
         if self.sha256 > target:
             return False
         for tx in self.vtx:
@@ -972,7 +1025,7 @@ class msg_headers(object):
         self.headers = []
 
     def deserialize(self, f):
-        # comment in dashd indicates these should be deserialized as blocks
+        # comment in terracoind indicates these should be deserialized as blocks
         blocks = deser_vector(f, CBlock)
         for x in blocks:
             self.headers.append(CBlockHeader(x))
@@ -1185,7 +1238,7 @@ class NodeConn(asyncore.dispatcher):
         vt.addrFrom.ip = "0.0.0.0"
         vt.addrFrom.port = 0
         self.send_message(vt, True)
-        print 'MiniNode: Connecting to Dash Node IP # ' + dstaddr + ':' \
+        print 'MiniNode: Connecting to Terracoin Node IP # ' + dstaddr + ':' \
             + str(dstport)
 
         try:

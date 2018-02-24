@@ -102,7 +102,7 @@ UniValue getpeerinfo(const UniValue& params, bool fHelp)
             "    \"minping\": n,              (numeric) minimum observed ping time\n"
             "    \"pingwait\": n,             (numeric) ping wait\n"
             "    \"version\": v,              (numeric) The peer version, such as 7001\n"
-            "    \"subver\": \"/Dash Core:x.x.x/\",  (string) The string version\n"
+            "    \"subver\": \"/Terracoin Core:x.x.x/\",  (string) The string version\n"
             "    \"inbound\": true|false,     (boolean) Inbound (true) or Outbound (false)\n"
             "    \"startingheight\": n,       (numeric) The starting height (block) of the peer\n"
             "    \"banscore\": n,             (numeric) The ban score\n"
@@ -187,8 +187,8 @@ UniValue addnode(const UniValue& params, bool fHelp)
             "1. \"node\"     (string, required) The node (see getpeerinfo for nodes)\n"
             "2. \"command\"  (string, required) 'add' to add a node to the list, 'remove' to remove a node from the list, 'onetry' to try a connection to the node once\n"
             "\nExamples:\n"
-            + HelpExampleCli("addnode", "\"192.168.0.6:9999\" \"onetry\"")
-            + HelpExampleRpc("addnode", "\"192.168.0.6:9999\", \"onetry\"")
+            + HelpExampleCli("addnode", "\"192.168.0.6:13333\" \"onetry\"")
+            + HelpExampleRpc("addnode", "\"192.168.0.6:13333\", \"onetry\"")
         );
 
     string strNode = params[0].get_str();
@@ -263,7 +263,7 @@ UniValue getaddednodeinfo(const UniValue& params, bool fHelp)
             "    \"connected\" : true|false,          (boolean) If connected\n"
             "    \"addresses\" : [\n"
             "       {\n"
-            "         \"address\" : \"192.168.0.201:9999\",  (string) The dash server host and port\n"
+            "         \"address\" : \"192.168.0.201:13333\", (string) The terracoin server host and port\n"
             "         \"connected\" : \"outbound\"           (string) connection, inbound or outbound\n"
             "       }\n"
             "       ,...\n"
@@ -433,7 +433,7 @@ UniValue getnetworkinfo(const UniValue& params, bool fHelp)
             "\nResult:\n"
             "{\n"
             "  \"version\": xxxxx,                      (numeric) the server version\n"
-            "  \"subversion\": \"/Dash Core:x.x.x/\",     (string) the server subversion string\n"
+            "  \"subversion\": \"/Terracoin Core:x.x.x/\",     (string) the server subversion string\n"
             "  \"protocolversion\": xxxxx,              (numeric) the protocol version\n"
             "  \"localservices\": \"xxxxxxxxxxxxxxxx\", (string) the services we offer to the network\n"
             "  \"timeoffset\": xxxxx,                   (numeric) the time offset\n"

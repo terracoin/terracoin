@@ -403,7 +403,7 @@
          <item>
           <widget class="QPushButton" name="openDebugLogfileButton">
            <property name="toolTip">
-            <string>Open the Dash Core debug log file from the current data directory. This can take a few seconds for large log files.</string>
+            <string>Open the Terracoin Core debug log file from the current data directory. This can take a few seconds for large log files.</string>
            </property>
            <property name="text">
             <string>&amp;Open</string>
@@ -487,8 +487,8 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../dash.qrc">
-             <normaloff>:/icons/drkblue/remove</normaloff>:/icons/drkblue/remove</iconset>
+            <iconset resource="../terracoin.qrc">
+             <normaloff>:/icons/trad/remove</normaloff>:/icons/trad/remove</iconset>
            </property>
            <property name="shortcut">
             <string notr="true">Ctrl+L</string>
@@ -1583,7 +1583,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../dash.qrc"/>
+  <include location="../terracoin.qrc"/>
  </resources>
  <connections/>
 </ui>

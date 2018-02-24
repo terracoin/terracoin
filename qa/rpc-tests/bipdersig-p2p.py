@@ -83,7 +83,7 @@ class BIP66Test(ComparisonTestFramework):
         test_blocks = []
         for i in xrange(98):
             block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-            block.nVersion = 2
+            block.set_base_version(2)
             block.rehash()
             block.solve()
             test_blocks.append([block, True])
@@ -96,7 +96,7 @@ class BIP66Test(ComparisonTestFramework):
         test_blocks = []
         for i in xrange(749):
             block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-            block.nVersion = 3
+            block.set_base_version(3)
             block.rehash()
             block.solve()
             test_blocks.append([block, True])
@@ -115,7 +115,7 @@ class BIP66Test(ComparisonTestFramework):
         spendtx.rehash()
 
         block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-        block.nVersion = 3
+        block.set_base_version(3)
         block.vtx.append(spendtx)
         block.hashMerkleRoot = block.calc_merkle_root()
         block.rehash()
@@ -136,7 +136,7 @@ class BIP66Test(ComparisonTestFramework):
         spendtx.rehash()
 
         block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-        block.nVersion = 3
+        block.set_base_version(3)
         block.vtx.append(spendtx)
         block.hashMerkleRoot = block.calc_merkle_root()
         block.rehash()
@@ -148,7 +148,7 @@ class BIP66Test(ComparisonTestFramework):
         test_blocks = []
         for i in xrange(199):
             block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-            block.nVersion = 3
+            block.set_base_version(3)
             block.rehash()
             block.solve()
             test_blocks.append([block, True])
@@ -159,7 +159,7 @@ class BIP66Test(ComparisonTestFramework):
 
         ''' Mine 1 old version block '''
         block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-        block.nVersion = 2
+        block.set_base_version(2)
         block.rehash()
         block.solve()
         self.last_block_time += 1
@@ -169,7 +169,7 @@ class BIP66Test(ComparisonTestFramework):
 
         ''' Mine 1 new version block '''
         block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-        block.nVersion = 3
+        block.set_base_version(3)
         block.rehash()
         block.solve()
         self.last_block_time += 1
@@ -179,7 +179,7 @@ class BIP66Test(ComparisonTestFramework):
 
         ''' Mine 1 old version block, should be invalid '''
         block = create_block(self.tip, create_coinbase(height), self.last_block_time + 1)
-        block.nVersion = 2
+        block.set_base_version(2)
         block.rehash()
         block.solve()
         self.last_block_time += 1

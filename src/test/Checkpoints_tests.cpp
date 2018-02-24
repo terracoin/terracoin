@@ -9,7 +9,7 @@
 #include "checkpoints.h"
 
 #include "uint256.h"
-#include "test/test_dash.h"
+#include "test/test_terracoin.h"
 #include "chainparams.h"
 
 #include <boost/test/unit_test.hpp>
@@ -21,7 +21,7 @@ BOOST_FIXTURE_TEST_SUITE(Checkpoints_tests, BasicTestingSetup)
 BOOST_AUTO_TEST_CASE(sanity)
 {
     const CCheckpointData& checkpoints = Params(CBaseChainParams::MAIN).Checkpoints();
-    BOOST_CHECK(Checkpoints::GetTotalBlocksEstimate(checkpoints) >= 107996);
+    BOOST_CHECK(Checkpoints::GetTotalBlocksEstimate(checkpoints) >= 107368);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

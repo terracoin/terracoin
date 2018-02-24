@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -209,8 +210,8 @@ void CActiveMasternode::ManageStateInitial()
         return;
     }
 
-    if(pwalletMain->GetBalance() < 1000*COIN) {
-        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < 1000 DASH\n", GetStateString());
+    if(pwalletMain->GetBalance() < MASTERNODE_COLLATERAL) {
+        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < %d TERRACOIN\n", GetStateString(), MASTERNODE_COLLATERAL);
         return;
     }
 

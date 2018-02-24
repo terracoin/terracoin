@@ -1,0 +1,3 @@
+debian/manpages/terracoind.1
+debian/manpages/terracoin.conf.5
+debian/manpages/terracoin-cli.1

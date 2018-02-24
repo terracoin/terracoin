@@ -1,0 +1,6 @@
+usr/local/bin/terracoin-qt usr/bin
+share/pixmaps/terracoin32.xpm usr/share/pixmaps
+share/pixmaps/terracoin16.xpm usr/share/pixmaps
+share/pixmaps/terracoin128.png usr/share/pixmaps
+debian/terracoin-qt.desktop usr/share/applications
+debian/terracoin-qt.protocol usr/share/kde4/services/

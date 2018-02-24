@@ -10,9 +10,17 @@
 #include "utilstrencodings.h"
 #include "crypto/common.h"
 
-uint256 CBlockHeader::GetHash() const
+void CBlockHeader::SetAuxpow (CAuxPow* apow)
 {
-    return HashX11(BEGIN(nVersion), END(nNonce));
+    if (apow)
+    {
+        auxpow.reset(apow);
+        SetAuxpowVersion(true);
+    } else
+    {
+        auxpow.reset();
+        SetAuxpowVersion(false);
+    }
 }
 
 std::string CBlock::ToString() const

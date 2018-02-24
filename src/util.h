@@ -12,7 +12,7 @@
 #define BITCOIN_UTIL_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dash-config.h"
+#include "config/terracoin-config.h"
 #endif
 
 #include "compat.h"
@@ -34,14 +34,14 @@
 
 // Uncomment the following line to enable debugging messages
 // or enable on a per file basis prior to inclusion of util.h
-//#define ENABLE_DASH_DEBUG
-#ifdef ENABLE_DASH_DEBUG
+//#define ENABLE_TERRACOIN_DEBUG
+#ifdef ENABLE_TERRACOIN_DEBUG
 #define DBG( x ) x
 #else
 #define DBG( x ) 
 #endif
 
-//Dash only features
+//Terracoin only features
 
 extern bool fMasterNode;
 extern bool fLiteMode;
@@ -51,6 +51,7 @@ static const bool DEFAULT_LOGTIMEMICROS  = false;
 static const bool DEFAULT_LOGIPS         = false;
 static const bool DEFAULT_LOGTIMESTAMPS  = true;
 static const bool DEFAULT_LOGTHREADNAMES = false;
+extern const char * const DEFAULT_DEBUGLOGFILE;
 
 /** Signals for translation. */
 class CTranslationInterface
@@ -157,7 +158,8 @@ void ReadConfigFile(std::map<std::string, std::string>& mapSettingsRet, std::map
 boost::filesystem::path GetSpecialFolderPath(int nFolder, bool fCreate = true);
 #endif
 boost::filesystem::path GetTempPath();
-void OpenDebugLog();
+boost::filesystem::path GetDebugLogPath();
+bool OpenDebugLog();
 void ShrinkDebugFile();
 void runCommand(const std::string& strCommand);
 
@@ -248,7 +250,7 @@ std::string GetThreadName();
  */
 template <typename Callable> void TraceThread(const char* name,  Callable func)
 {
-    std::string s = strprintf("dash-%s", name);
+    std::string s = strprintf("terracoin-%s", name);
     RenameThread(s.c_str());
     try
     {

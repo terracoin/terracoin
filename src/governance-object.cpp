@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2017-2018 The Terracoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -538,7 +539,7 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
         return false;
     }
 
-    // LOOK FOR SPECIALIZED GOVERNANCE SCRIPT (PROOF OF BURN)
+    // LOOK FOR SPECIALIZED GOVERNANCE SCRIPT
 
     CScript findScript;
     findScript << OP_RETURN << ToByteVector(nExpectedHash);
@@ -556,12 +557,17 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
              << ", o.nValue = " << o.nValue
              << ", o.scriptPubKey = " << ScriptToAsmStr( o.scriptPubKey, false )
              << endl; );
-        if(!o.scriptPubKey.IsNormalPaymentScript() && !o.scriptPubKey.IsUnspendable()){
+
+        if(!o.scriptPubKey.IsPayToPublicKeyHash() && !o.scriptPubKey.IsUnspendable()){
             strError = strprintf("Invalid Script %s", txCollateral.ToString());
             LogPrintf ("CGovernanceObject::IsCollateralValid -- %s\n", strError);
             return false;
         }
-        if(o.scriptPubKey == findScript && o.nValue >= nMinFee) {
+
+        // Dash
+        //if(o.scriptPubKey == findScript && o.nValue >= nMinFee) {
+        // This breaks for Terracoin so remove Fee check for now
+        if(o.scriptPubKey == findScript) {
             DBG( cout << "IsCollateralValid foundOpReturn = true" << endl; );
             foundOpReturn = true;
         }
@@ -575,6 +581,38 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
         strError = strprintf("Couldn't find opReturn %s in %s", nExpectedHash.ToString(), txCollateral.ToString());
         LogPrintf ("CGovernanceObject::IsCollateralValid -- %s\n", strError);
         return false;
+    }
+
+    // UNLIKE IN DASH, WE DON'T BURN THE COLLATERAL
+
+    CAmount nValueIn = 0;
+    CAmount nValueOut = 0;
+    bool fMissingTx = false;
+
+    BOOST_FOREACH(const CTxOut txout, txCollateral.vout) {
+        nValueOut += txout.nValue;
+    }
+
+    BOOST_FOREACH(const CTxIn txin, txCollateral.vin) {
+        CTransaction txPrev;
+        uint256 hash;
+        if(GetTransaction(txin.prevout.hash, txPrev, Params().GetConsensus(), hash, true)) {
+            if(txPrev.vout.size() > txin.prevout.n)
+                nValueIn += txPrev.vout[txin.prevout.n].nValue;
+        } else {
+            fMissingTx = true;
+        }
+    }
+
+    if(fMissingTx) {
+        LogPrintf ("CGovernanceObject::IsCollateralValid -- Unknown inputs in collateral transaction, txCollateral=%s", txCollateral.ToString());
+        return false;
+    }
+
+    if(nValueOut > nValueIn || (nValueIn - nValueOut) < nMinFee)
+    {
+         LogPrintf ("CGovernanceObject::IsCollateralValid Collateral fee too low txFee = %lu nMinFee = %lu\n",  (nValueIn - nValueOut), nMinFee);
+         return false;
     }
 
     // GET CONFIRMATIONS FOR TRANSACTION
@@ -674,11 +712,17 @@ void CGovernanceObject::UpdateSentinelVariables()
 
     // CALCULATE THE MINUMUM VOTE COUNT REQUIRED FOR FULL SIGNAL
 
-    // todo - 12.1 - should be set to `10` after governance vote compression is implemented
-    int nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nMnCount / 10);
-    int nAbsDeleteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, (2 * nMnCount) / 3);
-    // todo - 12.1 - Temporarily set to 1 for testing - reverted
-    //nAbsVoteReq = 1;
+    int nAbsVoteReq, nAbsDeleteReq;
+    if(Params().NetworkIDString() == CBaseChainParams::MAIN)
+    {
+        nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nMnCount / 10);
+        nAbsDeleteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, (2 * nMnCount) / 3);
+    }
+    else
+    {
+        nAbsVoteReq = Params().GetConsensus().nGovernanceMinQuorum;
+        nAbsDeleteReq = Params().GetConsensus().nGovernanceMinQuorum;
+    }
 
     // SET SENTINEL FLAGS TO FALSE
 
