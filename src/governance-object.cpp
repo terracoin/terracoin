@@ -583,7 +583,7 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
     }
 
     // UNLIKE IN DASH, WE DON'T BURN THE COLLATERAL
-
+    // TERRACOIN
     CAmount nValueIn = 0;
     CAmount nValueOut = 0;
     bool fMissingTx = false;
@@ -613,6 +613,7 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
          LogPrintf ("CGovernanceObject::IsCollateralValid Collateral fee too low txFee = %lu nMinFee = %lu\n",  (nValueIn - nValueOut), nMinFee);
          return false;
     }
+    // END TERRACOIN
 
     // GET CONFIRMATIONS FOR TRANSACTION
 
