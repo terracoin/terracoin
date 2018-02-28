@@ -1297,7 +1297,8 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState &state, const C
             dFreeCount += nSize;
         }
 
-        // Terracoin add nFees != GOVERNANCE_PROPOSAL_FEE_TX, why?
+        // Terracoin doesn't burn proposla fee
+	// add nFees != GOVERNANCE_PROPOSAL_FEE_TX
         if (fRejectAbsurdFee && nFees > ::minRelayTxFee.GetFee(nSize) * 10000 && nFees != GOVERNANCE_PROPOSAL_FEE_TX)
             return state.Invalid(false,
                 REJECT_HIGHFEE, "absurdly-high-fee",

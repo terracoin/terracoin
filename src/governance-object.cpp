@@ -564,9 +564,8 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
             return false;
         }
 
-        // Dash
-        //if(o.scriptPubKey == findScript && o.nValue >= nMinFee) {
-        // This breaks for Terracoin so remove Fee check for now
+        // Terracoin doesn't burn proposal fee
+        // remove && o.nValue >= nMinFee
         if(o.scriptPubKey == findScript) {
             DBG( cout << "IsCollateralValid foundOpReturn = true" << endl; );
             foundOpReturn = true;
