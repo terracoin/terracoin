@@ -564,9 +564,8 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
             return false;
         }
 
-        // Dash
-        //if(o.scriptPubKey == findScript && o.nValue >= nMinFee) {
-        // This breaks for Terracoin so remove Fee check for now
+        // Terracoin doesn't burn proposal fee
+        // remove && o.nValue >= nMinFee
         if(o.scriptPubKey == findScript) {
             DBG( cout << "IsCollateralValid foundOpReturn = true" << endl; );
             foundOpReturn = true;
@@ -584,7 +583,7 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
     }
 
     // UNLIKE IN DASH, WE DON'T BURN THE COLLATERAL
-
+    // TERRACOIN
     CAmount nValueIn = 0;
     CAmount nValueOut = 0;
     bool fMissingTx = false;
@@ -614,6 +613,7 @@ bool CGovernanceObject::IsCollateralValid(std::string& strError)
          LogPrintf ("CGovernanceObject::IsCollateralValid Collateral fee too low txFee = %lu nMinFee = %lu\n",  (nValueIn - nValueOut), nMinFee);
          return false;
     }
+    // END TERRACOIN
 
     // GET CONFIRMATIONS FOR TRANSACTION
 

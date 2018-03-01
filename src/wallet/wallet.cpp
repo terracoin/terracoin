@@ -2850,10 +2850,12 @@ bool CWallet::GetBudgetSystemCollateralTX(CWalletTx& tx, uint256 hash, CAmount a
     int nChangePosRet = -1;
     std::string strFail = "";
     vector< CRecipient > vecSend;
-    vecSend.push_back((CRecipient){scriptChange, amount, false});
+    // Terracoin don't add transcation fee to proposal fee, keep separate
+    vecSend.push_back((CRecipient){scriptChange, 0, false});
 
     CCoinControl *coinControl=NULL;
-    bool success = CreateTransaction(vecSend, tx, reservekey, nFeeRet, nChangePosRet, strFail, coinControl, true, ALL_COINS, fUseInstantSend);
+    // Terracoin add amount separate from proposal fee
+    bool success = CreateTransaction(vecSend, tx, reservekey, nFeeRet, nChangePosRet, strFail, coinControl, true, ALL_COINS, fUseInstantSend, amount);
 
     if(!success){
         LogPrintf("CWallet::GetBudgetSystemCollateralTX -- Error: %s\n", strFail);
@@ -2879,10 +2881,17 @@ bool CWallet::ConvertList(std::vector<CTxIn> vecTxIn, std::vector<CAmount>& vecA
     return true;
 }
 
+// Terracoin add feeOverride separate from proposal fee
 bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet,
-                                int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl, bool sign, AvailableCoinsType nCoinType, bool fUseInstantSend)
+                                int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl, bool sign, AvailableCoinsType nCoinType, bool fUseInstantSend, CAmount feeOverride)
 {
-    CAmount nFeePay = fUseInstantSend ? CTxLockRequest().GetMinFee() : 0;
+    // Terracoin add feeOverride separate from proposal fee
+    // CAmount nFeePay = fUseInstantSend ? CTxLockRequest().GetMinFee() : 0;
+    CAmount nFeePay;
+    if(feeOverride == 0)
+        nFeePay = fUseInstantSend ? CTxLockRequest().GetMinFee() : 0;
+    else
+        nFeePay = feeOverride;
 
     CAmount nValue = 0;
     unsigned int nSubtractFeeFromAmount = 0;

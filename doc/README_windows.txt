@@ -1,4 +1,4 @@
-Terracoin Core 0.12.1.7
+Terracoin Core 0.12.1.8
 =======================
 
 Intro
