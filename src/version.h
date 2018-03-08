@@ -10,7 +10,7 @@
  * network protocol versioning
  */
 
-static const int PROTOCOL_VERSION = 70206;
+static const int PROTOCOL_VERSION = 70208;
 
 //! initial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
@@ -24,6 +24,10 @@ static const int MIN_PEER_PROTO_VERSION = 70206;
 //! nTime field added to CAddress, starting with this version;
 //! if possible, avoid requesting addresses nodes older than this
 static const int CADDR_TIME_VERSION = 31402;
+
+//! only request blocks from nodes outside this range of versions
+static const int NOBLKS_VERSION_START = 32000;
+static const int NOBLKS_VERSION_END = 32400;
 
 //! BIP 0031, pong message, is enabled for all versions AFTER this one
 static const int BIP0031_VERSION = 60000;
@@ -39,11 +43,5 @@ static const int SIZE_HEADERS_LIMIT_VERSION = 70208;
 
 //! "sendheaders" command and announcing blocks with headers starts with this version
 static const int SENDHEADERS_VERSION = 70002;
-
-//! "feefilter" tells peers to filter invs to you by fee starts with this version
-static const int FEEFILTER_VERSION = 70002;
-
-//! shord-id-based block download starts with this version
-static const int SHORT_IDS_BLOCKS_VERSION = 70002;
 
 #endif // BITCOIN_VERSION_H

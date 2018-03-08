@@ -8,7 +8,7 @@
 #include "chain.h"
 #include "chainparams.h"
 #include "hash.h"
-#include "main.h"
+#include "validation.h"
 #include "pow.h"
 #include "uint256.h"
 
@@ -376,7 +376,7 @@ bool CBlockTreeDB::LoadBlockIndexGuts()
 
                 pcursor->Next();
             } else {
-                return error("LoadBlockIndex() : failed to read value");
+                return error("%s: failed to read value", __func__);
             }
         } else {
             break;

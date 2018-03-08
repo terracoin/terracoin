@@ -124,8 +124,8 @@ share/BitcoindComparisonTool.jar
 .autotools
 /doc/doxygen/
 
-libbitcoinconsensus.pc
-src/qt/terracoin-qt.bash
+libterracoinconsensus.pc
+src/qt/dash-qt.bash
 qa/pull-tester/tests-config.sh
 
 #development symlinks

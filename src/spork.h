@@ -17,7 +17,7 @@ class CSporkManager;
     - This would result in old clients getting confused about which spork is for what
 */
 static const int SPORK_START                                            = 10001;
-static const int SPORK_END                                              = 10013;
+static const int SPORK_END                                              = 10007;
 
 static const int SPORK_1_INSTANTSEND_ENABLED                            = 10001;
 static const int SPORK_2_INSTANTSEND_BLOCK_FILTERING                    = 10002;
@@ -87,7 +87,7 @@ public:
 
     bool Sign(std::string strSignKey);
     bool CheckSignature();
-    void Relay();
+    void Relay(CConnman& connman);
 };
 
 
@@ -102,9 +102,9 @@ public:
 
     CSporkManager() {}
 
-    void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
+    void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
     void ExecuteSpork(int nSporkID, int nValue);
-    bool UpdateSpork(int nSporkID, int64_t nValue);
+    bool UpdateSpork(int nSporkID, int64_t nValue, CConnman& connman);
 
     bool IsSporkActive(int nSporkID);
     int64_t GetSporkValue(int nSporkID);

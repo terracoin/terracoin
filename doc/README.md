@@ -11,8 +11,8 @@ The following are some helpful notes on how to run Terracoin on your native plat
 
 Unpack the files into a directory and run:
 
-- `bin/bitcoin-qt` (GUI) or
-- `bin/bitcoind` (headless)
+- `bin/terracoin-qt` (GUI) or
+- `bin/terracoind` (headless)
 
 ### Windows
 

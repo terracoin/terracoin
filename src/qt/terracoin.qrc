@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/icons">
         <file alias="bitcoin">res/icons/terracoin.png</file>
+        <file alias="prompticon">res/icons/chevron.png</file>
+        <file alias="warning">res/icons/warning.png</file>
     </qresource>
     <qresource prefix="/icons/light">
         <file alias="address-book">res/icons/light/address-book.png</file>
@@ -51,6 +53,12 @@
         <file alias="about">res/icons/light/about.png</file>
         <file alias="about_qt">res/icons/light/about_qt.png</file>
         <file alias="verify">res/icons/light/verify.png</file>
+        <file alias="hd_enabled">res/icons/light/hd_enabled.png</file>
+        <file alias="hd_disabled">res/icons/light/hd_disabled.png</file>
+        <file alias="fontbigger">res/icons/light/fontbigger.png</file>
+        <file alias="fontsmaller">res/icons/light/fontsmaller.png</file>
+        <file alias="transaction_abandoned">res/icons/light/transaction_abandoned.png</file>
+        <file alias="network_disabled">res/icons/light/network_disabled.png</file>
     </qresource>
     <qresource prefix="/icons/trad">
         <file alias="address-book">res/icons/trad/address-book.png</file>
@@ -101,9 +109,17 @@
         <file alias="about">res/icons/trad/about.png</file>
         <file alias="about_qt">res/icons/trad/about_qt.png</file>
         <file alias="verify">res/icons/trad/verify.png</file>
+        <file alias="hd_enabled">res/icons/trad/hd_enabled.png</file>
+        <file alias="hd_disabled">res/icons/trad/hd_disabled.png</file>
+        <file alias="fontbigger">res/icons/trad/fontbigger.png</file>
+        <file alias="fontsmaller">res/icons/trad/fontsmaller.png</file>
+        <file alias="transaction_abandoned">res/icons/trad/transaction_abandoned.png</file>
+        <file alias="network_disabled">res/icons/trad/network_disabled.png</file>
     </qresource>
     <qresource prefix="/css">
         <file alias="light">res/css/light.css</file>
+        <file alias="light-hires">res/css/light-hires.css</file>
+        <file alias="trad">res/css/trad.css</file>
     </qresource>
     <qresource prefix="/images/light">
         <file alias="about">res/images/light/about.png</file>
