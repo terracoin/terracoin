@@ -618,7 +618,7 @@ void MasternodeList::updateVoteList(bool reset)
         if (GetAdjustedTime() > nStartEpoch) {
             nStart = GetAdjustedTime();
         }
-        int nRemaining = nPayments - floor((nEndEpoch - nStartEpoch) / nSuperblockCycleSeconds);
+        int nRemaining = nPayments - floor((nStart - nStartEpoch) / nSuperblockCycleSeconds);
 
         CBitcoinAddress address2(objJSON["payment_address"].get_str());
 
