@@ -12,6 +12,13 @@
 #include "wallet/wallet.h"
 #include "walletmodel.h"
 
+#include "messagesigner.h"
+#include "governance.h"
+#include "governance-object.h"
+#include "governance-vote.h"
+#include "governance-classes.h"
+#include "governance-validators.h"
+
 #include <QTimer>
 #include <QMessageBox>
 
@@ -35,6 +42,38 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->setupUi(this);
 
     ui->startButton->setEnabled(false);
+    ui->voteManyYesButton->setEnabled(false);
+    ui->voteManyNoButton->setEnabled(false);
+
+    int columnNameWidth = 200;
+    int columnCreatedWidth = 90;
+    int columnStartWidth = 90;
+    int columnEndWidth = 90;
+    int columnYesWidth = 45;
+    int columnNoWidth = 45;
+    int columnAbstainWidth = 45;
+    int columnMonthlyWidth = 80;
+    int columnPaymentsWidth = 60;
+    int columnRemainingWidth = 60;
+    int columnTotalWidth = 80;
+    int columnPassingWidth = 45;
+    int columnPayeeWidth = 200;
+    int columnHashWidth = 200;
+
+    ui->tableWidgetVoting->setColumnWidth(0, columnNameWidth);
+    ui->tableWidgetVoting->setColumnWidth(1, columnCreatedWidth);
+    ui->tableWidgetVoting->setColumnWidth(2, columnStartWidth);
+    ui->tableWidgetVoting->setColumnWidth(3, columnEndWidth);
+    ui->tableWidgetVoting->setColumnWidth(4, columnYesWidth);
+    ui->tableWidgetVoting->setColumnWidth(5, columnNoWidth);
+    ui->tableWidgetVoting->setColumnWidth(6, columnAbstainWidth);
+    ui->tableWidgetVoting->setColumnWidth(7, columnMonthlyWidth);
+    ui->tableWidgetVoting->setColumnWidth(8, columnPaymentsWidth);
+    ui->tableWidgetVoting->setColumnWidth(9, columnRemainingWidth);
+    ui->tableWidgetVoting->setColumnWidth(10, columnTotalWidth);
+    ui->tableWidgetVoting->setColumnWidth(11, columnPassingWidth);
+    ui->tableWidgetVoting->setColumnWidth(12, columnPayeeWidth);
+    ui->tableWidgetVoting->setColumnWidth(13, columnHashWidth);
 
     int columnAliasWidth = 100;
     int columnAddressWidth = 200;
@@ -66,12 +105,41 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateVoteList()));
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
     timer->start(1000);
 
     fFilterUpdated = false;
     nTimeFilterUpdated = GetTime();
     updateNodeList();
+    updateVoteList();
+
+    // Compute last/next superblock
+    int nLastSuperblock, nNextSuperblock;
+
+    // Get current block height
+    int nBlockHeight = 0;
+    {   
+        LOCK(cs_main); 
+        nBlockHeight = (int)chainActive.Height();
+    }
+
+    // Get chain parameters
+    int nSuperblockStartBlock = Params().GetConsensus().nSuperblockStartBlock;
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+
+    // Get first superblock
+    int nFirstSuperblockOffset = (nSuperblockCycle - nSuperblockStartBlock % nSuperblockCycle) % nSuperblockCycle;
+    int nFirstSuperblock = nSuperblockStartBlock + nFirstSuperblockOffset;
+
+    if(nBlockHeight < nFirstSuperblock){
+        nLastSuperblock = 0;
+        nNextSuperblock = nFirstSuperblock;
+    } else {
+        nLastSuperblock = nBlockHeight - nBlockHeight % nSuperblockCycle;
+        nNextSuperblock = nLastSuperblock + nSuperblockCycle;
+    }
+    ui->superblockLabel->setText(QString::number(nNextSuperblock));
 }
 
 MasternodeList::~MasternodeList()
@@ -424,4 +492,373 @@ void MasternodeList::on_tableWidgetMyMasternodes_itemSelectionChanged()
 void MasternodeList::on_UpdateButton_clicked()
 {
     updateMyNodeList(true);
+}
+
+void MasternodeList::on_UpdateVotesButton_clicked()
+{
+    updateVoteList(true);
+}
+
+void MasternodeList::updateVoteList(bool reset)
+{
+
+    static int64_t lastVoteListUpdate = 0;
+    int nMnCount = mnodeman.CountEnabled();
+
+    // CALCULATE THE MINUMUM VOTE COUNT REQUIRED FOR FULL SIGNAL
+
+    int nAbsVoteReq;
+    if(Params().NetworkIDString() == CBaseChainParams::MAIN)
+    {
+        nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nMnCount / 10);
+    }
+    else
+    {
+        nAbsVoteReq = Params().GetConsensus().nGovernanceMinQuorum;
+    }
+
+    // automatically update my masternode list only once in MY_MASTERNODELIST_UPDATE_SECONDS seconds,
+    // this update still can be triggered manually at any time via button click
+    int64_t timeTillUpdate = lastVoteListUpdate + MY_MASTERNODELIST_UPDATE_SECONDS - GetTime();
+    ui->voteSecondsLabel->setText(QString::number(timeTillUpdate));
+
+    if(timeTillUpdate > 0 && !reset) return;
+    lastVoteListUpdate = GetTime();
+
+    QString strToFilter;
+    ui->tableWidgetVoting->setSortingEnabled(false);
+    ui->tableWidgetVoting->clearContents();
+    ui->tableWidgetVoting->setRowCount(0);
+
+    // Compute last/next superblock
+    int nLastSuperblock, nNextSuperblock;
+
+    // Get current block height
+    int nBlockHeight = 0;
+    {   
+        LOCK(cs_main); 
+        nBlockHeight = (int)chainActive.Height();
+    }
+
+    // Get chain parameters
+    int nSuperblockStartBlock = Params().GetConsensus().nSuperblockStartBlock;
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+    int nPowTargetSpacing = Params().GetConsensus().nPowTargetSpacing;
+
+    // Get first superblock
+    int nFirstSuperblockOffset = (nSuperblockCycle - nSuperblockStartBlock % nSuperblockCycle) % nSuperblockCycle;
+    int nFirstSuperblock = nSuperblockStartBlock + nFirstSuperblockOffset;
+
+    if(nBlockHeight < nFirstSuperblock){
+        nLastSuperblock = 0;
+        nNextSuperblock = nFirstSuperblock;
+    } else {
+        nLastSuperblock = nBlockHeight - nBlockHeight % nSuperblockCycle;
+        nNextSuperblock = nLastSuperblock + nSuperblockCycle;
+    }
+
+    int64_t nNextTime = GetAdjustedTime() + ((nNextSuperblock - nBlockHeight) * nPowTargetSpacing);
+    int64_t nSuperblockCycleSeconds = nSuperblockCycle * nPowTargetSpacing;
+    int64_t nSuperblockValue = round((int64_t)CSuperblock::GetPaymentsLimit(nNextSuperblock) / 100000000);
+    int64_t nTotalAllotted = 0;
+
+    std::vector<CGovernanceObject*> objs = governance.GetAllNewerThan(0);
+    BOOST_FOREACH(CGovernanceObject* pGovObj, objs)
+    {
+        if(!pGovObj->IsSetCachedValid()) continue;
+        if(pGovObj->GetObjectType() != GOVERNANCE_OBJECT_PROPOSAL) continue;
+
+        UniValue obj(UniValue::VOBJ);
+        obj.read(pGovObj->GetDataAsString());
+        std::vector<UniValue> arr1 = obj.getValues();
+        std::vector<UniValue> arr2 = arr1.at(0).getValues();
+        UniValue objJSON = arr2.at(1);
+
+        int64_t nStartEpoch = 0;
+        const UniValue uValueSE = objJSON["start_epoch"];
+        switch(uValueSE.getType()) {
+            case UniValue::VNUM:
+                nStartEpoch = uValueSE.get_int64();
+                break;
+            default:
+                std::istringstream ss(uValueSE.get_str());
+                ss >> nStartEpoch;
+                break;
+        }
+
+        int64_t nEndEpoch = 0;
+        const UniValue uValueEE = objJSON["end_epoch"];
+        switch(uValueEE.getType()) {
+            case UniValue::VNUM:
+                nEndEpoch = uValueEE.get_int64();
+                break;
+            default:
+                std::istringstream ss(uValueEE.get_str());
+                ss >> nEndEpoch;
+                break;
+        }
+
+        int64_t nAmount = 0;
+        const UniValue uValuePA = objJSON["payment_amount"];
+        switch(uValuePA.getType()) {
+            case UniValue::VNUM:
+                nAmount = uValuePA.get_int64();
+                break;
+            default:
+                std::istringstream ss(uValuePA.get_str());
+                ss >> nAmount;
+                break;
+        }
+
+        // Don't display past proposals
+	if (nEndEpoch < nNextTime) continue;
+
+        int nPayments = floor((nEndEpoch - nStartEpoch) / nSuperblockCycleSeconds);
+        int nStart = nStartEpoch;
+        if (GetAdjustedTime() > nStartEpoch) {
+            nStart = GetAdjustedTime();
+        }
+        int nRemaining = nPayments - floor((nEndEpoch - nStartEpoch) / nSuperblockCycleSeconds);
+
+        CBitcoinAddress address2(objJSON["payment_address"].get_str());
+
+        // populate list
+        QLabel *nameItem = new QLabel("<a href=\"" + QString::fromStdString(objJSON["url"].get_str()) + "\">" + QString::fromStdString(objJSON["name"].get_str()) + "</a>");
+        nameItem->setOpenExternalLinks(true);
+        nameItem->setStyleSheet("background-color: transparent; padding: 0 1em;");
+        QTableWidgetItem *hashItem = new QTableWidgetItem(QString::fromStdString(pGovObj->GetHash().ToString()));
+        QTableWidgetItem *blockCreatedItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", (int64_t)pGovObj->GetCreationTime() + GetOffsetFromUtc())));
+        QTableWidgetItem *blockStartItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", nStartEpoch + GetOffsetFromUtc())));
+        QTableWidgetItem *blockEndItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", nEndEpoch + GetOffsetFromUtc())));
+        QTableWidgetItem *yesVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetYesCount(VOTE_SIGNAL_FUNDING)));
+        QTableWidgetItem *noVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetNoCount(VOTE_SIGNAL_FUNDING)));
+        QTableWidgetItem *abstainVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetAbstainCount(VOTE_SIGNAL_FUNDING)));
+        QTableWidgetItem *monthlyPaymentItem = new QTableWidgetItem(QString::number(nAmount));
+        QTableWidgetItem *paymentsItem = new QTableWidgetItem(QString::number(nPayments));
+        QTableWidgetItem *remainingPaymentsItem = new QTableWidgetItem(QString::number(nRemaining));
+        QTableWidgetItem *totalPaymentItem = new QTableWidgetItem(QString::number(nAmount * nPayments));
+        QTableWidgetItem *AddressItem = new QTableWidgetItem(QString::fromStdString(address2.ToString()));
+
+        std::string projected;            
+        if ((int64_t)pGovObj->GetAbsoluteYesCount(VOTE_SIGNAL_FUNDING) >= nAbsVoteReq){
+            nTotalAllotted += nAmount;
+            projected = "Yes";
+        } else {
+            projected = "No";
+        }
+        QTableWidgetItem *projectedItem = new QTableWidgetItem(QString::fromStdString(projected));
+
+        ui->tableWidgetVoting->insertRow(0);
+// FIXME if projected == No Red, Yes Green
+        ui->tableWidgetVoting->setCellWidget(0, 0, nameItem);
+        ui->tableWidgetVoting->setItem(0, 1, blockCreatedItem);
+        ui->tableWidgetVoting->setItem(0, 2, blockStartItem);
+        ui->tableWidgetVoting->setItem(0, 3, blockEndItem);
+        ui->tableWidgetVoting->setItem(0, 4, yesVotesItem);
+        ui->tableWidgetVoting->setItem(0, 5, noVotesItem);
+        ui->tableWidgetVoting->setItem(0, 6, abstainVotesItem);
+        ui->tableWidgetVoting->setItem(0, 7, monthlyPaymentItem);
+        ui->tableWidgetVoting->setItem(0, 8, paymentsItem);
+        ui->tableWidgetVoting->setItem(0, 9, remainingPaymentsItem);
+        ui->tableWidgetVoting->setItem(0, 10, totalPaymentItem);
+        ui->tableWidgetVoting->setItem(0, 11, projectedItem);
+        ui->tableWidgetVoting->setItem(0, 12, AddressItem);
+        ui->tableWidgetVoting->setItem(0, 13, hashItem);
+    }
+
+    ui->superblockLabel->setText(QString::number(nNextSuperblock));
+    ui->totalAllottedLabel->setText(QString::number(nTotalAllotted) + " of " + QString::number(nSuperblockValue));
+    ui->tableWidgetVoting->setSortingEnabled(true);
+
+    // reset "timer"
+    ui->voteSecondsLabel->setText("0");
+}
+
+void MasternodeList::VoteMany(std::string strCommand)
+{
+    // Find selected Budget Hash
+    QItemSelectionModel* selectionModel = ui->tableWidgetVoting->selectionModel();
+    QModelIndexList selected = selectionModel->selectedRows();
+    if(selected.count() == 0)
+        return;
+
+    QModelIndex index = selected.at(0);
+    int r = index.row();
+    std::string strHash = ui->tableWidgetVoting->item(r, 2)->text().toStdString();
+    uint256 hash;
+    hash.SetHex(strHash);
+
+    vote_signal_enum_t eVoteSignal = CGovernanceVoting::ConvertVoteSignal("funding");
+    if(eVoteSignal == VOTE_SIGNAL_NONE) {
+        // "Invalid vote signal. Please using one of the following: (funding|valid|delete|endorsed) OR `custom sentinel code`"
+    }
+
+    vote_outcome_enum_t eVoteOutcome = CGovernanceVoting::ConvertVoteOutcome(strCommand);
+    if(eVoteOutcome == VOTE_OUTCOME_NONE) {
+        // "Invalid vote outcome. Please use one of the following: 'yes', 'no' or 'abstain'"
+    }
+
+    int nSuccessful = 0;
+    int nFailed = 0;
+    std::string statusObj;
+
+    std::vector<CMasternodeConfig::CMasternodeEntry> mnEntries;
+    mnEntries = masternodeConfig.getEntries();
+
+    BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
+        std::string strError;
+        std::vector<unsigned char> vchMasterNodeSignature;
+        std::string strMasterNodeSignMessage;
+
+        CPubKey pubKeyCollateralAddress;
+        CKey keyCollateralAddress;
+        CPubKey pubKeyMasternode;
+        CKey keyMasternode;
+
+        if(!CMessageSigner::GetKeysFromSecret(mne.getPrivKey(), keyMasternode, pubKeyMasternode)){
+            nFailed++;
+            statusObj += "\nFailed to vote with " + mne.getAlias() + ". Masternode signing error, could not set key correctly: " + statusObj;
+            continue;
+        }
+
+        uint256 nTxHash;
+        nTxHash.SetHex(mne.getTxHash());
+
+        int32_t nOutputIndex = 0;
+        if(!ParseInt32(mne.getOutputIndex(), &nOutputIndex)) {
+            continue;
+        }
+
+        COutPoint outpoint(nTxHash, nOutputIndex);
+
+        CMasternode mn;
+        bool fMnFound = mnodeman.Get(outpoint, mn);
+
+        if(!fMnFound) {
+            nFailed++;
+            statusObj += "\nFailed to find masternode " + mne.getAlias() + " by collateral output. Error: " + statusObj;
+            continue;
+        }
+
+        CGovernanceVote vote(mn.vin.prevout, hash, eVoteSignal, eVoteOutcome);
+        if(!vote.Sign(keyMasternode, pubKeyMasternode)){
+            nFailed++;
+            statusObj += "\nFailed to vote with " + mne.getAlias() + ". Error: Failure to sign";
+            continue;
+        }
+
+        CGovernanceException exception;
+        if(governance.ProcessVoteAndRelay(vote, exception, *g_connman)) {
+            nSuccessful++;
+        }
+        else {
+            nFailed++;
+            statusObj += "\nFailed to vote on proposal. Error: " + exception.GetMessage();
+        }
+    }
+    std::string returnObj;
+    returnObj = strprintf("Voted successfully %d time(s) and failed %d time(s).", nSuccessful, nFailed);
+    if (nFailed > 0)
+        returnObj += statusObj;
+
+    QMessageBox msg;
+    msg.setText(QString::fromStdString(returnObj));
+    msg.exec();
+    updateVoteList(true);
+}
+
+void MasternodeList::on_voteManyYesButton_clicked()
+{
+    // Display message box
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm vote-many"),
+        tr("Are you sure you want to vote with ALL of your masternodes?"),
+        QMessageBox::Yes | QMessageBox::Cancel,
+        QMessageBox::Cancel);
+
+    if(retval != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    WalletModel::EncryptionStatus encStatus = walletModel->getEncryptionStatus();
+    if(encStatus == walletModel->Locked || encStatus == walletModel->UnlockedForMixingOnly)
+    {
+        WalletModel::UnlockContext ctx(walletModel->requestUnlock(true));
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            return;
+        }
+        VoteMany("yes");
+        return;
+    }
+
+    VoteMany("yes");
+}
+
+void MasternodeList::on_voteManyNoButton_clicked()
+{
+    // Display message box
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm vote-many"),
+        tr("Are you sure you want to vote with ALL of your masternodes?"),
+        QMessageBox::Yes | QMessageBox::Cancel,
+        QMessageBox::Cancel);
+
+    if(retval != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    WalletModel::EncryptionStatus encStatus = walletModel->getEncryptionStatus();
+    if(encStatus == walletModel->Locked || encStatus == walletModel->UnlockedForMixingOnly)
+    {
+        WalletModel::UnlockContext ctx(walletModel->requestUnlock(true));
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            return;
+        }
+        VoteMany("no");
+        return;
+    }
+
+    VoteMany("no");
+}
+
+void MasternodeList::on_voteManyAbstainButton_clicked()
+{
+    // Display message box
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm vote-many"),
+        tr("Are you sure you want to vote with ALL of your masternodes?"),
+        QMessageBox::Yes | QMessageBox::Cancel,
+        QMessageBox::Cancel);
+
+    if(retval != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    WalletModel::EncryptionStatus encStatus = walletModel->getEncryptionStatus();
+    if(encStatus == walletModel->Locked || encStatus == walletModel->UnlockedForMixingOnly)
+    {
+        WalletModel::UnlockContext ctx(walletModel->requestUnlock(true));
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            return;
+        }
+        VoteMany("abstain");
+        return;
+    }
+
+    VoteMany("abstain");
+}
+
+void MasternodeList::on_tableWidgetVoting_itemSelectionChanged()
+{
+    if(ui->tableWidgetVoting->selectedItems().count() > 0)
+    {
+        ui->voteManyYesButton->setEnabled(true);
+        ui->voteManyNoButton->setEnabled(true);
+    }
 }

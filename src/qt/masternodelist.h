@@ -38,6 +38,7 @@ public:
     void setWalletModel(WalletModel *walletModel);
     void StartAlias(std::string strAlias);
     void StartAll(std::string strCommand = "start-all");
+    void VoteMany(std::string strCommand);
 
 private:
     QMenu *contextMenu;
@@ -48,6 +49,7 @@ public Q_SLOTS:
     void updateMyMasternodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint);
     void updateMyNodeList(bool fForce = false);
     void updateNodeList();
+    void updateVoteList(bool reset = false);
 
 Q_SIGNALS:
 
@@ -73,5 +75,11 @@ private Q_SLOTS:
     void on_startMissingButton_clicked();
     void on_tableWidgetMyMasternodes_itemSelectionChanged();
     void on_UpdateButton_clicked();
+
+    void on_voteManyYesButton_clicked();
+    void on_voteManyNoButton_clicked();
+    void on_voteManyAbstainButton_clicked();
+    void on_tableWidgetVoting_itemSelectionChanged();
+    void on_UpdateVotesButton_clicked();
 };
 #endif // MASTERNODELIST_H
