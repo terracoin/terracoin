@@ -1,5 +1,5 @@
-Terracoin Core 0.12.1.8
-=======================
+Terracoin Core 0.12.2
+=====================
 
 This is the official reference wallet for Terracoin digital currency and comprises the backbone of the Terracoin peer-to-peer network. You can [download Terracoin Core](https://www.terracoin.io/downloads/) or [build it yourself](#building) using the guides below.
 
