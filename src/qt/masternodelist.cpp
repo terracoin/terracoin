@@ -33,6 +33,30 @@ int GetOffsetFromUtc()
 #endif
 }
 
+void morphNumericString (char *s, int n) {
+    char *p;
+    int count;
+
+    p = strchr (s,'.');         // Find decimal point, if any.
+    if (p != NULL) {
+        count = n;              // Adjust for more or less decimals.
+        while (count >= 0) {    // Maximum decimals allowed.
+             count--;
+             if (*p == '\0')    // If there's less than desired.
+                 break;
+             p++;               // Next character.
+        }
+
+        *p-- = '\0';            // Truncate string.
+        while (*p == '0')       // Remove trailing zeros.
+            *p-- = '\0';
+
+        if (*p == '.') {        // If all decimals were zeros, remove ".".
+            *p = '\0';
+        }
+    }
+}
+
 MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MasternodeList),
@@ -559,8 +583,8 @@ void MasternodeList::updateVoteList(bool reset)
 
     int64_t nNextTime = GetAdjustedTime() + ((nNextSuperblock - nBlockHeight) * nPowTargetSpacing);
     int64_t nSuperblockCycleSeconds = nSuperblockCycle * nPowTargetSpacing;
-    int64_t nSuperblockValue = round((int64_t)CSuperblock::GetPaymentsLimit(nNextSuperblock) / 100000000);
-    int64_t nTotalAllotted = 0;
+    double nSuperblockValue = CSuperblock::GetPaymentsLimit(nNextSuperblock) / 100000000;
+    double nTotalAllotted = 0;
 
     std::vector<CGovernanceObject*> objs = governance.GetAllNewerThan(0);
     BOOST_FOREACH(CGovernanceObject* pGovObj, objs)
@@ -598,15 +622,16 @@ void MasternodeList::updateVoteList(bool reset)
                 break;
         }
 
-        int64_t nAmount = 0;
+        double nAmount = 0;
         const UniValue uValuePA = objJSON["payment_amount"];
         switch(uValuePA.getType()) {
             case UniValue::VNUM:
-                nAmount = uValuePA.get_int64();
+                nAmount = uValuePA.get_real();
                 break;
             default:
-                std::istringstream ss(uValuePA.get_str());
-                ss >> nAmount;
+                nAmount = ::atof(uValuePA.get_str().c_str());
+                //std::istringstream ss(uValuePA.get_str());
+                //ss >> nAmount;
                 break;
         }
 
@@ -633,10 +658,16 @@ void MasternodeList::updateVoteList(bool reset)
         QTableWidgetItem *yesVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetYesCount(VOTE_SIGNAL_FUNDING)));
         QTableWidgetItem *noVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetNoCount(VOTE_SIGNAL_FUNDING)));
         QTableWidgetItem *abstainVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetAbstainCount(VOTE_SIGNAL_FUNDING)));
-        QTableWidgetItem *monthlyPaymentItem = new QTableWidgetItem(QString::number(nAmount));
+        char strAmount[50];
+        sprintf(strAmount, "%.8f", nAmount);
+        morphNumericString(strAmount, 8);
+        QTableWidgetItem *monthlyPaymentItem = new QTableWidgetItem(QString::fromStdString(strAmount));
         QTableWidgetItem *paymentsItem = new QTableWidgetItem(QString::number(nPayments));
         QTableWidgetItem *remainingPaymentsItem = new QTableWidgetItem(QString::number(nRemaining));
-        QTableWidgetItem *totalPaymentItem = new QTableWidgetItem(QString::number(nAmount * nPayments));
+        char strTotalPayments[50];
+        sprintf(strTotalPayments, "%.8f", nAmount * nPayments);
+        morphNumericString(strTotalPayments, 8);
+        QTableWidgetItem *totalPaymentItem = new QTableWidgetItem(QString::fromStdString(strTotalPayments));
         QTableWidgetItem *AddressItem = new QTableWidgetItem(QString::fromStdString(address2.ToString()));
 
         std::string projected;            
@@ -667,7 +698,13 @@ void MasternodeList::updateVoteList(bool reset)
     }
 
     ui->superblockLabel->setText(QString::number(nNextSuperblock));
-    ui->totalAllottedLabel->setText(QString::number(nTotalAllotted) + " of " + QString::number(nSuperblockValue));
+    char strAllotted[50];
+    sprintf(strAllotted, "%.8f", nTotalAllotted);
+    morphNumericString(strAllotted, 8);
+    char strSuperblockValue[50];
+    sprintf(strSuperblockValue, "%.8f", nSuperblockValue);
+    morphNumericString(strSuperblockValue, 8);
+    ui->totalAllottedLabel->setText(QString::fromStdString(strAllotted) + " of " + QString::fromStdString(strSuperblockValue));
     ui->tableWidgetVoting->setSortingEnabled(true);
 
     // reset "timer"
@@ -684,7 +721,7 @@ void MasternodeList::VoteMany(std::string strCommand)
 
     QModelIndex index = selected.at(0);
     int r = index.row();
-    std::string strHash = ui->tableWidgetVoting->item(r, 2)->text().toStdString();
+    std::string strHash = ui->tableWidgetVoting->item(r, 13)->text().toStdString();
     uint256 hash;
     hash.SetHex(strHash);
 
