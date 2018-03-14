@@ -340,11 +340,6 @@ std::string gbt_vb_name(const Consensus::DeploymentPos pos) {
     return s;
 }
 
-#if 0
-getblocktemplate is disabled for merge-mining, since getauxblock should
-be used instead.  All blocks are required to be merge-mined, thus GBT
-makes no sense.
-
 UniValue getblocktemplate(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() > 1)
@@ -744,7 +739,6 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
 
     return result;
 }
-#endif // Disabled getblocktemplate
 
 class submitblock_StateCatcher : public CValidationInterface
 {

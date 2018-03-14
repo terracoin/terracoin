@@ -144,6 +144,8 @@ testScriptsExt = [
     'bip68-sequence.py',
     'bipdersig-p2p.py', # NOTE: needs terracoin_hash to pass
     'bipdersig.py',
+    'getblocktemplate_longpoll.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651
+    'getblocktemplate_proposals.py',
     'txn_doublespend.py',
     'txn_clone.py --mineblock',
     # 'pruning.py', # Prune mode is incompatible with -txindex.
