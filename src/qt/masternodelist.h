@@ -51,7 +51,14 @@ public Q_SLOTS:
     void updateNodeList();
     void updateVoteList(bool reset = false);
 
+    void updateProposalTotals();
+    void populateStartDates();
+    uint256 prepareProposal(uint256 hashParent, int nRevision, int64_t nTime, std::string strData);
+    uint256 submitProposal(uint256 hashParent, int nRevision, int64_t nTime, uint256 txidFee, std::string strData);
+
 Q_SIGNALS:
+    void requestedProposalOverlay(QString submitStr);
+    void requestedConfirmationUpdate(int count, bool unlock, bool failed);
 
 private:
     QTimer *timer;
@@ -67,6 +74,14 @@ private:
 
     QString strCurrentFilter;
 
+    QString strCurrentName;
+    double doubleCurrentAmount = 0;
+    int intCurrentPayments = 1;
+
+    void showProposalModal(QString submitStr);
+    void updateProposalConfirmations(int count, bool unlock, bool failed);
+    void formIsValid();
+
 private Q_SLOTS:
     void showContextMenu(const QPoint &);
     void on_filterLineEdit_textChanged(const QString &strFilterIn);
@@ -81,5 +96,11 @@ private Q_SLOTS:
     void on_voteManyAbstainButton_clicked();
     void on_tableWidgetVoting_itemSelectionChanged();
     void on_UpdateVotesButton_clicked();
+
+    void on_proposalName_textChanged(const QString &strProposalName);
+    void on_trcAddress_textChanged(const QString &strAddress);
+    void on_paymentSlider_valueChanged(const int &intPayments);
+    void on_amounttrc_valueChanged(const double &doubleAmount);
+    void on_createProposal_clicked();
 };
 #endif // MASTERNODELIST_H

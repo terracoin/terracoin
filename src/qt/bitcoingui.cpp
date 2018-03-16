@@ -10,6 +10,7 @@
 #include "guiconstants.h"
 #include "guiutil.h"
 #include "modaloverlay.h"
+#include "modalproposaloverlay.h"
 #include "networkstyle.h"
 #include "notificator.h"
 #include "openuridialog.h"
@@ -118,6 +119,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     rpcConsole(0),
     helpMessageDialog(0),
     modalOverlay(0),
+    modalProposalOverlay(0),
     prevBlocks(0),
     spinnerFrame(0),
     platformStyle(platformStyle)
@@ -255,6 +257,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     connect(labelConnectionsIcon, SIGNAL(clicked(QPoint)), this, SLOT(showPeers()));
 
     modalOverlay = new ModalOverlay(this->centralWidget());
+    modalProposalOverlay = new ModalProposalOverlay(this->centralWidget());
 #ifdef ENABLE_WALLET
     if(enableWallet) {
         connect(walletFrame, SIGNAL(requestedSyncWarningInfo()), this, SLOT(showModalOverlay()));
@@ -1406,6 +1409,18 @@ void BitcoinGUI::setTrayIconVisible(bool fHideTrayIcon)
     {
         trayIcon->setVisible(!fHideTrayIcon);
     }
+}
+
+void BitcoinGUI::showModalProposalOverlay(QString submitStr)
+{
+    if (modalProposalOverlay)
+        modalProposalOverlay->toggleVisibility(submitStr);
+}
+
+void BitcoinGUI::updateModalProposalConfirmations(int count, bool unlock, bool failed)
+{
+    if (modalProposalOverlay)
+        modalProposalOverlay->updateConfirmations(count, unlock, failed);
 }
 
 void BitcoinGUI::showModalOverlay()

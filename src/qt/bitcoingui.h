@@ -31,6 +31,7 @@ class WalletFrame;
 class WalletModel;
 class HelpMessageDialog;
 class ModalOverlay;
+class ModalProposalOverlay;
 class MasternodeList;
 
 class CWallet;
@@ -134,6 +135,7 @@ private:
     RPCConsole *rpcConsole;
     HelpMessageDialog *helpMessageDialog;
     ModalOverlay *modalOverlay;
+    ModalProposalOverlay *modalProposalOverlay;
 
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;
@@ -280,6 +282,9 @@ private Q_SLOTS:
     void toggleNetworkActive();
 
     void showModalOverlay();
+
+    void showModalProposalOverlay(QString submitStr);
+    void updateModalProposalConfirmations(int count, bool unlock, bool failed);
 };
 
 class UnitDisplayStatusBarControl : public QLabel

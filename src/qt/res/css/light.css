@@ -129,6 +129,11 @@ QPushButton:pressed {
 border:1px solid #333;
 }
 
+QPushButton:disabled {
+background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: .01 #ddd, stop: .1 #ccc, stop: .95 #ccc, stop: 1 #bbb);
+color: #666;
+}
+
 QComboBox { /* Dropdown Menus */
 border:1px solid #82C3E6;
 padding: 3px 5px 3px 5px;

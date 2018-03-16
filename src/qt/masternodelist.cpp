@@ -19,8 +19,13 @@
 #include "governance-classes.h"
 #include "governance-validators.h"
 
+#include "bitcoingui.h"
+
 #include <QTimer>
 #include <QMessageBox>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 int GetOffsetFromUtc()
 {
@@ -164,6 +169,13 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
         nNextSuperblock = nLastSuperblock + nSuperblockCycle;
     }
     ui->superblockLabel->setText(QString::number(nNextSuperblock));
+
+    QRegExp reg_alphanum("^[-_A-Za-z0-9]{3,99}$");
+    QRegExp reg_base58("^[a-km-zA-HJ-NP-Z1-9]{25,34}$");
+    populateStartDates();
+    ui->proposalName->setValidator(new QRegExpValidator(reg_alphanum, this));
+    ui->trcAddress->setValidator(new QRegExpValidator(reg_base58, this));
+    formIsValid();
 }
 
 MasternodeList::~MasternodeList()
@@ -898,4 +910,325 @@ void MasternodeList::on_tableWidgetVoting_itemSelectionChanged()
         ui->voteManyYesButton->setEnabled(true);
         ui->voteManyNoButton->setEnabled(true);
     }
+}
+
+void MasternodeList::formIsValid() {
+    int error = 0;
+
+    if (ui->proposalName->hasAcceptableInput()) {
+        // check if it's avail via ajax call
+        // if taken change to red
+        ui->proposalName->setStyleSheet("QLineEdit { border-color: initial; }");
+    } else {
+        error++;
+        ui->proposalName->setStyleSheet("QLineEdit { border-color: red; }");
+    }
+
+    if (ui->trcAddress->hasAcceptableInput()) {
+        // check if it's avail via ajax call
+        // if taken change to red
+        ui->trcAddress->setStyleSheet("QLineEdit { border-color: initial; }");
+    } else {
+        error++;
+        ui->trcAddress->setStyleSheet("QLineEdit { border-color: red; }");
+    }
+
+    if (error > 0) {
+        ui->createProposal->setEnabled(false);
+    } else {
+        ui->createProposal->setEnabled(true);
+    }
+}
+
+void MasternodeList::on_trcAddress_textChanged(const QString &strAddress)
+{
+    formIsValid();
+}
+
+void MasternodeList::on_proposalName_textChanged(const QString &strProposalName)
+{
+    strCurrentName = strProposalName;
+
+    if (ui->proposalName->hasAcceptableInput()) {
+    	ui->label_servicesurl->setText(QString::fromStdString("https://services.terracoin.io/p/") + strProposalName);
+    } else {
+        ui->label_servicesurl->setText(QString::fromStdString("https://services.terracoin.io/p/proposal-name"));
+    }
+
+    formIsValid();
+}
+
+void MasternodeList::on_paymentSlider_valueChanged(const int &intPayments)
+{
+    intCurrentPayments = intPayments;
+
+    ui->label_payments->setText(QString::number(intCurrentPayments));
+    MasternodeList::updateProposalTotals();
+}
+
+void MasternodeList::on_amounttrc_valueChanged(const double &doubleAmount)
+{
+    doubleCurrentAmount = doubleAmount;
+
+    MasternodeList::updateProposalTotals();
+}
+
+void MasternodeList::updateProposalTotals() {
+    ui->label_totaltrc->setText(QString::number(doubleCurrentAmount * intCurrentPayments, 'f', 2) + " TRC");
+}
+
+void MasternodeList::showProposalModal(QString submitStr)
+{
+    Q_EMIT requestedProposalOverlay(submitStr);
+}
+
+void MasternodeList::updateProposalConfirmations(int count, bool unlock, bool failed)
+{
+    Q_EMIT requestedConfirmationUpdate(count, unlock, failed);
+}
+
+void MasternodeList::populateStartDates()
+{
+    // Compute last/next superblock
+    int nLastSuperblock, nNextSuperblock;
+
+    // Get current block height
+    int nBlockHeight = 0;
+    {   
+        LOCK(cs_main); 
+        nBlockHeight = (int)chainActive.Height();
+    }
+
+    // Get chain parameters
+    int nSuperblockStartBlock = Params().GetConsensus().nSuperblockStartBlock;
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+    int nPowTargetSpacing = Params().GetConsensus().nPowTargetSpacing;
+
+    // Get first superblock
+    int nFirstSuperblockOffset = (nSuperblockCycle - nSuperblockStartBlock % nSuperblockCycle) % nSuperblockCycle;
+    int nFirstSuperblock = nSuperblockStartBlock + nFirstSuperblockOffset;
+
+    if(nBlockHeight < nFirstSuperblock){
+        nLastSuperblock = 0;
+        nNextSuperblock = nFirstSuperblock;
+    } else {
+        nLastSuperblock = nBlockHeight - nBlockHeight % nSuperblockCycle;
+        nNextSuperblock = nLastSuperblock + nSuperblockCycle;
+    }
+
+    int64_t nNextTime = GetAdjustedTime() + ((nNextSuperblock - nBlockHeight) * nPowTargetSpacing);
+    int64_t nSuperblockCycleSeconds = nSuperblockCycle * nPowTargetSpacing;
+
+    QStringList list;
+    QDateTime timestamp;
+    timestamp.setTime_t(nNextTime);
+    list << timestamp.toString(Qt::SystemLocaleShortDate);
+    int i;
+    for( i = 1; i <= 14; i++) {
+        nNextTime += nSuperblockCycleSeconds;
+        timestamp.setTime_t(nNextTime);
+        list << timestamp.toString(Qt::SystemLocaleShortDate);
+    }
+
+    ui->startDate->clear();
+    ui->startDate->addItems(list);
+    ui->startDate->setCurrentIndex(0);
+}
+
+void MasternodeList::on_createProposal_clicked()
+{
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+    int nPowTargetSpacing = Params().GetConsensus().nPowTargetSpacing;
+    int nSuperblockCycleTime = nSuperblockCycle * nPowTargetSpacing;
+
+    // Build HEXed string
+    int64_t start = QDateTime::fromString(ui->startDate->currentText(), Qt::SystemLocaleShortDate).toUTC().toTime_t();
+    QJsonObject proposalObj;
+    proposalObj.insert(QString("name"), QJsonValue(strCurrentName));
+    proposalObj.insert(QString("url"), QJsonValue("https://services.terracoin.io/p/" + strCurrentName));
+    proposalObj.insert(QString("payment_address"), QJsonValue(ui->trcAddress->text()));
+    proposalObj.insert(QString("payment_amount"), QJsonValue(ui->amounttrc->value()));
+    proposalObj.insert(QString("start_epoch"), QJsonValue(start - (nSuperblockCycleTime/2)));
+    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_totaltrc->text().toInt() * nSuperblockCycleTime) + (nSuperblockCycleTime/2)));
+    proposalObj.insert(QString("type"), QJsonValue(1));
+
+    QJsonArray proposalArray;
+    proposalArray.push_back("proposal");
+    proposalArray.push_back(proposalObj);
+    QJsonArray proposalArray2;
+    proposalArray2.push_back(proposalArray);
+    QJsonDocument proposalDoc;
+    proposalDoc.setArray(proposalArray2);
+    QString proposalString = proposalDoc.toJson(QJsonDocument::Compact);
+
+    std::string proposalHex = QString(proposalString.toLatin1().toHex()).toStdString();
+    int64_t currentTS = QDateTime::currentDateTime().toUTC().toTime_t();
+
+    // Prepare
+    uint256 txid;
+    txid = prepareProposal(uint256(), 1, currentTS, proposalHex);
+    if (txid == uint256()) return;
+
+    QString submitStr = QString::fromStdString("gobject submit 0 1 ") + QString::number(currentTS) + QString::fromStdString(" " + proposalHex + " " + txid.ToString());
+
+    // Display Modal
+    showProposalModal(submitStr);
+
+    int unlockat = GOVERNANCE_FEE_CONFIRMATIONS * nPowTargetSpacing * 10 * 1.5;
+    auto *fakeLoop = new QTimer();
+    connect(fakeLoop, &QTimer::timeout, [this, fakeLoop, txid, currentTS, proposalHex, unlockat] {
+        // static means that it will initialize only once.
+        static const CWalletTx& wtx = pwalletMain->mapWallet[txid];
+        static int confirmations = 0;
+        static int counter = 0;
+        static bool unlock = false;
+        counter++;
+
+        if (counter >= unlockat) {
+            unlock = true;
+        }
+
+        confirmations = wtx.GetDepthInMainChain(false);
+        updateProposalConfirmations(confirmations, unlock, false);
+
+        // break the loop after confirmations met or 1.5 the time it should take
+        if (confirmations >= GOVERNANCE_FEE_CONFIRMATIONS) {
+            // Submit
+            uint256 strHash;
+            strHash = submitProposal(uint256(), 1, currentTS, txid, proposalHex);
+            if (strHash == uint256()) {
+                updateProposalConfirmations(confirmations, true, true);
+            }
+
+            fakeLoop->stop();
+            fakeLoop->deleteLater();
+            return;
+        }
+    });
+
+    // call the loop function every nPowTargetSpacing/10 second
+    fakeLoop->start(nPowTargetSpacing/10 * 1000);
+
+    // Reset form
+    ui->proposalName->setText("");
+    ui->trcAddress->setText("");
+    doubleCurrentAmount = 0;
+    ui->amounttrc->setValue(0);
+    intCurrentPayments = 1;
+    ui->paymentSlider->setValue(1);
+    populateStartDates();
+    formIsValid();
+}
+
+uint256 MasternodeList::prepareProposal(uint256 hashParent, int nRevision, int64_t nTime, std::string strData)
+{
+    QMessageBox msg;
+
+    // CREATE A NEW COLLATERAL TRANSACTION FOR THIS SPECIFIC OBJECT
+
+    CGovernanceObject govobj(hashParent, nRevision, nTime, uint256(), strData);
+
+    if(govobj.GetObjectType() == GOVERNANCE_OBJECT_PROPOSAL) {
+        CProposalValidator validator(strData);
+        if(!validator.Validate())  {
+            msg.setText(QString::fromStdString("Invalid proposal data, error messages:" + validator.GetErrorMessages()));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    if((govobj.GetObjectType() == GOVERNANCE_OBJECT_TRIGGER) ||
+       (govobj.GetObjectType() == GOVERNANCE_OBJECT_WATCHDOG)) {
+        msg.setText(QString::fromStdString("Trigger and watchdog objects need not be prepared (however only masternodes can create them)"));
+        msg.exec();
+        return uint256();
+    }
+
+    {
+        LOCK(cs_main);
+        std::string strError = "";
+        if(!govobj.IsValidLocally(strError, false)) {
+            msg.setText(QString::fromStdString("Governance object is not valid - " + govobj.GetHash().ToString() + " - " + strError));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    CWalletTx wtx;
+    if(!pwalletMain->GetBudgetSystemCollateralTX(wtx, govobj.GetHash(), govobj.GetMinCollateralFee(), false)) {
+        msg.setText(QString::fromStdString("Error making collateral transaction for governance object. Please check your wallet balance and make sure your wallet is unlocked."));
+        msg.exec();
+        return uint256();
+    }
+
+    // -- make our change address
+    CReserveKey reservekey(pwalletMain);
+
+    // -- send the tx to the network
+    pwalletMain->CommitTransaction(wtx, reservekey, g_connman.get(), NetMsgType::TX);
+
+    return wtx.GetHash();
+}
+
+uint256 MasternodeList::submitProposal(uint256 hashParent, int nRevision, int64_t nTime, uint256 txidFee, std::string strData)
+{
+    QMessageBox msg;
+
+    bool fMnFound = mnodeman.Has(activeMasternode.outpoint);
+
+    CGovernanceObject govobj(hashParent, nRevision, nTime, txidFee, strData);
+
+    if(govobj.GetObjectType() == GOVERNANCE_OBJECT_PROPOSAL) {
+        CProposalValidator validator(strData);
+        if(!validator.Validate())  {
+            msg.setText(QString::fromStdString("Invalid proposal data, error messages:" + validator.GetErrorMessages()));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    // Attempt to sign triggers if we are a MN
+    if((govobj.GetObjectType() == GOVERNANCE_OBJECT_TRIGGER) ||
+       (govobj.GetObjectType() == GOVERNANCE_OBJECT_WATCHDOG)) {
+        if(fMnFound) {
+            govobj.SetMasternodeVin(activeMasternode.outpoint);
+            govobj.Sign(activeMasternode.keyMasternode, activeMasternode.pubKeyMasternode);
+        }
+        else {
+            msg.setText(QString::fromStdString("Only valid masternodes can submit this type of object"));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    std::string strHash = govobj.GetHash().ToString();
+
+    std::string strError = "";
+    bool fMissingMasternode;
+    bool fMissingConfirmations;
+    {
+        LOCK(cs_main);
+        if(!govobj.IsValidLocally(strError, fMissingMasternode, fMissingConfirmations, true) && !fMissingConfirmations) {
+            msg.setText(QString::fromStdString("Governance object is not valid - " + strHash + " - " + strError));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    // RELAY THIS OBJECT
+    // Reject if rate check fails but don't update buffer
+    if(!governance.MasternodeRateCheck(govobj)) {
+        msg.setText(QString::fromStdString("Object creation rate limit exceeded"));
+        msg.exec();
+        return uint256();
+    }
+
+    if(fMissingConfirmations) {
+        governance.AddPostponedObject(govobj);
+        govobj.Relay(*g_connman);
+    } else {
+        governance.AddGovernanceObject(govobj, *g_connman);
+    }
+
+    return govobj.GetHash();
 }

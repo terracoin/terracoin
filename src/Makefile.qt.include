@@ -29,6 +29,7 @@ QT_FORMS_UI = \
   qt/forms/helpmessagedialog.ui \
   qt/forms/intro.ui \
   qt/forms/modaloverlay.ui \
+  qt/forms/modalproposaloverlay.ui \
   qt/forms/masternodelist.ui \
   qt/forms/openuridialog.ui \
   qt/forms/optionsdialog.ui \
@@ -60,6 +61,7 @@ QT_MOC_CPP = \
   qt/moc_intro.cpp \
   qt/moc_macdockiconhandler.cpp \
   qt/moc_macnotificationhandler.cpp \
+  qt/moc_modalproposaloverlay.cpp \
   qt/moc_modaloverlay.cpp \
   qt/moc_masternodelist.cpp \
   qt/moc_notificator.cpp \
@@ -130,6 +132,7 @@ BITCOIN_QT_H = \
   qt/intro.h \
   qt/macdockiconhandler.h \
   qt/macnotificationhandler.h \
+  qt/modalproposaloverlay.h \
   qt/modaloverlay.h \
   qt/masternodelist.h \
   qt/networkstyle.h \
@@ -291,6 +294,7 @@ BITCOIN_QT_CPP = \
   qt/csvmodelwriter.cpp \
   qt/guiutil.cpp \
   qt/intro.cpp \
+  qt/modalproposaloverlay.cpp \
   qt/modaloverlay.cpp \
   qt/networkstyle.cpp \
   qt/notificator.cpp \
