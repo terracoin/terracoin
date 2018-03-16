@@ -1042,14 +1042,15 @@ void MasternodeList::on_createProposal_clicked()
     int nSuperblockCycleTime = nSuperblockCycle * nPowTargetSpacing;
 
     // Build HEXed string
-    int64_t start = QDateTime::fromString(ui->startDate->currentText(), Qt::SystemLocaleShortDate).toUTC().toTime_t();
+    int start = QDateTime::fromString(ui->startDate->currentText(), Qt::SystemLocaleShortDate).toUTC().toTime_t();
+    int nSuperblockCycleHalfTime = nSuperblockCycleTime / 2;
     QJsonObject proposalObj;
     proposalObj.insert(QString("name"), QJsonValue(strCurrentName));
     proposalObj.insert(QString("url"), QJsonValue("https://services.terracoin.io/p/" + strCurrentName));
     proposalObj.insert(QString("payment_address"), QJsonValue(ui->trcAddress->text()));
     proposalObj.insert(QString("payment_amount"), QJsonValue(ui->amounttrc->value()));
-    proposalObj.insert(QString("start_epoch"), QJsonValue(start - (nSuperblockCycleTime/2)));
-    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_totaltrc->text().toInt() * nSuperblockCycleTime) + (nSuperblockCycleTime/2)));
+    proposalObj.insert(QString("start_epoch"), QJsonValue(start - nSuperblockCycleHalfTime));
+    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_totaltrc->text().toInt() * nSuperblockCycleTime) + nSuperblockCycleHalfTime));
     proposalObj.insert(QString("type"), QJsonValue(1));
 
     QJsonArray proposalArray;
