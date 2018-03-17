@@ -1019,19 +1019,18 @@ void MasternodeList::populateStartDates()
     int64_t nNextTime = GetAdjustedTime() + ((nNextSuperblock - nBlockHeight) * nPowTargetSpacing);
     int64_t nSuperblockCycleSeconds = nSuperblockCycle * nPowTargetSpacing;
 
-    QStringList list;
+    ui->startDate->clear();
+
     QDateTime timestamp;
     timestamp.setTime_t(nNextTime);
-    list << timestamp.toString(Qt::SystemLocaleShortDate);
+    ui->startDate->addItem(timestamp.toString(Qt::SystemLocaleShortDate), QVariant(timestamp.toTime_t()));
     int i;
     for( i = 1; i <= 14; i++) {
         nNextTime += nSuperblockCycleSeconds;
         timestamp.setTime_t(nNextTime);
-        list << timestamp.toString(Qt::SystemLocaleShortDate);
+        ui->startDate->addItem(timestamp.toString(Qt::SystemLocaleShortDate), QVariant(timestamp.toTime_t()));
     }
 
-    ui->startDate->clear();
-    ui->startDate->addItems(list);
     ui->startDate->setCurrentIndex(0);
 }
 
@@ -1042,7 +1041,7 @@ void MasternodeList::on_createProposal_clicked()
     int nSuperblockCycleTime = nSuperblockCycle * nPowTargetSpacing;
 
     // Build HEXed string
-    int start = QDateTime::fromString(ui->startDate->currentText(), Qt::SystemLocaleShortDate).toUTC().toTime_t();
+    int start = ui->startDate->currentData().toInt();
     int nSuperblockCycleHalfTime = nSuperblockCycleTime / 2;
     QJsonObject proposalObj;
     proposalObj.insert(QString("name"), QJsonValue(strCurrentName));
@@ -1063,7 +1062,7 @@ void MasternodeList::on_createProposal_clicked()
     QString proposalString = proposalDoc.toJson(QJsonDocument::Compact);
 
     std::string proposalHex = QString(proposalString.toLatin1().toHex()).toStdString();
-    int64_t currentTS = QDateTime::currentDateTime().toUTC().toTime_t();
+    int64_t currentTS = GetAdjustedTime();
 
     // Prepare
     uint256 txid;
