@@ -1023,9 +1023,11 @@ void MasternodeList::populateStartDates()
 
     QDateTime timestamp;
     timestamp.setTime_t(nNextTime);
-    ui->startDate->addItem(timestamp.toString(Qt::SystemLocaleShortDate), QVariant(timestamp.toTime_t()));
+    if (GetTime() < timestamp.toTime_t() - (nSuperblockCycleSeconds * 0.10)) {
+        ui->startDate->addItem(timestamp.toString(Qt::SystemLocaleShortDate), QVariant(timestamp.toTime_t()));
+    }
     int i;
-    for( i = 1; i <= 14; i++) {
+    for(i = 1; i <= 15; i++) {
         nNextTime += nSuperblockCycleSeconds;
         timestamp.setTime_t(nNextTime);
         ui->startDate->addItem(timestamp.toString(Qt::SystemLocaleShortDate), QVariant(timestamp.toTime_t()));
