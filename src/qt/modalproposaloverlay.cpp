@@ -76,6 +76,8 @@ void ModalProposalOverlay::updateConfirmations(int count, bool unlock, bool fail
     }
 
     int percentage = (count * 100 ) / GOVERNANCE_FEE_CONFIRMATIONS;
+    if (percentage > 100)
+        percentage = 100;
 
     // show confirms
     ui->label_count->setText(QString::number(count));
