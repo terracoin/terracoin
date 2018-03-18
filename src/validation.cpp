@@ -3262,9 +3262,9 @@ static bool CheckIndexAgainstCheckpoint(const CBlockIndex* pindexPrev, CValidati
 bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& state, CBlockIndex * const pindexPrev)
 {
     const Consensus::Params& consensusParams = Params().GetConsensus();
-    int nHeight = pindexPrev->nHeight + 1;
 
     // Disallow legacy blocks after merge-mining start.
+    const int nHeight = pindexPrev->nHeight + 1;
     if (!Params().GetConsensus().AllowLegacyBlocks(nHeight) && block.IsLegacy())
         return state.DoS(100, error("%s : legacy block after auxpow start",
                                     __func__),
