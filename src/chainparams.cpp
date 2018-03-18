@@ -420,7 +420,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nTimeout = 999999999999ULL;
 
         consensus.nAuxpowStartHeight = 0;
-        consensus.nAuxpowChainId = 0x0001;
+        consensus.nAuxpowChainId = 0x0032;
         consensus.fStrictChainId = true;
         consensus.nLegacyBlocksBefore = 0;
 
