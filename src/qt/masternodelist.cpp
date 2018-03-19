@@ -1076,7 +1076,7 @@ void MasternodeList::on_createProposal_clicked()
     // Display Modal
     showProposalModal(submitStr);
 
-    int unlockat = GOVERNANCE_FEE_CONFIRMATIONS * nPowTargetSpacing * 10 * 1.5;
+    int unlockat = GOVERNANCE_FEE_CONFIRMATIONS * nPowTargetSpacing * 1.5;
     auto *fakeLoop = new QTimer();
     connect(fakeLoop, &QTimer::timeout, [this, fakeLoop, txid, currentTS, proposalHex, unlockat] {
         // static means that it will initialize only once.
