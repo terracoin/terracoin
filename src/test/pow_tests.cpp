@@ -21,6 +21,14 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     SelectParams(CBaseChainParams::MAIN);
     const Consensus::Params& params = Params().GetConsensus();
 
+    int64_t nLastRetargetTime = 1261130161; // Block #30240
+    CBlockIndex pindexLast;
+    pindexLast.nHeight = 32255;
+    pindexLast.nTime = 1262152739;  // Block #32255
+    pindexLast.nBits = 0x1d00ffff;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, params), 0x1d00ffff);
+
+#if 0 // DWG on Terracoin doesn't start till later, update this data/tests
     // build the chain of 24 blocks
     CBlockIndex blockIndexLast;
     blockIndexLast.nHeight = 123456;
@@ -122,6 +130,7 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     CBlockHeader blockHeader;
     blockHeader.nTime = 1408732505; // Block #123457
     BOOST_CHECK_EQUAL(GetNextWorkRequired(&blockIndexLast, &blockHeader, params), 0x1b1441de); // Block #123457 has 0x1b1441de
+#endif
 }
 
 /* Test the constraint on the upper bound for next work */
