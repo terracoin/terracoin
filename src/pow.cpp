@@ -123,12 +123,12 @@ unsigned int GetNextWorkRequiredEMA(const CBlockIndex* pindexLast, const CBlockH
 	    if (bnNew > fiveThousandsLimit) {
 		bnNew = fiveThousandsLimit;
 	    }
-	}	
+	}
 
 
 	if (bnNew > bnPowLimit)
 	    bnNew = bnPowLimit;
-    	LogPrintf("GetNextWorkRequiredEMA RETARGET\n");
+        LogPrintf("GetNextWorkRequiredEMA RETARGET\n");
 	return bnNew.GetCompact();
     }
 
@@ -160,7 +160,7 @@ unsigned int GetNextWorkRequiredEMA(const CBlockIndex* pindexLast, const CBlockH
     for (int i=0; i<2160 ; i++) {
         accumulator = (alpha * block_durations[i]) + (1 - alpha) * accumulator;
     }
- 
+
     int64_t nActualTimespan = accumulator;
     if (nActualTimespan < perBlockTargetTimespan / 2)
         nActualTimespan = perBlockTargetTimespan / 2;
@@ -344,18 +344,11 @@ unsigned int GetNextWorkRequiredBTC(const CBlockIndex* pindexLast, const CBlockH
     const CBlockIndex* pindexFirst = pindexLast->GetAncestor(nHeightFirst);
     assert(pindexFirst);
 
-   return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params);
+    return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params);
 }
 
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
-    if (Params().NetworkIDString() != CBaseChainParams::MAIN && Params().NetworkIDString() != CBaseChainParams::REGTEST) {
-        if (pindexLast->nHeight <= 10000)
-            return (0x1d00ffff); // Get testnet started quickly
-        else
-            return (0x1c018616); // diff 168
-    }
-
     // Exception first
     if (pindexLast->nHeight == 137161 && (Params().NetworkIDString() == CBaseChainParams::MAIN || Params().NetworkIDString() == CBaseChainParams::REGTEST)) {
         return (0x1b034c51);
