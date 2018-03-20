@@ -96,8 +96,8 @@ public:
         consensus.nPowV2Height = 181200;
         consensus.nPowKGWHeight = 833000; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
         consensus.nPowDGWHeight = 833000;
-        consensus.nRuleChangeActivationThreshold = 90; // 300% of 30
-        consensus.nMinerConfirmationWindow = 30; // nPowTargetTimespan / nPowTargetSpacing
+        consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
+        consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
 
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
@@ -282,7 +282,7 @@ public:
         consensus.BIP34Height = 21111;
         consensus.BIP34Hash = uint256S("0x0000000023b3a96d3484e5abb3755c413e7d41500f8e2a5c3f0dd01299cd8ef8");
         consensus.powLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 24 * 60 * 60;
+        consensus.nPowTargetTimespan = 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 2 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
@@ -399,7 +399,7 @@ public:
         consensus.BIP34Height = -1; // BIP34 has not necessarily activated on regtest
         consensus.BIP34Hash = uint256();
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 24 * 60 * 60;
+        consensus.nPowTargetTimespan = 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 2 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
@@ -420,7 +420,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nTimeout = 999999999999ULL;
 
         consensus.nAuxpowStartHeight = 0;
-        consensus.nAuxpowChainId = 0x0032;
+        consensus.nAuxpowChainId = 0x0001;
         consensus.fStrictChainId = true;
         consensus.nLegacyBlocksBefore = 0;
 
