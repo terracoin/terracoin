@@ -2234,18 +2234,16 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     // the peer who sent us this block is missing some data and wasn't able
     // to recognize that block is actually invalid.
     // TODO: resync data (both ways?) and try to reprocess this block later.
-    if(pindex->nHeight >= Params().GetConsensus().nSuperblockStartBlock) {
-        CAmount blockReward = nFees + GetBlockSubsidy(pindex->pprev->nBits, pindex->pprev->nHeight, chainparams.GetConsensus());
-        std::string strError = "";
-        if (!IsBlockValueValid(block, pindex->nHeight, blockReward, strError)) {
-            return state.DoS(0, error("ConnectBlock(TERRACOIN): %s", strError), REJECT_INVALID, "bad-cb-amount");
-        }
+    CAmount blockReward = nFees + GetBlockSubsidy(pindex->pprev->nBits, pindex->pprev->nHeight, chainparams.GetConsensus());
+    std::string strError = "";
+    if (!IsBlockValueValid(block, pindex->nHeight, blockReward, strError)) {
+        return state.DoS(0, error("ConnectBlock(TERRACOIN): %s", strError), REJECT_INVALID, "bad-cb-amount");
+    }
 
-        if (!IsBlockPayeeValid(block.vtx[0], pindex->nHeight, blockReward)) {
-            mapRejectedBlocks.insert(make_pair(block.GetHash(), GetTime()));
-            return state.DoS(0, error("ConnectBlock(TERRACOIN): couldn't find masternode or superblock payments"),
-                                REJECT_INVALID, "bad-cb-payee");
-        }
+    if (!IsBlockPayeeValid(block.vtx[0], pindex->nHeight, blockReward)) {
+        mapRejectedBlocks.insert(make_pair(block.GetHash(), GetTime()));
+        return state.DoS(0, error("ConnectBlock(TERRACOIN): couldn't find masternode or superblock payments"),
+                            REJECT_INVALID, "bad-cb-payee");
     }
     // END TERRACOIN
 
