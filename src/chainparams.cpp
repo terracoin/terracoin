@@ -388,7 +388,7 @@ public:
         consensus.nMasternodePaymentsIncreaseBlock = 350;
         consensus.nMasternodePaymentsIncreasePeriod = 10;
         consensus.nInstantSendKeepLock = 6;
-        consensus.nSuperblockStartBlock = 1500;
+        consensus.nSuperblockStartBlock = 0;
         consensus.nSuperblockCycle = 10;
         consensus.nGovernanceMinQuorum = 1;
         consensus.nGovernanceFilterElements = 100;
