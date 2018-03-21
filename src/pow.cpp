@@ -338,11 +338,19 @@ unsigned int GetNextWorkRequiredBTC(const CBlockIndex* pindexLast, const CBlockH
         return pindexLast->nBits;
     }
 
-    // Go back by what we want to be 1 day worth of blocks
-    int nHeightFirst = pindexLast->nHeight - (params.DifficultyAdjustmentInterval()-1);
-    assert(nHeightFirst >= 0);
-    const CBlockIndex* pindexFirst = pindexLast->GetAncestor(nHeightFirst);
+    // Go back by what we want to be 1 hourworth of blocks
+    // TERRACOIN START
+    // int nHeightFirst = pindexLast->nHeight - (params.DifficultyAdjustmentInterval()-1);
+    // assert(nHeightFirst >= 0);
+    // const CBlockIndex* pindexFirst = pindexLast->GetAncestor(nHeightFirst);
+    // assert(pindexFirst);
+    int nBlocksLookupRange = params.DifficultyAdjustmentInterval() - 1;
+    if (pindexLast->nHeight > 99988) {
+	nBlocksLookupRange = params.DifficultyAdjustmentInterval() * 24;
+    }
+    const CBlockIndex* pindexFirst = pindexLast->GetAncestor(pindexLast->nHeight - nBlocksLookupRange);
     assert(pindexFirst);
+    // TERRACOIN END
 
     return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params);
 }
@@ -375,11 +383,20 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 // for DIFF_BTC only!
 unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params& params)
 {
-    if (params.fPowNoRetargeting)
-        return pindexLast->nBits;
+    // TERRACOIN START
+    //if (params.fPowNoRetargeting)
+    //    return pindexLast->nBits;
+    // TERRACOIN END
 
     // Limit adjustment step
     int64_t nActualTimespan = pindexLast->GetBlockTime() - nFirstBlockTime;
+    // TERRACOIN START
+    if (pindexLast->nHeight > 101908) {
+        nActualTimespan = nActualTimespan / 3;
+    } else if (pindexLast->nHeight > 99988) {
+        nActualTimespan = nActualTimespan / 24;
+    }
+    // TERRACOIN END
     LogPrintf("  nActualTimespan = %d  before bounds\n", nActualTimespan);
     if (nActualTimespan < params.nPowTargetTimespan/4)
         nActualTimespan = params.nPowTargetTimespan/4;

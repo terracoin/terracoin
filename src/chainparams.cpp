@@ -88,16 +88,16 @@ public:
         consensus.BIP34Height = 95980;
         consensus.BIP34Hash = uint256S("0x0000000000006a908847f2d6b7ac98e8ac9ce54c544aca63c66473e637f4741e");
         consensus.powLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 24 * 60 * 60;
+        consensus.nPowTargetTimespan = 60 * 60;
         consensus.nPowTargetSpacing = 2 * 60;
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
-        consensus.nPowEMAHeight = 101631;
-        consensus.nPowV2Height = 181200;
-        consensus.nPowKGWHeight = 833000; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
-        consensus.nPowDGWHeight = 833000;
-        consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
-        consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
+        consensus.nPowEMAHeight = 101633;
+        consensus.nPowV2Height = 181202;
+        consensus.nPowKGWHeight = 833001; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
+        consensus.nPowDGWHeight = 833001;
+        consensus.nRuleChangeActivationThreshold = 90; // 300% of nMinerConfirmationWindow
+        consensus.nMinerConfirmationWindow = 30; // nPowTargetTimespan / nPowTargetSpacing
 
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
