@@ -110,7 +110,7 @@ class BIP68_112_113Test(ComparisonTestFramework):
         test.run()
 
     def send_generic_input_tx(self, node, coinbases):
-        amount = Decimal("499.99")
+        amount = Decimal("19.99")
         return node.sendrawtransaction(ToHex(self.sign_transaction(node, self.create_transaction(node, node.getblock(coinbases.pop())['tx'][0], self.nodeaddress, amount))))
 
     def create_transaction(self, node, txid, to_address, amount):
@@ -159,7 +159,7 @@ class BIP68_112_113Test(ComparisonTestFramework):
                 for b22 in xrange(2):
                     b18txs = []
                     for b18 in xrange(2):
-                        tx =  self.create_transaction(self.nodes[0], bip68inputs[i], self.nodeaddress, Decimal("499.98"))
+                        tx =  self.create_transaction(self.nodes[0], bip68inputs[i], self.nodeaddress, Decimal("19.98"))
                         i += 1
                         tx.nVersion = txversion
                         tx.vin[0].nSequence = relative_locktimes[b31][b25][b22][b18] + locktime_delta
@@ -170,7 +170,7 @@ class BIP68_112_113Test(ComparisonTestFramework):
         return txs
 
     def create_bip112special(self, input, txversion):
-        tx = self.create_transaction(self.nodes[0], input, self.nodeaddress, Decimal("499.98"))
+        tx = self.create_transaction(self.nodes[0], input, self.nodeaddress, Decimal("19.98"))
         tx.nVersion = txversion
         signtx = self.sign_transaction(self.nodes[0], tx)
         signtx.vin[0].scriptSig = CScript([-1, OP_CHECKSEQUENCEVERIFY, OP_DROP] + list(CScript(signtx.vin[0].scriptSig)))
@@ -187,7 +187,7 @@ class BIP68_112_113Test(ComparisonTestFramework):
                 for b22 in xrange(2):
                     b18txs = []
                     for b18 in xrange(2):
-                        tx =  self.create_transaction(self.nodes[0], bip112inputs[i], self.nodeaddress, Decimal("499.98"))
+                        tx =  self.create_transaction(self.nodes[0], bip112inputs[i], self.nodeaddress, Decimal("19.98"))
                         i += 1
                         if (varyOP_CSV): # if varying OP_CSV, nSequence is fixed
                             tx.vin[0].nSequence = base_relative_locktime + locktime_delta
@@ -287,9 +287,9 @@ class BIP68_112_113Test(ComparisonTestFramework):
 
         # Test both version 1 and version 2 transactions for all tests
         # BIP113 test transaction will be modified before each use to put in appropriate block time
-        bip113tx_v1 = self.create_transaction(self.nodes[0], bip113input, self.nodeaddress, Decimal("499.98"))
+        bip113tx_v1 = self.create_transaction(self.nodes[0], bip113input, self.nodeaddress, Decimal("19.98"))
         bip113tx_v1.vin[0].nSequence = 0xFFFFFFFE
-        bip113tx_v2 = self.create_transaction(self.nodes[0], bip113input, self.nodeaddress, Decimal("499.98"))
+        bip113tx_v2 = self.create_transaction(self.nodes[0], bip113input, self.nodeaddress, Decimal("19.98"))
         bip113tx_v2.vin[0].nSequence = 0xFFFFFFFE
         bip113tx_v2.nVersion = 2
 

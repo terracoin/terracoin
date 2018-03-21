@@ -100,7 +100,7 @@ class GetAuxBlockTest (BitcoinTestFramework):
     assert_equal (t['category'], "immature")
     assert_equal (t['blockhash'], auxblock['hash'])
     assert t['generated']
-    assert t['amount'] >= Decimal ("25")
+    assert t['amount'] >= Decimal ("10")
     assert_equal (t['confirmations'], 1)
 
     # Verify the coinbase script.  Ensure that it includes the block height

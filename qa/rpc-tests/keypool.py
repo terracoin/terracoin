@@ -79,7 +79,7 @@ def test_auxpow(nodes):
     """
 
     nodes[0].walletpassphrase('test', 12000)
-    nodes[0].keypoolrefill(1)
+    nodes[0].keypoolrefill(2)
     nodes[0].walletlock()
     assert_equal (nodes[0].getwalletinfo()['keypoolsize'], 2)
 

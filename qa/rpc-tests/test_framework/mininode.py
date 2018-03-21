@@ -32,8 +32,6 @@ from threading import Thread
 import logging
 import copy
 
-import terracoin_hash
-
 BIP0031_VERSION = 60000
 MY_VERSION = 70206  # current MIN_PEER_PROTO_VERSION
 MY_SUBVERSION = b"/python-mininode-tester:0.0.2/"
@@ -41,7 +39,7 @@ MY_SUBVERSION = b"/python-mininode-tester:0.0.2/"
 MAX_INV_SZ = 50000
 MAX_BLOCK_SIZE = 1000000
 
-COIN = 100000000L # 1 btc in satoshis
+COIN = 100000000L # 1 trc in satoshis
 
 # Constants for the auxpow block version.
 VERSION_AUXPOW = (1 << 8)
@@ -68,9 +66,6 @@ def sha256(s):
 
 def hash256(s):
     return sha256(sha256(s))
-
-def terracoinhash(s):
-    return terracoin_hash.getPoWHash(s)
 
 def deser_string(f):
     nit = struct.unpack("<B", f.read(1))[0]
@@ -544,8 +539,8 @@ class CBlockHeader(object):
             r += struct.pack("<I", self.nTime)
             r += struct.pack("<I", self.nBits)
             r += struct.pack("<I", self.nNonce)
-            self.sha256 = uint256_from_str(terracoinhash(r))
-            self.hash = encode(terracoinhash(r)[::-1], 'hex_codec').decode('ascii')
+            self.sha256 = uint256_from_str(hash256(r))
+            self.hash = encode(hash256(r)[::-1], 'hex_codec').decode('ascii')
 
     def rehash(self):
         self.sha256 = None
@@ -1209,9 +1204,9 @@ class NodeConn(asyncore.dispatcher):
         b"mempool": msg_mempool,
     }
     MAGIC_BYTES = {
-        "mainnet": b"\xbf\x0c\x6b\xbd",   # mainnet
-        "testnet3": b"\xce\xe2\xca\xff",  # testnet3
-        "regtest": b"\xfc\xc1\xb7\xdc"    # regtest
+        "mainnet": b"\x42\xba\xbe\x56",   # mainnet
+        "testnet3": b"\x0b\x11\x09\x07",  # testnet3
+        "regtest": b"\xfa\xbf\xb5\xda"    # regtest
     }
 
     def __init__(self, dstaddr, dstport, rpc, callback, net="regtest", services=1):

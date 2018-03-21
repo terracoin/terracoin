@@ -89,7 +89,7 @@ if ENABLE_ZMQ:
 #Tests
 testScripts = [
     # FIXME: Enable once BIP9 is live for Terracoin.
-    #'bip68-112-113-p2p.py',
+    # 'bip68-112-113-p2p.py',
     'wallet.py',
     'wallet-hd.py',
     'listtransactions.py',
@@ -118,18 +118,18 @@ testScripts = [
     'timestampindex.py',
     'spentindex.py',
     'decodescript.py',
-    'p2p-fullblocktest.py', # NOTE: needs terracoin_hash to pass
+    'p2p-fullblocktest.py',
     'blockchain.py',
     'disablewallet.py',
-    'sendheaders.py', # NOTE: needs terracoin_hash to pass
+    'sendheaders.py',
     'keypool.py',
     'keypool-hd.py',
     'prioritise_transaction.py',
-    'invalidblockrequest.py', # NOTE: needs terracoin_hash to pass
-    'invalidtxrequest.py', # NOTE: needs terracoin_hash to pass
+    'invalidblockrequest.py',
+    'invalidtxrequest.py',
     'abandonconflict.py',
     # FIXME: Enable with versionbits.
-    #'p2p-versionbits-warning.py',
+    # 'p2p-versionbits-warning.py',
 
     # auxpow tests
     'getauxblock.py',
@@ -138,23 +138,27 @@ if ENABLE_ZMQ:
     testScripts.append('zmq_test.py')
 
 testScriptsExt = [
-    'bip9-softforks.py',
+    # FIXME: Enable once BIP9 is live for Terracoin.
+    # 'bip9-softforks.py',
     'bip65-cltv.py',
-    'bip65-cltv-p2p.py', # NOTE: needs terracoin_hash to pass
-    'bip68-sequence.py',
-    'bipdersig-p2p.py', # NOTE: needs terracoin_hash to pass
+    # FIXME chainId doesn't get set
+    # 'bip65-cltv-p2p.py',
+    # FIXME: Enable once BIP9 is live for Terracoin.
+    # 'bip68-sequence.py',
+    # FIXME chainId doesn't get set
+    # 'bipdersig-p2p.py',
     'bipdersig.py',
     'getblocktemplate_longpoll.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651
-    'getblocktemplate_proposals.py',
+    'getblocktemplate_proposals.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651
     'txn_doublespend.py',
     'txn_clone.py --mineblock',
     # 'pruning.py', # Prune mode is incompatible with -txindex.
     'forknotify.py',
     'invalidateblock.py',
-#    'rpcbind_test.py', #temporary, bug in libevent, see #6655
+    # 'rpcbind_test.py', #temporary, bug in libevent, see #6655
     'smartfees.py',
     'maxblocksinflight.py',
-    'p2p-acceptblock.py', # NOTE: needs terracoin_hash to pass
+    'p2p-acceptblock.py',
     'mempool_packages.py',
     'maxuploadtarget.py',
     # 'replace-by-fee.py', # RBF is disabled in Terracoin Core
