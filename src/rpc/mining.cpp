@@ -24,7 +24,6 @@
 #include "util.h"
 #ifdef ENABLE_WALLET
 #include "masternode-sync.h"
-#include "wallet/wallet.h" // for DEFAULT_LEGACY_FALLBACK_FEE
 #endif
 #include "utilstrencodings.h"
 #include "validationinterface.h"
@@ -839,8 +838,6 @@ UniValue estimatefee(const UniValue& params, bool fHelp)
         nBlocks = 1;
 
     CFeeRate feeRate = mempool.estimateFee(nBlocks);
-    if (feeRate == CFeeRate(0))
-        feeRate = CFeeRate(DEFAULT_LEGACY_FALLBACK_FEE);
 
     return ValueFromAmount(feeRate.GetFeePerK());
 }
@@ -903,13 +900,8 @@ UniValue estimatesmartfee(const UniValue& params, bool fHelp)
     UniValue result(UniValue::VOBJ);
     int answerFound;
     CFeeRate feeRate = mempool.estimateSmartFee(nBlocks, &answerFound);
-    if (feeRate == CFeeRate(0)) {
-        result.push_back(Pair("feerate", ValueFromAmount(CFeeRate(DEFAULT_LEGACY_FALLBACK_FEE).GetFeePerK())));
-        result.push_back(Pair("blocks", nBlocks));
-    } else {
-        result.push_back(Pair("feerate", ValueFromAmount(feeRate.GetFeePerK())));
-        result.push_back(Pair("blocks", answerFound));
-    }
+    result.push_back(Pair("feerate", feeRate == CFeeRate(0) ? -1.0 : ValueFromAmount(feeRate.GetFeePerK())));
+    result.push_back(Pair("blocks", answerFound));
 
     return result;
 }
