@@ -3496,7 +3496,7 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned 
 {
     // Don't start till after a specifical marker
     int nHeight = pstart->nHeight + 1;
-    if (nHeight < consensusParams.nSuperblockStartBlock + consensusParams.nMajorityRejectBlockOutdated)
+    if (Params().NetworkIDString() == CBaseChainParams::MAIN && nHeight < consensusParams.nSuperblockStartBlock + consensusParams.nMajorityRejectBlockOutdated)
 	return false;
 
     unsigned int nFound = 0;

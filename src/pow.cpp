@@ -350,7 +350,7 @@ unsigned int GetNextWorkRequiredBTC(const CBlockIndex* pindexLast, const CBlockH
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
     // Exception first
-    if (pindexLast->nHeight == 137161 && (Params().NetworkIDString() == CBaseChainParams::MAIN || Params().NetworkIDString() == CBaseChainParams::REGTEST)) {
+    if (pindexLast->nHeight == 137161 && Params().NetworkIDString() == CBaseChainParams::MAIN) {
         return (0x1b034c51);
     }
 
