@@ -34,7 +34,8 @@ env:
     - PYTHON_DEBUG=1
     - WINEDEBUG=fixme-all
 
-  matrix:
+matrix:
+  fast_finish: true
 # ARM
     - HOST=arm-linux-gnueabihf PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=1 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Win32
@@ -55,6 +56,7 @@ before_install:
     - travis_retry sudo add-apt-repository ppa:ubuntu-wine/ppa -y
     - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
 install:
+    - if [ -n "$PACKAGES" ]; then sudo rm -f /etc/apt/sources.list.d/google-chrome.list; fi
     - if [ "$PYZMQ" = "true" ]; then pip install pyzmq --user ; fi
     - if [ -n "$PPA" ]; then travis_retry sudo add-apt-repository "$PPA" -y; fi
     - if [ -n "$DPKG_ADD_ARCH" ]; then sudo dpkg --add-architecture "$DPKG_ADD_ARCH" ; fi

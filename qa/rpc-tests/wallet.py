@@ -1,7 +1,5 @@
-#!/usr/bin/env python2
-# coding=utf-8
-# ^^^^^^^^^^^^ TODO remove when supporting only Python3
-# Copyright (c) 2014-2015 The Bitcoin Core developers
+#!/usr/bin/env python3
+# Copyright (c) 2014-2016 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -40,7 +38,7 @@ class WalletTest (BitcoinTestFramework):
         assert_equal(len(self.nodes[1].listunspent()), 0)
         assert_equal(len(self.nodes[2].listunspent()), 0)
 
-        print "Mining blocks..."
+        print("Mining blocks...")
 
         self.nodes[0].generate(1)
 
@@ -316,7 +314,7 @@ class WalletTest (BitcoinTestFramework):
             for s in [u'рыба', u'𝅘𝅥𝅯']:
                 addr = self.nodes[0].getaccountaddress(s)
                 label = self.nodes[0].getaccount(addr)
-                assert_equal(label.encode('utf-8'), s.encode('utf-8')) # TODO remove encode(...) when supporting only Python3
+                assert_equal(label, s)
                 assert(s in self.nodes[0].listaccounts().keys())
         self.nodes[0].ensure_ascii = True # restore to default
 
@@ -329,7 +327,7 @@ class WalletTest (BitcoinTestFramework):
             '-salvagewallet',
         ]
         for m in maintenance:
-            print "check " + m
+            print("check " + m)
             stop_nodes(self.nodes)
             wait_bitcoinds()
             self.nodes = start_nodes(3, self.options.tmpdir, [[m]] * 3)
