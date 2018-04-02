@@ -86,6 +86,7 @@ public:
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman);
 
     bool ProcessTxLockRequest(const CTxLockRequest& txLockRequest, CConnman& connman);
+    void Vote(const uint256& txHash, CConnman& connman);
 
     bool AlreadyHave(const uint256& hash);
 
@@ -121,7 +122,7 @@ public:
 class CTxLockRequest : public CTransaction
 {
 private:
-    static const CAmount MIN_FEE            = 0.001 * COIN;
+    static const CAmount MIN_FEE            = 0.0001 * COIN;
 
 public:
     static const int WARN_MANY_INPUTS       = 100;

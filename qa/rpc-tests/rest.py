@@ -233,7 +233,7 @@ class RESTTest (BitcoinTestFramework):
         assert_equal(response_hex.status, 200)
         assert_greater_than(int(response_hex.getheader('content-length')), 160)
         response_hex_str = response_hex.read().strip()
-        assert_equal(response_str.encode("hex_codec"), response_hex_str)
+        assert_equal(encode(response_str, "hex_codec"), response_hex_str)
 
         # compare with hex block header
         response_header_hex = http_get_call(url.hostname, url.port, '/rest/headers/1/'+bb_hash+self.FORMAT_SEPARATOR+"hex", True)
@@ -242,7 +242,7 @@ class RESTTest (BitcoinTestFramework):
         response_header_hex_str = response_header_hex.read().strip()
         headerLen = len (response_header_hex_str)
         assert_equal(response_hex_str[0:headerLen], response_header_hex_str)
-        assert_equal(response_header_str.encode("hex_codec"), response_header_hex_str)
+        assert_equal(encode(response_header_str, "hex_codec"), response_header_hex_str)
 
         # check json format
         block_json_string = http_get_call(url.hostname, url.port, '/rest/block/'+bb_hash+self.FORMAT_SEPARATOR+'json')

@@ -141,12 +141,10 @@ testScriptsExt = [
     # FIXME: Enable once BIP9 is live for Terracoin.
     # 'bip9-softforks.py',
     'bip65-cltv.py',
-    # FIXME chainId doesn't get set
-    # 'bip65-cltv-p2p.py',
+    'bip65-cltv-p2p.py',
     # FIXME: Enable once BIP9 is live for Terracoin.
     # 'bip68-sequence.py',
-    # FIXME chainId doesn't get set
-    # 'bipdersig-p2p.py',
+    'bipdersig-p2p.py',
     'bipdersig.py',
     'getblocktemplate_longpoll.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651
     'getblocktemplate_proposals.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651

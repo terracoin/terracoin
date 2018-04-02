@@ -48,11 +48,11 @@ class SpentIndexTest(BitcoinTestFramework):
 
         privkey = "cSdkPxkAjA4HDr5VHgsebAPDEh9Gyub4HK8UJr2DFGGqKKy4K5sG"
         address = "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW"
-        addressHash = "0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc".decode("hex")
+        addressHash = binascii.unhexlify("0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc")
         scriptPubKey = CScript([OP_DUP, OP_HASH160, addressHash, OP_EQUALVERIFY, OP_CHECKSIG])
         unspent = self.nodes[0].listunspent()
         tx = CTransaction()
-        amount = unspent[0]["amount"] * 100000000
+        amount = int(unspent[0]["amount"] * 100000000)
         tx.vin = [CTxIn(COutPoint(int(unspent[0]["txid"], 16), unspent[0]["vout"]))]
         tx.vout = [CTxOut(amount, scriptPubKey)]
         tx.rehash()
@@ -86,11 +86,11 @@ class SpentIndexTest(BitcoinTestFramework):
         # Check that verbose raw transaction includes address values and input values
         privkey2 = "cSdkPxkAjA4HDr5VHgsebAPDEh9Gyub4HK8UJr2DFGGqKKy4K5sG"
         address2 = "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW"
-        addressHash2 = "0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc".decode("hex")
+        addressHash2 = binascii.unhexlify("0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc")
         scriptPubKey2 = CScript([OP_DUP, OP_HASH160, addressHash2, OP_EQUALVERIFY, OP_CHECKSIG])
         tx2 = CTransaction()
         tx2.vin = [CTxIn(COutPoint(int(txid, 16), 0))]
-        tx2.vout = [CTxOut(amount - 100000000, scriptPubKey2)]
+        tx2.vout = [CTxOut(int(amount - 100000000), scriptPubKey2)]
         tx.rehash()
         self.nodes[0].importprivkey(privkey)
         signed_tx2 = self.nodes[0].signrawtransaction(binascii.hexlify(tx2.serialize()).decode("utf-8"))
@@ -130,7 +130,7 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(block["deltas"][1]["inputs"][0]["prevout"], 0)
         assert_equal(block["deltas"][1]["outputs"][0]["index"], 0)
         assert_equal(block["deltas"][1]["outputs"][0]["address"], "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW")
-        assert_equal(block["deltas"][1]["outputs"][0]["satoshis"], amount - 100000000)
+        assert_equal(block["deltas"][1]["outputs"][0]["satoshis"], amount)
 
         print("Passed\n")
 

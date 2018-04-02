@@ -41,7 +41,7 @@ def enable_mocktime():
     #with previous versions of the cache, set MOCKTIME 
     #to regtest genesis time + (201 * 2.1 * 60)
     global MOCKTIME
-    MOCKTIME = 1417713337 + (201 * 2.1 * 60)
+    MOCKTIME = int(1417713337 + (201 * 2.1 * 60))
 
 def disable_mocktime():
     global MOCKTIME
@@ -224,13 +224,13 @@ def initialize_chain(test_dir):
         # blocks are created with timestamps 2.1 minutes apart
         # starting from 31356 seconds in the past
         enable_mocktime()
-        block_time = get_mocktime() - (201 * 2.1 * 60)
+        block_time = int(get_mocktime() - (201 * 2.1 * 60))
         for i in range(2):
             for peer in range(4):
                 for j in range(25):
                     set_node_times(rpcs, block_time)
                     rpcs[peer].generate(1)
-                    block_time += 2.1 * 60
+                    block_time += int(2.1 * 60)
                 # Must sync before next peer starts generating blocks
                 sync_blocks(rpcs)
 

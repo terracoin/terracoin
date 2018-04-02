@@ -99,7 +99,7 @@ def test_auxpow(nodes):
     try:
         nodes[0].getauxblock()
         raise AssertionError('Keypool should be exhausted by getauxblock')
-    except JSONRPCException,e:
+    except JSONRPCException as e:
         assert(e.error['code']==-12)
 
 def main():

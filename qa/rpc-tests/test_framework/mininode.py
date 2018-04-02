@@ -38,8 +38,8 @@ import logging
 import copy
 
 BIP0031_VERSION = 60000
-MY_VERSION = 70206  # current MIN_PEER_PROTO_VERSION
-MY_SUBVERSION = b"/python-mininode-tester:0.0.3/"
+MY_VERSION = 70208  # current MIN_PEER_PROTO_VERSION
+MY_SUBVERSION = b"/python-mininode-tester:0.0.2/"
 
 MAX_INV_SZ = 50000
 MAX_BLOCK_SIZE = 1000000
@@ -82,6 +82,7 @@ def deser_string(f):
         nit = struct.unpack("<Q", f.read(8))[0]
     return f.read(nit)
 
+
 def ser_string(s):
     if len(s) < 253:
         return struct.pack("B", len(s)) + s
@@ -90,6 +91,7 @@ def ser_string(s):
     elif len(s) < 0x100000000:
         return struct.pack("<BI", 254, len(s)) + s
     return struct.pack("<BQ", 255, len(s)) + s
+
 
 def deser_uint256(f):
     r = 0
@@ -464,7 +466,7 @@ class CAuxPow(CTransaction):
         self.parentBlock.deserialize(f)
 
     def serialize(self):
-        r = ""
+        r = b""
         r += super(CAuxPow, self).serialize()
         r += ser_uint256(self.hashBlock)
         r += ser_uint256_vector(self.vMerkleBranch)
@@ -491,7 +493,9 @@ class CBlockHeader(object):
             self.calc_sha256()
 
     def set_null(self):
-        self.nVersion = 1
+        # Set auxpow chain ID.  Blocks without a chain ID are not accepted
+        # by the regtest network consensus rules (since they are "legacy").
+        self.set_base_version(1)
         self.hashPrevBlock = 0
         self.hashMerkleRoot = 0
         self.nTime = 0
@@ -1327,7 +1331,7 @@ class NodeConn(asyncore.dispatcher):
                     t.deserialize(f)
                     self.got_message(t)
                 else:
-                    self.show_debug_msg("Unknown command: '" + command + "' " +
+                    self.show_debug_msg("Unknown command: '" + command.decode("ascii") + "' " +
                                         repr(msg))
         except Exception as e:
             print('got_data:', repr(e))

@@ -339,18 +339,20 @@ unsigned int GetNextWorkRequiredBTC(const CBlockIndex* pindexLast, const CBlockH
     }
 
     // Go back by what we want to be 1 hourworth of blocks
+    int nHeightFirst = pindexLast->nHeight - (params.DifficultyAdjustmentInterval()-1);
     // TERRACOIN START
-    // int nHeightFirst = pindexLast->nHeight - (params.DifficultyAdjustmentInterval()-1);
-    // assert(nHeightFirst >= 0);
-    // const CBlockIndex* pindexFirst = pindexLast->GetAncestor(nHeightFirst);
-    // assert(pindexFirst);
-    int nBlocksLookupRange = params.DifficultyAdjustmentInterval() - 1;
-    if (pindexLast->nHeight > 99988) {
-	nBlocksLookupRange = params.DifficultyAdjustmentInterval() * 24;
+    if (Params().NetworkIDString() != CBaseChainParams::MAIN) {
+        assert(nHeightFirst >= 0);
+    } else {
+        int nBlocksLookupRange = params.DifficultyAdjustmentInterval() - 1;
+        if (pindexLast->nHeight > 99988) {
+            nBlocksLookupRange = params.DifficultyAdjustmentInterval() * 24;
+        }
+        nHeightFirst = pindexLast->nHeight - nBlocksLookupRange;
     }
-    const CBlockIndex* pindexFirst = pindexLast->GetAncestor(pindexLast->nHeight - nBlocksLookupRange);
-    assert(pindexFirst);
     // TERRACOIN END
+    const CBlockIndex* pindexFirst = pindexLast->GetAncestor(nHeightFirst);
+    assert(pindexFirst);
 
     return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params);
 }
@@ -384,17 +386,21 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params& params)
 {
     // TERRACOIN START
-    //if (params.fPowNoRetargeting)
-    //    return pindexLast->nBits;
+    if (Params().NetworkIDString() != CBaseChainParams::MAIN) {
+        if (params.fPowNoRetargeting)
+            return pindexLast->nBits;
+    }
     // TERRACOIN END
 
     // Limit adjustment step
     int64_t nActualTimespan = pindexLast->GetBlockTime() - nFirstBlockTime;
     // TERRACOIN START
-    if (pindexLast->nHeight > 101908) {
-        nActualTimespan = nActualTimespan / 3;
-    } else if (pindexLast->nHeight > 99988) {
-        nActualTimespan = nActualTimespan / 24;
+    if (Params().NetworkIDString() == CBaseChainParams::MAIN) {
+        if (pindexLast->nHeight > 101908) {
+            nActualTimespan = nActualTimespan / 3;
+        } else if (pindexLast->nHeight > 99988) {
+            nActualTimespan = nActualTimespan / 24;
+        }
     }
     // TERRACOIN END
     LogPrintf("  nActualTimespan = %d  before bounds\n", nActualTimespan);

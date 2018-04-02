@@ -2920,7 +2920,7 @@ https://www.transifex.com/projects/p/terracoin/</translation>
     </message>
     <message>
         <source>Pay only the required fee of %1</source>
-        <translation>Заплатить только требуюмую комиссию %1</translation>
+        <translation>Заплатить только требуемую комиссию %1</translation>
     </message>
     <message numerus="yes">
         <source>Estimated to begin confirmation within %n block(s).</source>
