@@ -315,10 +315,10 @@ public:
         consensus.nLegacyBlocksBefore = -1;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("00000000000000000000000000000000000000000000000000000fa10fa10fa1"); //4000
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000100010001"); //genesis block to start up the chain
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("d68b80217aa6169cb22c979f6f9dd8bd44cd1011e4fa4c2f624da01d926a4e3f"); //4000
+        consensus.defaultAssumeValid = uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d"); //genesis block to start up the chain
 
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
