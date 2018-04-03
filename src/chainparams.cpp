@@ -281,7 +281,7 @@ public:
         consensus.nMajorityRejectBlockOutdated = 75;
         consensus.nMajorityWindow = 100;
         consensus.BIP34Height = 1;
-        consensus.BIP34Hash = uint256S("0x0000000023b3a96d3484e5abb3755c413e7d41500f8e2a5c3f0dd01299cd8ef8");
+        consensus.BIP34Hash = uint256S("0x57e446ce39f87a0949e7400db06b1e2e1680fe4bc4621db0af04b5ecabb92abd");
         consensus.powLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 2 * 60;
@@ -368,6 +368,7 @@ public:
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
             ( 0, uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d")),
+            ( 6, uint256S("0x3bfc2e6b4a2e6edb1db9e1fe5aff1e3ec6d6bd8933d794cabfaea3efd97b0d45")),
             1502818099,
             0,
             1000.0
