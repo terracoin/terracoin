@@ -117,10 +117,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nThreshold = 3226; // 80% of 4032
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000041e83aea39eb9f21954a2"); // 1087500
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000441fe9c8d4f45d3dec1ce"); // 1210000
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x5b03f9206287debfdfa60496481da4b994d7d3a3a7264f2dd22c8e5c9cf443a1"); // 1087500
+        consensus.defaultAssumeValid = uint256S("0xb40f66a62b2802614fe4941e1abbb6b112d7b3945d5c09ef6a1932c1d0a5585e"); // 1210000
 
         consensus.nAuxpowChainId = 0x0032;
         consensus.nAuxpowStartHeight = 833000;
@@ -250,7 +250,8 @@ public:
             (833000, uint256S("0x6fd7b973fa762ea35dc214a46276f95970c4260b251cb3e1e3c9337096b93f6d"))
             (900000, uint256S("0x6b9457bc395353eb5f08a88229125f3f30872e0771c5bbd5436beb950e20571a"))
             (1000000, uint256S("0x003bdc5e722fda8bb52ff1f54b3fe4896bed0708274ef787de6209d6817b7edd"))
-            (1087500, uint256S("0x5b03f9206287debfdfa60496481da4b994d7d3a3a7264f2dd22c8e5c9cf443a1")),
+            (1087500, uint256S("0x5b03f9206287debfdfa60496481da4b994d7d3a3a7264f2dd22c8e5c9cf443a1"))
+            (1210000, uint256S("0xb40f66a62b2802614fe4941e1abbb6b112d7b3945d5c09ef6a1932c1d0a5585e")),
             1506940111, // * UNIX timestamp of last checkpoint block
             1656788,    // * total number of transactions between genesis and last checkpoint
                         //   (the tx=... number in the SetBestChain debug.log lines)
@@ -367,7 +368,7 @@ public:
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
-            ( 0, uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d")),
+            ( 0, uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d"))
             ( 6, uint256S("0x3bfc2e6b4a2e6edb1db9e1fe5aff1e3ec6d6bd8933d794cabfaea3efd97b0d45")),
             1502818099,
             0,
