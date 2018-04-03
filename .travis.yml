@@ -34,8 +34,7 @@ env:
     - PYTHON_DEBUG=1
     - WINEDEBUG=fixme-all
 
-matrix:
-  fast_finish: true
+  matrix:
 # ARM
     - HOST=arm-linux-gnueabihf PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=1 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Win32
