@@ -316,10 +316,10 @@ public:
         consensus.nLegacyBlocksBefore = -1;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000100010001"); //genesis block to start up the chain
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000001a9c85200164b"); // 4001
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d"); //genesis block to start up the chain
+        consensus.defaultAssumeValid = uint256S("0x1ff88eb8ac889806543a831aecdf2e2b59126ede116b406f24df6a4e12a7d622"); // 4001
 
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
@@ -368,8 +368,9 @@ public:
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
-            ( 0, uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d"))
-            ( 6, uint256S("0x3bfc2e6b4a2e6edb1db9e1fe5aff1e3ec6d6bd8933d794cabfaea3efd97b0d45")),
+            (    0, uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d"))
+            (    6, uint256S("0x3bfc2e6b4a2e6edb1db9e1fe5aff1e3ec6d6bd8933d794cabfaea3efd97b0d45"))
+            ( 4001, uint256S("0x1ff88eb8ac889806543a831aecdf2e2b59126ede116b406f24df6a4e12a7d622")),
             1502818099,
             0,
             1000.0
