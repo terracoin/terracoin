@@ -1076,11 +1076,10 @@ void MasternodeList::on_createProposal_clicked()
     // Display Modal
     showProposalModal(submitStr);
 
-    int unlockat = GOVERNANCE_FEE_CONFIRMATIONS * nPowTargetSpacing * 1.5;
+    int unlockat = GOVERNANCE_FEE_CONFIRMATIONS * 10 * 1.5;
     auto *fakeLoop = new QTimer();
     connect(fakeLoop, &QTimer::timeout, [this, fakeLoop, txid, currentTS, proposalHex, unlockat] {
         // static means that it will initialize only once.
-        static const CWalletTx& wtx = pwalletMain->mapWallet[txid];
         static int confirmations = 0;
         static int counter = 0;
         static bool unlock = false;
@@ -1090,6 +1089,7 @@ void MasternodeList::on_createProposal_clicked()
             unlock = true;
         }
 
+        const CWalletTx& wtx = pwalletMain->mapWallet[txid];
         confirmations = wtx.GetDepthInMainChain(false);
         updateProposalConfirmations(confirmations, unlock, false);
 
@@ -1104,6 +1104,9 @@ void MasternodeList::on_createProposal_clicked()
 
             fakeLoop->stop();
             fakeLoop->deleteLater();
+            confirmations = 0;
+            counter = 0;
+            unlock = false;
             return;
         }
     });
