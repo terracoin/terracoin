@@ -912,31 +912,55 @@ void MasternodeList::on_tableWidgetVoting_itemSelectionChanged()
     }
 }
 
+void MasternodeList::checkAvailName(QNetworkReply *NetReply) {
+    if (NetReply->isFinished()) {
+        int error = 0;
+
+        if (NetReply->error()) {
+            error++;
+        } else {
+            QByteArray bytes = NetReply->readAll();
+            QString reply = QString::fromUtf8(bytes.data(), bytes.size());
+            if (reply.toStdString() == "1") {
+                error++;
+            } else {
+                ui->proposalName->setStyleSheet("QLineEdit { border-color: initial; }");
+            }
+        }
+
+        // Hide ajax spinner
+
+
+        if (ui->trcAddress->hasAcceptableInput()) {
+            ui->trcAddress->setStyleSheet("QLineEdit { border-color: initial; }");
+        } else {
+            error++;
+            ui->trcAddress->setStyleSheet("QLineEdit { border-color: red; }");
+        }
+
+        if (error > 0) {
+            ui->createProposal->setEnabled(false);
+        } else {
+            ui->createProposal->setEnabled(true);
+        }
+    }
+}
+
 void MasternodeList::formIsValid() {
     int error = 0;
 
+    ui->createProposal->setEnabled(false);
+    ui->proposalName->setStyleSheet("QLineEdit { border-color: red; }");
     if (ui->proposalName->hasAcceptableInput()) {
-        // check if it's avail via ajax call
-        // if taken change to red
-        ui->proposalName->setStyleSheet("QLineEdit { border-color: initial; }");
+        // show ajax spinner
+
+        QNetworkRequest request(QUrl("https://services.terracoin.io/ajax/checkAvailableProposalName.php?name=" + ui->proposalName->text()));
+        QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+        QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(checkAvailName(QNetworkReply*)));
+        manager->get(request);
+        error++;
     } else {
         error++;
-        ui->proposalName->setStyleSheet("QLineEdit { border-color: red; }");
-    }
-
-    if (ui->trcAddress->hasAcceptableInput()) {
-        // check if it's avail via ajax call
-        // if taken change to red
-        ui->trcAddress->setStyleSheet("QLineEdit { border-color: initial; }");
-    } else {
-        error++;
-        ui->trcAddress->setStyleSheet("QLineEdit { border-color: red; }");
-    }
-
-    if (error > 0) {
-        ui->createProposal->setEnabled(false);
-    } else {
-        ui->createProposal->setEnabled(true);
     }
 }
 

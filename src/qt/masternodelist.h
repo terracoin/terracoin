@@ -9,6 +9,8 @@
 #include <QMenu>
 #include <QTimer>
 #include <QWidget>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 #define MY_MASTERNODELIST_UPDATE_SECONDS                 60
 #define MASTERNODELIST_UPDATE_SECONDS                    15
@@ -90,6 +92,8 @@ private Q_SLOTS:
     void on_startMissingButton_clicked();
     void on_tableWidgetMyMasternodes_itemSelectionChanged();
     void on_UpdateButton_clicked();
+
+    void checkAvailName(QNetworkReply *NetReply);
 
     void on_voteManyYesButton_clicked();
     void on_voteManyNoButton_clicked();
