@@ -162,6 +162,7 @@ BITCOIN_CORE_H = \
   rpc/client.h \
   rpc/protocol.h \
   rpc/server.h \
+  rpc/update.h \
   scheduler.h \
   script/interpreter.h \
   script/script.h \
@@ -187,6 +188,7 @@ BITCOIN_CORE_H = \
   ui_interface.h \
   uint256.h \
   undo.h \
+  updater.h \
   util.h \
   utilmoneystr.h \
   utilstrencodings.h \
@@ -261,6 +263,7 @@ libbitcoin_server_a_SOURCES = \
   rpc/net.cpp \
   rpc/rawtransaction.cpp \
   rpc/server.cpp \
+  rpc/update.cpp \
   script/sigcache.cpp \
   sendalert.cpp \
   spork.cpp \
@@ -291,8 +294,10 @@ libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_wallet_a_SOURCES = \
   keepass.cpp \
+  policy/rbf.cpp \
   privatesend-client.cpp \
   privatesend-util.cpp \
+  updater.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \
   wallet/rpcdump.cpp \
@@ -300,7 +305,6 @@ libbitcoin_wallet_a_SOURCES = \
   wallet/wallet.cpp \
   wallet/wallet_ismine.cpp \
   wallet/walletdb.cpp \
-  policy/rbf.cpp \
   $(BITCOIN_CORE_H)
 
 # crypto primitives library
@@ -421,7 +425,7 @@ if ENABLE_WALLET
 terracoind_LDADD += libbitcoin_wallet.a
 endif
 
-terracoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+terracoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CURL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 
 # terracoin-cli binary #
 terracoin_cli_SOURCES = terracoin-cli.cpp
@@ -445,7 +449,7 @@ terracoin_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL)
-terracoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+terracoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CURL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 
 if ENABLE_WALLET
 wallet_utility_LDADD = libbitcoin_wallet.a $(LIBBITCOIN_COMMON) $(LIBBITCOIN_CRYPTO) $(LIBSECP256K1) $(LIBBITCOIN_UTIL) $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS)

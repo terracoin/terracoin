@@ -8,6 +8,7 @@
 #include "clientversion.h"
 #include "rpc/server.h"
 #include "init.h"
+#include "net.h"
 #include "noui.h"
 #include "scheduler.h"
 #include "util.h"
@@ -184,6 +185,22 @@ bool AppInit(int argc, char* argv[])
         // thread-blocking-waiting-for-another-thread-during-startup case
     } else {
         WaitForShutdown(&threadGroup);
+    }
+    if (RestartRequested())
+    {
+        // If restart requested cleanup resources and run application again.
+        // The old one will be exited below.
+        PrepareShutdown();
+        CExplicitNetCleanup::callCleanup();
+
+        if (argc > 0)
+        {
+            runCommand(std::string(argv[0]) + " &");
+        }
+        else
+        {
+            fprintf(stderr, "Error: Application name couldn't be detected.");
+        }
     }
     Shutdown();
 

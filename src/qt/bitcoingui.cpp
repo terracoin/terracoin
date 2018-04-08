@@ -35,6 +35,7 @@
 #include "util.h"
 #include "masternode-sync.h"
 #include "masternodelist.h"
+#include "updatedialog.h"
 
 #include <iostream>
 
@@ -100,6 +101,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     signMessageAction(0),
     verifyMessageAction(0),
     aboutAction(0),
+    updateAction(0),
     receiveCoinsAction(0),
     receiveCoinsMenuAction(0),
     optionsAction(0),
@@ -122,6 +124,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     modalProposalOverlay(0),
     prevBlocks(0),
     spinnerFrame(0),
+    updateChecked(false),
     platformStyle(platformStyle)
 {
     /* Open CSS when configured */
@@ -252,6 +255,12 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
 
     // Subscribe to notifications from core
     subscribeToCoreSignals();
+
+    if (GetBoolArg("-updateautocheck", true))
+    {
+        // Check update after 10 seconds
+        QTimer::singleShot(10000, this, SLOT(checkUpdate()));
+    }
 
     // Jump to peers tab by clicking on connections icon
     connect(labelConnectionsIcon, SIGNAL(clicked(QPoint)), this, SLOT(showPeers()));
@@ -384,6 +393,9 @@ void BitcoinGUI::createActions()
     aboutQtAction = new QAction(QIcon(":/icons/" + theme + "/about_qt"), tr("About &Qt"), this);
     aboutQtAction->setStatusTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
+    updateAction = new QAction(QIcon(":/icons/" + theme + "/notsynced"), tr("&Check for Updates"), this);
+    updateAction->setStatusTip(tr("Check for available updates"));
+    updateAction->setMenuRole(QAction::ApplicationSpecificRole);
     optionsAction = new QAction(QIcon(":/icons/" + theme + "/options"), tr("&Options..."), this);
     optionsAction->setStatusTip(tr("Modify configuration options for Terracoin Core"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
@@ -447,6 +459,7 @@ void BitcoinGUI::createActions()
 
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutClicked()));
+    connect(updateAction, SIGNAL(triggered()), this, SLOT(updateClicked()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(optionsAction, SIGNAL(triggered()), this, SLOT(optionsClicked()));
     connect(toggleHideAction, SIGNAL(triggered()), this, SLOT(toggleHidden()));
@@ -550,6 +563,7 @@ void BitcoinGUI::createMenuBar()
     help->addSeparator();
     help->addAction(aboutAction);
     help->addAction(aboutQtAction);
+    help->addAction(updateAction);
 }
 
 void BitcoinGUI::createToolBars()
@@ -787,6 +801,11 @@ void BitcoinGUI::aboutClicked()
 
     HelpMessageDialog dlg(this, HelpMessageDialog::about);
     dlg.exec();
+}
+
+void BitcoinGUI::updateClicked()
+{
+    checkUpdate(true);
 }
 
 void BitcoinGUI::showDebugWindow()
@@ -1474,6 +1493,37 @@ void BitcoinGUI::handleRestart(QStringList args)
 {
     if (!ShutdownRequested())
         Q_EMIT requestedRestart(args);
+}
+
+void BitcoinGUI::checkUpdate(bool askedToCheck)
+{
+    UpdateDialog::GetInstance()->setParent(this, Qt::Dialog);
+    try
+    {
+        if (!askedToCheck && updateChecked)
+        {
+            // Do nothing if update status is checked once by user.
+            return;
+        }
+        updateChecked = true;
+        bool hasUpdate = updater.GetStatus();
+        if (hasUpdate)
+        {
+            UpdateDialog::GetInstance()->exec();
+        }
+        else if (askedToCheck)
+        {
+            QMessageBox::information(this, tr("Check for Update"),
+                    tr("You are running the latest version of Terracoin Core - %1")
+                    .arg(QString::fromStdString(FormatVersion(CLIENT_VERSION))));
+
+        }
+    }
+    catch(const std::exception& e)
+    {
+        QMessageBox::warning(this, tr("Update Check Error"),
+                tr(e.what()));
+    }
 }
 
 UnitDisplayStatusBarControl::UnitDisplayStatusBarControl(const PlatformStyle *platformStyle) :

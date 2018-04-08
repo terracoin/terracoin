@@ -106,6 +106,7 @@ private:
     QAction *signMessageAction;
     QAction *verifyMessageAction;
     QAction *aboutAction;
+    QAction *updateAction;
     QAction *receiveCoinsAction;
     QAction *receiveCoinsMenuAction;
     QAction *optionsAction;
@@ -140,6 +141,8 @@ private:
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;
     int spinnerFrame;
+
+    bool updateChecked;
 
     const PlatformStyle *platformStyle;
 
@@ -233,11 +236,18 @@ private Q_SLOTS:
 
     /** Show open dialog */
     void openClicked();
+
+    /** Check if update is available and ask to download it.
+      @param[in] askedToCheck true when the check is initiated by user.
+    */
+    void checkUpdate(bool askedToCheck=false);
 #endif // ENABLE_WALLET
     /** Show configuration dialog */
     void optionsClicked();
     /** Show about dialog */
     void aboutClicked();
+    /** Show update dialog */
+    void updateClicked();
     /** Show debug window */
     void showDebugWindow();
 

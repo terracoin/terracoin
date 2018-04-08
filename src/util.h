@@ -162,6 +162,7 @@ boost::filesystem::path GetDebugLogPath();
 bool OpenDebugLog();
 void ShrinkDebugFile();
 void runCommand(const std::string& strCommand);
+std::string Sha256Sum(const std::string& filename);
 
 inline bool IsSwitchChar(char c)
 {

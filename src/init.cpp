@@ -169,9 +169,17 @@ void StartShutdown()
 {
     fRequestShutdown = true;
 }
+void StartRestart()
+{
+    fRestartRequested = true;
+}
 bool ShutdownRequested()
 {
     return fRequestShutdown || fRestartRequested;
+}
+bool RestartRequested()
+{
+    return fRestartRequested;
 }
 
 class CCoinsViewErrorCatcher : public CCoinsViewBacked

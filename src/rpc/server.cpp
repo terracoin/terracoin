@@ -251,6 +251,18 @@ UniValue stop(const UniValue& params, bool fHelp)
     return "Terracoin Core server stopping";
 }
 
+UniValue restart(const UniValue& params, bool fHelp)
+{
+    // Accept the deprecated and ignored 'detach' boolean argument
+    if (fHelp || params.size() > 1)
+        throw runtime_error(
+            "restart\n"
+            "\nRestart Terracoin Core server.");
+    // Restart will take long enough that the response should get back
+    StartRestart();
+    return "Terracoin Core server restarting";
+}
+
 /**
  * Call Table
  */
@@ -262,6 +274,7 @@ static const CRPCCommand vRPCCommands[] =
     { "control",            "debug",                  &debug,                  true  },
     { "control",            "help",                   &help,                   true  },
     { "control",            "stop",                   &stop,                   true  },
+    { "control",            "restart",                &restart,                true  },
 
     /* P2P networking */
     { "network",            "getnetworkinfo",         &getnetworkinfo,         true  },
@@ -404,6 +417,7 @@ static const CRPCCommand vRPCCommands[] =
     { "wallet",             "setaccount",             &setaccount,             true  },
     { "wallet",             "settxfee",               &settxfee,               true  },
     { "wallet",             "signmessage",            &signmessage,            true  },
+    { "wallet",             "update",                 &update,                 true  },
     { "wallet",             "walletlock",             &walletlock,             true  },
     { "wallet",             "walletpassphrasechange", &walletpassphrasechange, true  },
     { "wallet",             "walletpassphrase",       &walletpassphrase,       true  },
