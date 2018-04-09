@@ -68,7 +68,7 @@ public:
     void setDisplayUnit(const QVariant &value);
 
     /* Explicit getters */
-    bool getCheckOnStartup() { return settings.value("fCheckOnStartup"); }
+    bool getCheckOnStartup() { return fCheckOnStartup; }
     bool getHideTrayIcon() { return fHideTrayIcon; }
     bool getMinimizeToTray() { return fMinimizeToTray; }
     bool getMinimizeOnClose() { return fMinimizeOnClose; }
@@ -86,6 +86,7 @@ public:
 
 private:
     /* Qt-only settings */
+    bool fCheckOnStartup;
     bool fHideTrayIcon;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
