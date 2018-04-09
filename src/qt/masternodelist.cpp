@@ -719,6 +719,9 @@ void MasternodeList::updateVoteList(bool reset)
     ui->totalAllottedLabel->setText(QString::fromStdString(strAllotted) + " of " + QString::fromStdString(strSuperblockValue));
     ui->tableWidgetVoting->setSortingEnabled(true);
 
+    // Update superblock times on the create form
+    populateStartDates();
+
     // reset "timer"
     ui->voteSecondsLabel->setText("0");
 }
@@ -1013,6 +1016,10 @@ void MasternodeList::updateProposalConfirmations(int count, bool unlock, bool fa
 
 void MasternodeList::populateStartDates()
 {
+    // Assume we are filling in the form, there has to be a better way!
+    if (ui->startDate->currentIndex() > 0)
+        return;
+
     // Compute last/next superblock
     int nLastSuperblock, nNextSuperblock;
 
@@ -1075,7 +1082,7 @@ void MasternodeList::on_createProposal_clicked()
     proposalObj.insert(QString("payment_address"), QJsonValue(ui->trcAddress->text()));
     proposalObj.insert(QString("payment_amount"), QJsonValue(ui->amounttrc->value()));
     proposalObj.insert(QString("start_epoch"), QJsonValue(start - nSuperblockCycleHalfTime));
-    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_totaltrc->text().toInt() * nSuperblockCycleTime) + nSuperblockCycleHalfTime));
+    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_payments->text().toInt() * nSuperblockCycleTime) + nSuperblockCycleHalfTime));
     proposalObj.insert(QString("type"), QJsonValue(1));
 
     QJsonArray proposalArray;
@@ -1145,6 +1152,7 @@ void MasternodeList::on_createProposal_clicked()
     ui->amounttrc->setValue(0);
     intCurrentPayments = 1;
     ui->paymentSlider->setValue(1);
+    ui->startDate->setCurrentIndex(0);
     populateStartDates();
     formIsValid();
 }
