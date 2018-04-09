@@ -160,7 +160,7 @@ void UpdateDialog::downloadVersion()
 
     fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
             QDir::homePath() + QDir::separator() + fileInfo.fileName(),
-            tr("Archives (*.zip *.tar.gz)"));
+            tr("Archives (*.tar.gz *.dmg *.exe)"));
     if (!fileName.trimmed().isEmpty())
     {
         ui->progressBar->setVisible(true);

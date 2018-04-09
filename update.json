@@ -1,23 +1,23 @@
 {  
    "Linux32":{  
       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-i686-pc-linux-gnu.tar.gz",
-      "sha256sum":"691736cc5e9429489ff365e25d5eb1c171a544d935514e9152c96707762d8286"
+      "sha256sum":"71a10cec6ad4eaa8fdef8404e098827108f8155ce424c01a25052c69e0f30fe6"
    },
    "Linux64":{  
       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-x86_64-linux-gnu.tar.gz",
-      "sha256sum":"36dc1a4a2e7badf4136edcc339d33a9b42939a370307d91e212b2dec1506ebca"
+      "sha256sum":"c41081865de82849919317b8f8965bc734b3f904fa6525c8abd47995d51e7aba"
    },
    "Osx":{
-       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-osx64.tar.gz",
-       "sha256sum":"70d56c63f577b2ee767d16517d0dfdda4422c7d6d10e6211600c65d12bd0c50e"
+       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-osx-unsigned.dmg",
+       "sha256sum":"7f19165e63971511b3d78c7f347c0f32ebac16e9107c4b69eb5f51d1767dc3f3"
    },
    "Win32":{
-       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-win32.zip",
-       "sha256sum":"31996bbae91a442ac092b2a36a29d62219fe0b71c6faf0f456249b4af2e71ea7"
+       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-win32-setup-unsigned.exe",
+       "sha256sum":"07e9db39d3a2b785e9ca720dfd2eded3bf5c0b342c509f7332e0c23eb06ef0d6"
    },
    "Win64":{
-       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-win64.zip",
-       "sha256sum":"7236775084b30e92ac3a0ca3894e08951730eba8a112cde7c5a67f3f1c1eeab7"
+       "Url":"https://terracoin.io/bin/terracoin-core-current/terracoin-0.12.1-win64-setup-unsigned.exe",
+       "sha256sum":"24e8d21db83f6e6b0788c8f5e1368cf8d2fc8309b999e0140a7339af0d753e30"
    },
 
    "Version":120108,

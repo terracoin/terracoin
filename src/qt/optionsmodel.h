@@ -28,6 +28,7 @@ public:
 
     enum OptionID {
         StartAtStartup,         // bool
+        CheckAtStartup,         // bool
         HideTrayIcon,           // bool
         MinimizeToTray,         // bool
         MapPortUPnP,            // bool
@@ -67,6 +68,7 @@ public:
     void setDisplayUnit(const QVariant &value);
 
     /* Explicit getters */
+    bool getCheckOnStartup() { return settings.value("fCheckOnStartup"); }
     bool getHideTrayIcon() { return fHideTrayIcon; }
     bool getMinimizeToTray() { return fMinimizeToTray; }
     bool getMinimizeOnClose() { return fMinimizeOnClose; }

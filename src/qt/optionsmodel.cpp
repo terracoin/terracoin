@@ -71,6 +71,10 @@ void OptionsModel::Init(bool resetSettings)
         settings.setValue("fMinimizeOnClose", false);
     fMinimizeOnClose = settings.value("fMinimizeOnClose").toBool();
 
+    if (!settings.contains("fCheckOnStartup"))
+        settings.setValue("fCheckOnStartup", true);
+    fCheckOnStartup = settings.value("fCheckOnStartup").toBool();
+
     // Display
     if (!settings.contains("nDisplayUnit"))
         settings.setValue("nDisplayUnit", BitcoinUnits::TRC);
@@ -221,6 +225,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
         {
         case StartAtStartup:
             return GUIUtil::GetStartOnSystemStartup();
+        case CheckAtStartup:
+            return settings.value("fCheckOnStartup").toBool();
         case HideTrayIcon:
             return fHideTrayIcon;
         case MinimizeToTray:
@@ -318,6 +324,9 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
         {
         case StartAtStartup:
             successful = GUIUtil::SetStartOnSystemStartup(value.toBool());
+            break;
+        case CheckAtStartup:
+            settings.setValue("fCheckOnStartup", value.toBool());
             break;
         case HideTrayIcon:
             fHideTrayIcon = value.toBool();

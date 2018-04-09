@@ -139,15 +139,15 @@ std::string Updater::GetOsString(boost::optional<OS> os)
     }
     switch(os.get()) {
         case Updater::LINUX_32:
-            return "i686-pc-linux-gnu";
+            return "Linux32";
         case Updater::LINUX_64:
-            return "x86_64-linux-gnu";
+            return "Linux64";
         case Updater::WINDOWS_32:
-            return "win32";
+            return "Win32";
         case Updater::WINDOWS_64:
-            return "win64";
+            return "Win64";
         case Updater::MAC_OS:
-            return "osx";
+            return "Osx";
         default:
             assert(false);
     }

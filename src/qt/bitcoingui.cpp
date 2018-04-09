@@ -256,12 +256,6 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     // Subscribe to notifications from core
     subscribeToCoreSignals();
 
-    if (GetBoolArg("-updateautocheck", true))
-    {
-        // Check update after 10 seconds
-        QTimer::singleShot(10000, this, SLOT(checkUpdate()));
-    }
-
     // Jump to peers tab by clicking on connections icon
     connect(labelConnectionsIcon, SIGNAL(clicked(QPoint)), this, SLOT(showPeers()));
 
@@ -603,6 +597,13 @@ void BitcoinGUI::createToolBars()
 void BitcoinGUI::setClientModel(ClientModel *clientModel)
 {
     this->clientModel = clientModel;
+
+    if(clientModel && clientModel->getOptionsModel() && clientModel->getOptionsModel()->getCheckOnStartup())
+    {
+        // Check update after 10 seconds
+        QTimer::singleShot(10000, this, SLOT(checkUpdate()));
+    }
+
     if(clientModel)
     {
         // Create system tray menu (or setup the dock menu) that late to prevent users from calling actions,
