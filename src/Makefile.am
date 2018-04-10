@@ -425,7 +425,7 @@ if ENABLE_WALLET
 terracoind_LDADD += libbitcoin_wallet.a
 endif
 
-terracoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CURL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+terracoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(CURL_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 
 # terracoin-cli binary #
 terracoin_cli_SOURCES = terracoin-cli.cpp
@@ -449,7 +449,7 @@ terracoin_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL)
-terracoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CURL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+terracoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(CURL_LIBS) $(EVENT_LIBS)
 
 if ENABLE_WALLET
 wallet_utility_LDADD = libbitcoin_wallet.a $(LIBBITCOIN_COMMON) $(LIBBITCOIN_CRYPTO) $(LIBSECP256K1) $(LIBBITCOIN_UTIL) $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS)
