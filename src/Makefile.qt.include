@@ -211,6 +211,7 @@ RES_ICONS = \
   qt/res/icons/light/key.png \
   qt/res/icons/light/lock_closed.png \
   qt/res/icons/light/lock_open.png \
+  qt/res/icons/light/notsynced.png \
   qt/res/icons/light/masternodes.png \
   qt/res/icons/light/overview.png \
   qt/res/icons/light/quit.png \
@@ -265,6 +266,7 @@ RES_ICONS = \
   qt/res/icons/trad/key.png \
   qt/res/icons/trad/lock_closed.png \
   qt/res/icons/trad/lock_open.png \
+  qt/res/icons/trad/notsynced.png \
   qt/res/icons/trad/masternodes.png \
   qt/res/icons/trad/overview.png \
   qt/res/icons/trad/quit.png \
