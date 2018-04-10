@@ -236,12 +236,12 @@ private Q_SLOTS:
 
     /** Show open dialog */
     void openClicked();
+#endif // ENABLE_WALLET
 
     /** Check if update is available and ask to download it.
       @param[in] askedToCheck true when the check is initiated by user.
     */
     void checkUpdate(bool askedToCheck=false);
-#endif // ENABLE_WALLET
     /** Show configuration dialog */
     void optionsClicked();
     /** Show about dialog */
