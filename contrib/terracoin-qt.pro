@@ -1,5 +1,4 @@
 FORMS += \
-    ../src/qt/forms/aboutdialog.ui \
     ../src/qt/forms/addressbookpage.ui \
     ../src/qt/forms/askpassphrasedialog.ui \
     ../src/qt/forms/coincontroldialog.ui \
@@ -9,6 +8,8 @@ FORMS += \
     ../src/qt/forms/helpmessagedialog.ui \
     ../src/qt/forms/intro.ui \
     ../src/qt/forms/masternodelist.ui \
+    ../src/qt/forms/modaloverlay.ui \
+    ../src/qt/forms/modalproposaloverlay.ui \
     ../src/qt/forms/openuridialog.ui \
     ../src/qt/forms/optionsdialog.ui \
     ../src/qt/forms/overviewpage.ui \
@@ -17,7 +18,8 @@ FORMS += \
     ../src/qt/forms/sendcoinsdialog.ui \
     ../src/qt/forms/sendcoinsentry.ui \
     ../src/qt/forms/signverifymessagedialog.ui \
-    ../src/qt/forms/transactiondescdialog.ui
+    ../src/qt/forms/transactiondescdialog.ui \
+    ../src/qt/forms/updatedialog.ui
 
 RESOURCES += \
     ../src/qt/terracoin.qrc
