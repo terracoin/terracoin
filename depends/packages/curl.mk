@@ -6,7 +6,7 @@ $(package)_dependencies=openssl
 $(package)_sha256_hash=1a084da1edbfc3bd632861358b26af45ba91aaadfb15d6482de55748b8dfc693
 
 define $(package)_set_vars
-$(package)_config_opts += --with-ssl=$(host_prefix) --without-librtmp --disable-shared --enable-hidden-symbols --enable-threaded-resolver
+$(package)_config_opts += --with-ssl=$(host_prefix) --without-librtmp --disable-shared --disable-hidden-symbols --enable-threaded-resolver
 $(package)_config_opts_linux = --with-pic
 $(package)_config_opts_darwin = --with-darwinssl
 $(package)_config_opts_mingw32 = --with-winssl
