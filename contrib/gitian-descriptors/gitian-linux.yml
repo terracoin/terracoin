@@ -6,7 +6,6 @@ suites:
 architectures:
 - "amd64"
 packages:
-- "curl"
 - "g++-4.8-multilib"
 - "gcc-4.8-multilib"
 - "binutils-gold"

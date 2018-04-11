@@ -7,7 +7,6 @@ architectures:
 - "amd64"
 packages:
 - "ca-certificates"
-- "curl"
 - "g++"
 - "git-core"
 - "pkg-config"
