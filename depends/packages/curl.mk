@@ -14,6 +14,8 @@ endef
 
 define $(package)_preprocess_cmds
   sed -i.old "s|-lgdi32 \$$$$LIBS|\$$$$LIBS -lgdi32|" configure
+  sed -i.old "s|HAVE_POLL_FINE 1|HAVE_POLL_FINE 0|" configure
+  sed -i.old "s|HAVE_POLL 1|HAVE_POLL 0|" configure
 endef
 
 define $(package)_config_cmds
