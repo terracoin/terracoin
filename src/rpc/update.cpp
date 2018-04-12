@@ -16,7 +16,7 @@ using namespace std;
 using namespace boost::filesystem;
 
 bool RPCUpdate::started = false;
-UniValue RPCUpdate::statusObj;
+UniValue RPCUpdate::statusObj(UniValue::VOBJ);
 
 std::string RPCUpdate::GetArchivePath() const
 {
@@ -80,7 +80,7 @@ void RPCUpdate::Install()
 
     // Copy files to /usr/
     if (!nErr) {
-        strCommand = strprintf("cp -rf %s /usr/local/", (tempDir / "archive/bin/*").string());
+        strCommand = strprintf("cp -rf %s /usr/local/bin/", (tempDir / "archive/bin/*").string());
         nErr = ::system(strCommand.c_str());
         if (nErr) {
             LogPrintf("runCommand error: system(%s) returned %d\n", strCommand, nErr);
@@ -181,7 +181,7 @@ UniValue update(const UniValue& params, bool fHelp)
         if (updater.GetStatus())
         {
             // There is an update
-            UniValue obj;
+            UniValue obj(UniValue::VOBJ);
             obj.push_back(Pair("Current Version", FormatVersion(CLIENT_VERSION)));
             obj.push_back(Pair("Update Version", FormatVersion(updater.GetVersion())));
             obj.push_back(Pair("OS", updater.GetOsString()));
