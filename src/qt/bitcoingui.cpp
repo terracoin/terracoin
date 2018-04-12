@@ -35,6 +35,7 @@
 #include "util.h"
 #include "masternode-sync.h"
 #include "masternodelist.h"
+#include "clientversion.h"
 #include "updatedialog.h"
 
 #include <iostream>
