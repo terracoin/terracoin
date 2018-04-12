@@ -37,6 +37,7 @@
 #include "masternodelist.h"
 #include "clientversion.h"
 #include "updatedialog.h"
+#include "updater.h"
 
 #include <iostream>
 
