@@ -39,7 +39,7 @@ MAX_VERSIONS = {
 'GCC':     (4,4,0),
 'CXXABI':  (1,3,3),
 'GLIBCXX': (3,4,13),
-'GLIBC':   (2,11)
+'GLIBC':   (2,16)
 }
 # See here for a description of _IO_stdin_used:
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=634261#109
