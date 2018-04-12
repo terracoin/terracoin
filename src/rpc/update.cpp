@@ -69,7 +69,7 @@ void RPCUpdate::Install()
     if (!result) {
         throw runtime_error(strprintf("Failed to create directory %s", (tempDir / "archive").string()));
     }
-    std::string strCommand = strprintf("unzip -q %s -d %s", GetArchivePath(), (tempDir / "archive").string());
+    std::string strCommand = strprintf("tar xzf %s -C %s --strip-components=1", GetArchivePath(), (tempDir / "archive").string());
     int nErr = ::system(strCommand.c_str());
     if (nErr) {
         LogPrintf("runCommand error: system(%s) returned %d\n", strCommand, nErr);
@@ -80,7 +80,7 @@ void RPCUpdate::Install()
 
     // Copy files to /usr/
     if (!nErr) {
-        strCommand = strprintf("cp -rf %s /usr/local/", (tempDir / "archive/*/*").string());
+        strCommand = strprintf("cp -rf %s /usr/local/", (tempDir / "archive/bin/*").string());
         nErr = ::system(strCommand.c_str());
         if (nErr) {
             LogPrintf("runCommand error: system(%s) returned %d\n", strCommand, nErr);
