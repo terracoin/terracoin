@@ -12,6 +12,8 @@
 #include <univalue.h>
 #include <boost/thread.hpp>
 
+#include <sys/stat.h>
+
 using namespace std;
 using namespace boost::filesystem;
 
@@ -230,9 +232,20 @@ UniValue update(const UniValue& params, bool fHelp)
             throw runtime_error("Command is available only in Linux.");
         }
 
-        if (::system("command -v unzip"))
+        struct stat buffer;
+        if (stat("/usr/local/bin/terracoind", &buffer) != 0)
         {
-            throw runtime_error("The command 'unzip' could not be found. Please install it and try again.");
+            throw runtime_error("Terracoin Core not located in /usr/local/bin, can not install.");
+        }
+
+        if (::system("command -v sudo"))
+        {
+            throw runtime_error("The command 'sudo' could not be found. Please install it and try again.");
+        }
+
+        if (::system("command -v tar"))
+        {
+            throw runtime_error("The command 'tar' could not be found. Please install it and try again.");
         }
 
         if (!updater.GetStatus())
