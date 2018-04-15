@@ -28,7 +28,7 @@ std::string RPCUpdate::GetArchivePath() const
 
 bool RPCUpdate::Download()
 {
-    statusObj.clear();
+    statusObj.setObject();
     // Create temporary directory
     tempDir = GetTempPath() / unique_path();
     bool result = TryCreateDirectory(tempDir);
@@ -61,7 +61,7 @@ bool RPCUpdate::Download()
 
 void RPCUpdate::Install()
 {
-    statusObj.clear();
+    statusObj.setObject();
     if (!Download())
     {
         return;
