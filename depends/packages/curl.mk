@@ -6,7 +6,25 @@ $(package)_dependencies=openssl
 $(package)_sha256_hash=1a084da1edbfc3bd632861358b26af45ba91aaadfb15d6482de55748b8dfc693
 
 define $(package)_set_vars
-$(package)_config_opts += --with-ssl=$(host_prefix) --without-librtmp --disable-shared --enable-hidden-symbols --enable-threaded-resolver --disable-smtp
+$(package)_config_opts += --with-ssl=$(host_prefix)
+$(package)_config_opts += --disable-shared
+$(package)_config_opts += --enable-hidden-symbols
+$(package)_config_opts += --enable-threaded-resolver
+$(package)_config_opts += --without-librtmp
+$(package)_config_opts += --without-winidn
+$(package)_config_opts += --without-libidn
+$(package)_config_opts += --disable-ldap
+$(package)_config_opts += --disable-ldaps
+$(package)_config_opts += --disable-rtsp
+$(package)_config_opts += --disable-dict
+$(package)_config_opts += --disable-telnet
+$(package)_config_opts += --disable-tftp
+$(package)_config_opts += --disable-pop3
+$(package)_config_opts += --disable-imap
+$(package)_config_opts += --disable-smb
+$(package)_config_opts += --disable-smtp
+$(package)_config_opts += --disable-gopher
+$(package)_config_opts += --disable-manual
 $(package)_config_opts_linux = --with-pic
 $(package)_config_opts_darwin = --with-darwinssl
 $(package)_config_opts_mingw32 = --with-winssl
