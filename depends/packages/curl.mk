@@ -13,6 +13,7 @@ $(package)_config_opts += --enable-threaded-resolver
 $(package)_config_opts += --without-librtmp
 $(package)_config_opts += --without-winidn
 $(package)_config_opts += --without-libidn
+$(package)_config_opts += --without-zlib
 $(package)_config_opts += --disable-ldap
 $(package)_config_opts += --disable-ldaps
 $(package)_config_opts += --disable-rtsp
