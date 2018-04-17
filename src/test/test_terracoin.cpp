@@ -168,7 +168,17 @@ void StartShutdown()
   exit(0);
 }
 
+void StartRestart()
+{
+  exit(0);
+}
+
 bool ShutdownRequested()
+{
+  return false;
+}
+
+bool RestartRequested()
 {
   return false;
 }
