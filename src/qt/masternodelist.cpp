@@ -963,7 +963,8 @@ void MasternodeList::formIsValid() {
         QNetworkRequest request(QUrl("https://services.terracoin.io/ajax/checkAvailableProposalName.php?name=" + ui->proposalName->text()));
         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
         QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(checkAvailName(QNetworkReply*)));
-        manager->get(request);
+        QNetworkReply *reply = manager->get(request);
+        reply->ignoreSslErrors(); // for Cloudflare
     }
 }
 
