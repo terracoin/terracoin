@@ -3,6 +3,7 @@ $(package)_version=1.0.2o
 $(package)_download_path=https://www.openssl.org/source
 $(package)_file_name=$(package)-$($(package)_version).tar.gz
 $(package)_sha256_hash=ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d
+$(package)_patches=openssl__chacha20_poly1305_draft_and_rfc_ossl102j.patch
 
 define $(package)_set_vars
 $(package)_config_env=AR="$($(package)_ar)" RANLIB="$($(package)_ranlib)" CC="$($(package)_cc)"
@@ -23,7 +24,7 @@ $(package)_config_opts+=no-krb5
 $(package)_config_opts+=no-libunbound
 $(package)_config_opts+=no-md2
 $(package)_config_opts+=no-mdc2
-$(package)_config_opts+=no-rc4
+#$(package)_config_opts+=no-rc4
 $(package)_config_opts+=no-rc5
 $(package)_config_opts+=no-rdrand
 $(package)_config_opts+=no-rfc3779
@@ -58,7 +59,8 @@ endef
 
 define $(package)_preprocess_cmds
   sed -i.old "/define DATE/d" util/mkbuildinf.pl && \
-  sed -i.old "s|engines apps test|engines|" Makefile.org
+  sed -i.old "s|engines apps test|engines|" Makefile.org && \
+  patch -p1 < $($(package)_patch_dir)/openssl__chacha20_poly1305_draft_and_rfc_ossl102j.patch
 endef
 
 define $(package)_config_cmds
