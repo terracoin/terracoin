@@ -7,6 +7,7 @@
 #include "util.h"
 
 #include <QMenu>
+#include <QMovie>
 #include <QTimer>
 #include <QWidget>
 #include <QNetworkAccessManager>
@@ -83,6 +84,7 @@ private:
     void showProposalModal(QString submitStr);
     void updateProposalConfirmations(int count, bool unlock, bool failed);
     void formIsValid();
+    QMovie *ajaxLoader;
 
 private Q_SLOTS:
     void showContextMenu(const QPoint &);

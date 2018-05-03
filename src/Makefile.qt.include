@@ -178,6 +178,7 @@ RES_ICONS = \
   qt/res/icons/terracoin.png \
   qt/res/icons/chevron.png \
   qt/res/icons/warning.png \
+  qt/res/icons/ajax-loader.gif \
   qt/res/icons/light/add.png \
   qt/res/icons/light/address-book.png \
   qt/res/icons/light/browse.png \

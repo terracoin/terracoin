@@ -342,6 +342,10 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QLabel" name="ajaxSpinner">
+                </widget>
+               </item>
               </layout>
              </item>
              <item>

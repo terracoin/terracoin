@@ -3,6 +3,7 @@
         <file alias="bitcoin">res/icons/terracoin.png</file>
         <file alias="prompticon">res/icons/chevron.png</file>
         <file alias="warning">res/icons/warning.png</file>
+        <file alias="ajax-loader">res/icons/ajax-loader.gif</file>
     </qresource>
     <qresource prefix="/icons/light">
         <file alias="address-book">res/icons/light/address-book.png</file>

@@ -176,6 +176,9 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->proposalName->setValidator(new QRegExpValidator(reg_alphanum, this));
     ui->trcAddress->setValidator(new QRegExpValidator(reg_base58, this));
     formIsValid();
+    ui->ajaxSpinner->hide();
+    ajaxLoader = new QMovie(":/icons/ajax-loader");
+    ui->ajaxSpinner->setMovie(ajaxLoader);
 }
 
 MasternodeList::~MasternodeList()
@@ -920,6 +923,7 @@ void MasternodeList::checkAvailName(QNetworkReply *NetReply) {
         int error = 0;
 
         if (NetReply->error()) {
+            LogPrintf("Net Error: %s\n", NetReply->error());
             error++;
         } else {
             QByteArray bytes = NetReply->readAll();
@@ -931,8 +935,8 @@ void MasternodeList::checkAvailName(QNetworkReply *NetReply) {
             }
         }
 
-        // Hide ajax spinner
-
+        ajaxLoader->stop();
+        ui->ajaxSpinner->hide();
 
         if (ui->trcAddress->hasAcceptableInput()) {
             ui->trcAddress->setStyleSheet("QLineEdit { border-color: initial; }");
@@ -950,20 +954,16 @@ void MasternodeList::checkAvailName(QNetworkReply *NetReply) {
 }
 
 void MasternodeList::formIsValid() {
-    int error = 0;
-
     ui->createProposal->setEnabled(false);
     ui->proposalName->setStyleSheet("QLineEdit { border-color: red; }");
     if (ui->proposalName->hasAcceptableInput()) {
-        // show ajax spinner
+        ui->ajaxSpinner->show();
+        ajaxLoader->start();
 
         QNetworkRequest request(QUrl("https://services.terracoin.io/ajax/checkAvailableProposalName.php?name=" + ui->proposalName->text()));
         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
         QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(checkAvailName(QNetworkReply*)));
         manager->get(request);
-        error++;
-    } else {
-        error++;
     }
 }
 
