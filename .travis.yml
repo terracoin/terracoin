@@ -23,14 +23,14 @@ cache:
 
 env:
   global:
-    - MAKEJOBS=-j5
+    - MAKEJOBS=-j3
     - RUN_TESTS=false
     - BOOST_TEST_RANDOM=1$TRAVIS_BUILD_ID
     - CCACHE_SIZE=400M
     - CCACHE_TEMPDIR=/tmp/.ccache-temp
     - CCACHE_COMPRESS=1
     - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
-    - SDK_URL=https://terracoin.io/depends-sources/sdks
+    - SDK_URL=https://bitcoin.jonasschnelli.ch/sdks
     - PYTHON_DEBUG=1
     - WINEDEBUG=fixme-all
 
