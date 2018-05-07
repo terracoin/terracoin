@@ -21,6 +21,7 @@
 
 #include "bitcoingui.h"
 
+#include <QUrl>
 #include <QTimer>
 #include <QMessageBox>
 #include <QJsonDocument>
@@ -960,7 +961,14 @@ void MasternodeList::formIsValid() {
         ui->ajaxSpinner->show();
         ajaxLoader->start();
 
-        QNetworkRequest request(QUrl("https://services.terracoin.io/ajax/checkAvailableProposalName.php?name=" + ui->proposalName->text()));
+        QUrl url;
+        url.setScheme("https");
+        url.setHost("services.terracoin.io");
+        url.setPath("/ajax/checkAvailableProposalName.php?name=" + ui->proposalName->text());
+        url.setUrl(QUrl::fromPercentEncoding(url.toEncoded()));
+
+        QNetworkRequest request(url);
+        request.setRawHeader("User-Agent", CLIENT_NAME.c_str());
         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
         QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(checkAvailName(QNetworkReply*)));
         manager->get(request);
