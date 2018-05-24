@@ -290,7 +290,7 @@ std::string RPCUpdate::CheckSha(const std::string& fileName) const
             if (newSha.compare(sha) == 0) {
                 result = "OK";
             } else {
-                result = "Error. SHA-256 verification did NOT match.";
+                result = "Error. SHA-256 verification did NOT match. (" + newSha + " != " + sha + ")";
             }
         } else {
             result = "Error. SHA-256 verification failed to run.";
