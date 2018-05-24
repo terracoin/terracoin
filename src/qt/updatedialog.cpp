@@ -212,7 +212,7 @@ void UpdateDialog::setIcon() const
 {
     QIcon icon = this->style()->standardIcon(QStyle::SP_MessageBoxInformation);
     ui->iconLabel->setPixmap(icon.pixmap(iconSize, iconSize));
-    ui->iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    ui->iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 }
 
 int UpdateDialog::exec()
