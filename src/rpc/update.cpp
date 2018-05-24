@@ -14,6 +14,8 @@
 
 #include <sys/stat.h>
 #include <libgen.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 using namespace std;
 using namespace boost::filesystem;
