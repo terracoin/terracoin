@@ -141,7 +141,7 @@ void RPCUpdate::ProgressFunction(curl_off_t now, curl_off_t total)
         started = true;
         statusObj.push_back(Pair("Download", strprintf("%0.1f/%0.1fMB, %d%%",
                                         static_cast<double>(now) / 1024 / 1024,
-                                        static_cast<double>(total) / 1024 / 1024,
+                                        static_cast<double>(updater.GetDownloadSize()) / 1024 / 1024,
                                         percent)));
     }
 }
@@ -216,6 +216,7 @@ UniValue update(const UniValue& params, bool fHelp)
             obj.push_back(Pair("OS", updater.GetOsString()));
             obj.push_back(Pair("Url", updater.GetDownloadUrl()));
             obj.push_back(Pair("Sha256hash", updater.GetDownloadSha256Sum()));
+            obj.push_back(Pair("Size", updater.GetDownloadSize()));
             return obj;
         }
         return "You are running the latest version of Terracoin Core - " + FormatVersion(CLIENT_VERSION);
@@ -268,13 +269,13 @@ UniValue update(const UniValue& params, bool fHelp)
         }
         int installeduid = buffer.st_uid;
 
-        if (::system("command -v tar"))
+        if (::system("command -v tar > /dev/null 2>&1"))
         {
             throw runtime_error("The command 'tar' could not be found. Please install it and try again.");
         }
 
         if (getuid() != installeduid) {
-            if (::system("command -v sudo"))
+            if (::system("command -v sudo > /dev/null 2>&1"))
             {
                 throw runtime_error("The command 'sudo' could not be found. Please install it and try again.");
             }
