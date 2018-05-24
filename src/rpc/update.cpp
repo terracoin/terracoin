@@ -62,15 +62,34 @@ bool RPCUpdate::Download()
     return true;
 }
 
+#if (defined(__MINGW32__) || defined(__CYGWIN__))
+uid_t getuid()
+{
+    HANDLE process = ::GetCurrentProcess();
+    handle_unique_ptr processPtr(process);
+    HANDLE token = nullptr;
+    BOOL openToken = ::OpenProcessToken(
+        process, TOKEN_READ|TOKEN_QUERY_SOURCE, &token);
+    if (! openToken)
+    {
+        return -1;
+    }
+    handle_unique_ptr tokenPtr(token);
+    uid_t ret = GetUID(token);
+    return ret;
+}
+#endif 
+
 std::string getexe(bool pathonly = false)
 {
-    char result[ PATH_MAX ];
-    ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+    boost::filesystem::path result = boost::filesystem::read_symlink( "/proc/self/exe" );
+    char *path = new char[MAX_PATH];
+    strcpy( path, result.c_str() );
 
     if (pathonly)
-        return std::string( dirname(result) );
+        return std::string( dirname( path ) );
     else
-        return std::string( result, (count > 0) ? count : 0 );
+        return std::string( result.c_str() );
 }
 
 void RPCUpdate::Install()
