@@ -20,7 +20,7 @@ public:
     static void ProgressFunction(curl_off_t now, curl_off_t total);
 
 private:
-    bool CheckSha(const std::string& fileName) const;
+    std::string CheckSha(const std::string& fileName) const;
     std::string GetArchivePath() const;
 
 private:

@@ -49,13 +49,15 @@ bool RPCUpdate::Download()
         remove_all(tempDir);
         return false;
     }
-    if (CheckSha(archivePath))
+
+    std::string shacheck = CheckSha(archivePath);
+    if (shacheck.compare("OK") == 0)
     {
         statusObj.push_back(Pair("Download", "Done - " + archivePath));
     }
     else
     {
-        statusObj.push_back(Pair("Download", "Error. SHA-256 verification failed."));
+        statusObj.push_back(Pair("Download", shacheck));
         remove_all(tempDir);
         return false;
     }
@@ -280,25 +282,26 @@ UniValue RPCUpdate::GetStatusObject() const
     return statusObj;
 }
 
-bool RPCUpdate::CheckSha(const std::string& fileName) const
+std::string RPCUpdate::CheckSha(const std::string& fileName) const
 {
-    bool result = false;
+    std::string result;
     std::string newSha = updater.GetDownloadSha256Sum();
     try
     {
         std::string sha = Sha256Sum(fileName);
         if (!sha.empty()) {
             if (newSha.compare(sha) == 0) {
-                result = true;
+                result = "OK";
             } else {
-                result = false;
+                result = "Error. SHA-256 verification did NOT match.";
             }
         } else {
-            result = false;
+            result = "Error. SHA-256 verification failed to run.";
         }
-    } catch(std::runtime_error &e) {
-        result = false;
+    } catch(std::string &e) {
+        result = "Error. SHA-256 verification failed: " + e;
     }
+
     return result;
 }
 
