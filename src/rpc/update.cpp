@@ -253,17 +253,14 @@ void RPCUpdate::Install()
 
 void RPCUpdate::ProgressFunction(curl_off_t now, curl_off_t total)
 {
-    int percent = 0;
-    if (total != 0) {
-        percent = now * 100 / updater.GetDownloadSize();
-    }
+    int percent = now * 100 / updater.GetDownloadSize();
     if (statusObj.size() == 0) {
         statusObj.push_back(Pair("Download", "In Progress"));
     }
-    if ((now == total) && now != 0) {
+    if ((now == updater.GetDownloadSize()) && now != 0) {
         started = false;
         statusObj.push_back(Pair("Download", "Done"));
-    } else if (now != total) {
+    } else if (now != updater.GetDownloadSize()) {
         started = true;
         statusObj.push_back(Pair("Download", strprintf("%0.1f/%0.1fMB, %d%%",
                                         static_cast<double>(now) / 1024 / 1024,
