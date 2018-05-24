@@ -13,6 +13,7 @@
 #include <boost/thread.hpp>
 
 #include <sys/stat.h>
+#include <libgen.h>
 
 using namespace std;
 using namespace boost::filesystem;
@@ -59,6 +60,17 @@ bool RPCUpdate::Download()
     return true;
 }
 
+std::string getexe(bool pathonly = false)
+{
+    char result[ PATH_MAX ];
+    ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+
+    if (pathonly)
+        return std::string( dirname(result) );
+    else
+        return std::string( result, (count > 0) ? count : 0 );
+}
+
 void RPCUpdate::Install()
 {
     statusObj.setObject();
@@ -66,11 +78,24 @@ void RPCUpdate::Install()
     {
         return;
     }
+
+    string installLoc = getexe();
+    string install_path = getexe(true);
+    struct stat buffer;
+    stat(installLoc.c_str(), &buffer);
+    int installuid = buffer.st_uid;
+    int installgid = buffer.st_gid;
+    string usesudo = "";
+
+    if (getuid() != installuid)
+        usesudo = strprintf("sudo -n -u %d:%d ", installuid, installgid);
+
     // Extract archive
     bool result = TryCreateDirectory(tempDir / "archive");
     if (!result) {
         throw runtime_error(strprintf("Failed to create directory %s", (tempDir / "archive").string()));
     }
+
     std::string strCommand = strprintf("tar xzf %s -C %s --strip-components=1", GetArchivePath(), (tempDir / "archive").string());
     int nErr = ::system(strCommand.c_str());
     if (nErr) {
@@ -80,9 +105,9 @@ void RPCUpdate::Install()
         statusObj.push_back(Pair("Extract", "Done"));
     }
 
-    // Copy files to /usr/
+    // Copy files to install_path
     if (!nErr) {
-        strCommand = strprintf("cp -rf %s /usr/local/bin/", (tempDir / "archive/bin/*").string());
+        strCommand = strprintf("%scp -rf %s %s", usesudo, (tempDir / "archive/bin/*").string(), install_path);
         nErr = ::system(strCommand.c_str());
         if (nErr) {
             LogPrintf("runCommand error: system(%s) returned %d\n", strCommand, nErr);
@@ -232,20 +257,25 @@ UniValue update(const UniValue& params, bool fHelp)
             throw runtime_error("Command is available only in Linux.");
         }
 
+        string installLoc = getexe();
+        string install_path = getexe(true);
         struct stat buffer;
-        if (stat("/usr/local/bin/terracoind", &buffer) != 0)
+        if (stat(installLoc.c_str(), &buffer) != 0)
         {
-            throw runtime_error("Terracoin Core not located in /usr/local/bin, can not install.");
+            throw runtime_error(strprintf("Terracoin Core not located in %s, can not install.", install_path.c_str()));
         }
-
-        if (::system("command -v sudo"))
-        {
-            throw runtime_error("The command 'sudo' could not be found. Please install it and try again.");
-        }
+        int installeduid = buffer.st_uid;
 
         if (::system("command -v tar"))
         {
             throw runtime_error("The command 'tar' could not be found. Please install it and try again.");
+        }
+
+        if (getuid() != installeduid) {
+            if (::system("command -v sudo"))
+            {
+                throw runtime_error("The command 'sudo' could not be found. Please install it and try again.");
+            }
         }
 
         if (!updater.GetStatus())
