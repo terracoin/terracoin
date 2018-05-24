@@ -105,7 +105,7 @@ void Updater::LoadUpdateInfo()
     if (curl)
     {
         curl_easy_setopt(curl, CURLOPT_URL, updaterInfoUrl.c_str());
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+        //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, GetUpdateData);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &updateData);
         res = curl_easy_perform(curl);
@@ -180,6 +180,27 @@ std::string Updater::GetSha256sum(UniValue value)
     return "";
 }
 
+int Updater::GetSize(UniValue value)
+{
+    if (value.getType() == UniValue::VOBJ && value.exists("size"))
+    {
+        UniValue sizeUniValue = value["size"];
+        int size = -1;
+        switch(sizeUniValue.getType()) {
+            case UniValue::VNUM:
+                size = sizeUniValue.get_int();
+                break;
+            default:
+                std::istringstream ss(sizeUniValue.get_str());
+                ss >> size;
+                break;
+        }
+
+        return size;
+    }
+    return -1;
+}
+
 int Updater::GetVersionFromJson()
 {
     if (jsonData.getType() == UniValue::VOBJ)
@@ -205,6 +226,13 @@ std::string Updater::GetDownloadSha256Sum(boost::optional<OS> version)
     return GetSha256sum(json);
 }
 
+int Updater::GetDownloadSize(boost::optional<OS> version)
+{
+    UniValue json = find_value(jsonData.get_obj(), GetOsString(version));
+    return GetSize(json);
+}
+
+
 static size_t write_data(void *ptr, size_t size, size_t nmemb, const void *stream)
 {
     size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
@@ -216,7 +244,15 @@ static int xferinfo(void *p,
         curl_off_t ultotal, curl_off_t ulnow)
 {
     struct DownloadProgress *myp = (struct DownloadProgress*)p;
+    CURL *curl = myp->curl;
+    double curtime = 0;
+
+    curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &curtime);
+
+    myp->lastruntime = curtime;
+ 
     myp->progressFunction(dlnow, dltotal);
+
     return updater.GetStopDownload();
 }
 
@@ -229,32 +265,39 @@ CURLcode Updater::DownloadFile(std::string url, std::string fileName, void(progr
 {
     stopDownload = false;
     CURL *curl_handle;
-    struct DownloadProgress prog;
-    prog.progressFunction = progressFunction;
     FILE *pagefile;
     CURLcode res = CURLE_FAILED_INIT;
+    struct DownloadProgress prog;
+
+    prog.progressFunction = progressFunction;
 
     curl_global_init(CURL_GLOBAL_ALL);
     curl_handle = curl_easy_init();
-    curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, false);
-    curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 0L);
-    curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+    if (curl_handle) {
+        prog.lastruntime = 0;
+        prog.curl = curl_handle;
+        curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
+        //curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, false);
+        curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 0L);
+        curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
 
-    curl_easy_setopt(curl_handle, CURLOPT_XFERINFOFUNCTION, xferinfo);
-    curl_easy_setopt(curl_handle, CURLOPT_XFERINFODATA, &prog);
-    pagefile = fopen(fileName.c_str(), "wb");
-    if(pagefile) {
-        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, pagefile);
-        res = curl_easy_perform(curl_handle);
-        fclose(pagefile);
-    }
-    curl_easy_cleanup(curl_handle);
+        curl_easy_setopt(curl_handle, CURLOPT_XFERINFOFUNCTION, xferinfo);
+        curl_easy_setopt(curl_handle, CURLOPT_XFERINFODATA, &prog);
+        pagefile = fopen(fileName.c_str(), "wb");
+        if(pagefile) {
+            curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, pagefile);
+            res = curl_easy_perform(curl_handle);
+            fclose(pagefile);
+        }
+        curl_easy_cleanup(curl_handle);
 
-    if (res != CURLE_OK)
-    {
-        LogPrintf("Updater::DownloadFile() - Error! Failed to download file - %s. Error code - %d\n", url, res);
+        if (res != CURLE_OK)
+        {
+            LogPrintf("Updater::DownloadFile() - Error! Failed to download file - %s. Error code - %d\n", url, res);
+        }
+    } else {
+        LogPrintf("Updater::DownloadFile() - Error! Failed to start curl.\n");
     }
     return res;
 }

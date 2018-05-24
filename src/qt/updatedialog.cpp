@@ -101,11 +101,8 @@ void UpdateDialog::setPossibleOS()
 void UpdateProgressBar(curl_off_t now, curl_off_t total)
 {
     QCoreApplication::processEvents();
-    if (now != 0 && total != 0)
-    {
-        UpdateDialog::GetInstance()->setProgressMaximum(total);
+    if (now != 0)
         UpdateDialog::GetInstance()->setProgressValue(now);
-    }
 }
 
 void UpdateDialog::shaError(const QString& error)
@@ -168,6 +165,7 @@ void UpdateDialog::downloadVersion()
         this->resize(this->width(), this->height() + ui->progressBar->size().height());
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         ui->buttonBox->button(QDialogButtonBox::Cancel)->setText("Cancel");
+        UpdateDialog::GetInstance()->setProgressMaximum(updater.GetDownloadSize(getOS()));
         CURLcode res = updater.DownloadFile(url, fileName.toStdString(), &UpdateProgressBar);
         if (res == CURLE_OK) {
             downloadFinished();

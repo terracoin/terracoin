@@ -41,6 +41,7 @@ public:
     void StopDownload();
     std::string GetDownloadUrl(boost::optional<OS> version = boost::none);
     std::string GetDownloadSha256Sum(boost::optional<OS> version = boost::none);
+    int GetDownloadSize(boost::optional<OS> version = boost::none);
     std::string GetOsString(boost::optional<OS> os = boost::none);
     bool GetStopDownload()
     {
@@ -65,6 +66,7 @@ private:
     int GetVersionFromJson();
     std::string GetUrl(const UniValue& value);
     std::string GetSha256sum(UniValue value);
+    int GetSize(UniValue value);
     void SetCAPath(CURL* curl);
     void CheckAndUpdateStatus(const std::string& updateData);
 };
