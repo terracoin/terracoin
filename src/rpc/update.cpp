@@ -80,7 +80,7 @@ std::string getexe(bool pathonly = false)
     if (pathonly)
         return std::string( dirname( (char *)result.c_str() ) );
     else
-        return std::string( result.c_str() );
+        return std::string( (char *)result.c_str() );
 }
 
 void RPCUpdate::Install()
