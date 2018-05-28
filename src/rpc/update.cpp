@@ -76,11 +76,9 @@ uid_t getuid()
 std::string getexe(bool pathonly = false)
 {
     boost::filesystem::path result = boost::filesystem::read_symlink( "/proc/self/exe" );
-    char *path = new char[MAX_PATH];
-    strcpy( path, result.c_str() );
 
     if (pathonly)
-        return std::string( dirname( path ) );
+        return std::string( dirname( (char *)result.c_str() ) );
     else
         return std::string( result.c_str() );
 }
