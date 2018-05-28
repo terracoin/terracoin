@@ -312,7 +312,6 @@ border:0px solid #fff;
 }
 
 QTableView::item { /* Table Item */
-background-color:#fcfcfc;
 font-size:9pt;
 }
 

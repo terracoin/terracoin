@@ -782,24 +782,36 @@ void MasternodeList::updateVoteList(bool reset)
         ui->tableWidgetVoting->insertRow(0);
 // FIXME if projected == No Red, Yes Green
         if (projected.compare("No") == 0)
-            rowcolor.setRgbF(1,0,0,0.5);
+            rowcolor.setRgbF(1,0,0,0.2);
         else
-            rowcolor.setRgbF(0,1,0,0.5);
+            rowcolor.setRgbF(0,1,0,0.2);
         ui->tableWidgetVoting->setCellWidget(0, 0, nameItem);
         ui->tableWidgetVoting->setItem(0, 1, blockCreatedItem);
-        ui->tableWidgetVoting->item(0, 1)->setBackground(Qt::red);
+        ui->tableWidgetVoting->item(0, 1)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 2, blockStartItem);
+        ui->tableWidgetVoting->item(0, 2)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 3, blockEndItem);
+        ui->tableWidgetVoting->item(0, 3)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 4, yesVotesItem);
+        ui->tableWidgetVoting->item(0, 4)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 5, noVotesItem);
+        ui->tableWidgetVoting->item(0, 5)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 6, abstainVotesItem);
+        ui->tableWidgetVoting->item(0, 6)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 7, monthlyPaymentItem);
+        ui->tableWidgetVoting->item(0, 7)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 8, paymentsItem);
+        ui->tableWidgetVoting->item(0, 8)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 9, remainingPaymentsItem);
+        ui->tableWidgetVoting->item(0, 9)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 10, totalPaymentItem);
+        ui->tableWidgetVoting->item(0, 10)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 11, projectedItem);
+        ui->tableWidgetVoting->item(0, 11)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 12, AddressItem);
+        ui->tableWidgetVoting->item(0, 12)->setBackground(rowcolor);
         ui->tableWidgetVoting->setItem(0, 13, hashItem);
+        ui->tableWidgetVoting->item(0, 13)->setBackground(rowcolor);
     }
 
     ui->superblockLabel->setText(QString::number(nNextSuperblock));
