@@ -108,5 +108,7 @@ private Q_SLOTS:
     void on_paymentSlider_valueChanged(const int &intPayments);
     void on_amounttrc_valueChanged(const double &doubleAmount);
     void on_createProposal_clicked();
+
+    void showProposalInfo(const QString &hash);
 };
 #endif // MASTERNODELIST_H

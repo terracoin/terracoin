@@ -21,12 +21,19 @@
 
 #include "bitcoingui.h"
 
+#include "tooltipdialog.h"
+#include "utilstrencodings.h"
+
 #include <QUrl>
 #include <QTimer>
 #include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QSignalMapper>
+#include <QPushButton>
+#include <QColor>
+#include <QDesktopServices>
 
 int GetOffsetFromUtc()
 {
@@ -539,6 +546,77 @@ void MasternodeList::on_UpdateVotesButton_clicked()
     updateVoteList(true);
 }
 
+void MasternodeList::showProposalInfo(const QString &hash)
+{
+    bool showURL = true;
+
+    std::vector<CGovernanceObject*> objs = governance.GetAllNewerThan(0);
+    CGovernanceObject* govObj;
+
+    BOOST_FOREACH(CGovernanceObject* pGovObj, objs)
+    {
+        if(!pGovObj->IsSetCachedValid()) continue;
+        if(pGovObj->GetObjectType() != GOVERNANCE_OBJECT_PROPOSAL) continue;
+
+        if (QString::fromStdString(pGovObj->GetHash().ToString()).compare(hash) == 0)
+        {
+            govObj = pGovObj;
+            break;
+        }
+    }
+
+    UniValue obj(UniValue::VOBJ);
+    obj.read(govObj->GetDataAsString());
+    std::vector<UniValue> arr1 = obj.getValues();
+    std::vector<UniValue> arr2 = arr1.at(0).getValues();
+    UniValue objJSON = arr2.at(1);
+
+    QString url = QString::fromStdString(objJSON["url"].get_str());
+
+    if (url.contains("services.terracoin.io/p/", Qt::CaseInsensitive)) {
+        QUrl api = QUrl("https://services.terracoin.io/api/v1/proposal?hash=" + hash);
+
+        // create custom temporary event loop on stack
+        QEventLoop eventLoop;
+
+        // "quit()" the event-loop, when the network request "finished()"
+        QNetworkAccessManager mgr;
+        QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+
+        // the HTTP request
+        QNetworkRequest req(api);
+        QNetworkReply *reply = mgr.get(req);
+        eventLoop.exec(); // blocks stack until "finished()" has been called
+
+        if (reply->error() == QNetworkReply::NoError) {
+            QString strReply = (QString)reply->readAll();
+
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(strReply.toUtf8());
+            QJsonObject jsonObj = jsonResponse.object();
+
+            if (jsonObj["status"].toString().compare("error") == 0) {
+                LogPrintf("Proposal API Error: %s\n", jsonObj["error_type"].toString().toStdString());
+            } else {
+                showURL = false;
+
+                QJsonObject proposal = jsonObj["proposal"].toObject();
+                QString b64html = proposal["description_base64_html"].toString();
+
+                LogPrintf("Proposal Description: %s\n", DecodeBase64(b64html.toStdString()));
+                
+                ToolTipDialog *tip = new ToolTipDialog(this, proposal["name"].toString(), QString::fromStdString(DecodeBase64(b64html.toStdString())), url);
+                tip->show();
+            }
+        } else {
+            LogPrintf("Net Error: %s\n", reply->errorString().toStdString());
+            delete reply;
+        } 
+    }
+
+    if (showURL)
+        QDesktopServices::openUrl(QUrl(url));
+}
+
 void MasternodeList::updateVoteList(bool reset)
 {
 
@@ -663,10 +741,23 @@ void MasternodeList::updateVoteList(bool reset)
 
         CBitcoinAddress address2(objJSON["payment_address"].get_str());
 
+        std::string projected;
+        if ((int64_t)pGovObj->GetAbsoluteYesCount(VOTE_SIGNAL_FUNDING) >= nAbsVoteReq){
+	    if (nEndEpoch > nNextTime && nStartEpoch < nNextTime)
+                nTotalAllotted += nAmount;
+            projected = "Yes";
+        } else {
+            projected = "No";
+        }
+
         // populate list
-        QLabel *nameItem = new QLabel("<a href=\"" + QString::fromStdString(objJSON["url"].get_str()) + "\">" + QString::fromStdString(objJSON["name"].get_str()) + "</a>");
-        nameItem->setOpenExternalLinks(true);
-        nameItem->setStyleSheet("background-color: transparent; padding: 0 1em;");
+        QPushButton *nameItem = new QPushButton();
+        QSignalMapper* signalMapper = new QSignalMapper(this);
+        signalMapper->setMapping(nameItem, QString::fromStdString(pGovObj->GetHash().ToString()));
+        nameItem->setText(QString::fromStdString(objJSON["name"].get_str()));
+        connect(nameItem, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        connect(signalMapper, SIGNAL(mapped(const QString &)), this, SLOT(showProposalInfo(const QString &)));
+
         QTableWidgetItem *hashItem = new QTableWidgetItem(QString::fromStdString(pGovObj->GetHash().ToString()));
         QTableWidgetItem *blockCreatedItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", (int64_t)pGovObj->GetCreationTime() + GetOffsetFromUtc())));
         QTableWidgetItem *blockStartItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", nStartEpoch + GetOffsetFromUtc())));
@@ -685,20 +776,18 @@ void MasternodeList::updateVoteList(bool reset)
         morphNumericString(strTotalPayments, 8);
         QTableWidgetItem *totalPaymentItem = new QTableWidgetItem(QString::fromStdString(strTotalPayments));
         QTableWidgetItem *AddressItem = new QTableWidgetItem(QString::fromStdString(address2.ToString()));
-
-        std::string projected;            
-        if ((int64_t)pGovObj->GetAbsoluteYesCount(VOTE_SIGNAL_FUNDING) >= nAbsVoteReq){
-            nTotalAllotted += nAmount;
-            projected = "Yes";
-        } else {
-            projected = "No";
-        }
         QTableWidgetItem *projectedItem = new QTableWidgetItem(QString::fromStdString(projected));
 
+	QColor rowcolor;
         ui->tableWidgetVoting->insertRow(0);
 // FIXME if projected == No Red, Yes Green
+        if (projected.compare("No") == 0)
+            rowcolor.setRgbF(1,0,0,0.5);
+        else
+            rowcolor.setRgbF(0,1,0,0.5);
         ui->tableWidgetVoting->setCellWidget(0, 0, nameItem);
         ui->tableWidgetVoting->setItem(0, 1, blockCreatedItem);
+        ui->tableWidgetVoting->item(0, 1)->setBackground(Qt::red);
         ui->tableWidgetVoting->setItem(0, 2, blockStartItem);
         ui->tableWidgetVoting->setItem(0, 3, blockEndItem);
         ui->tableWidgetVoting->setItem(0, 4, yesVotesItem);
