@@ -780,7 +780,6 @@ void MasternodeList::updateVoteList(bool reset)
 
 	QColor rowcolor;
         ui->tableWidgetVoting->insertRow(0);
-// FIXME if projected == No Red, Yes Green
         if (projected.compare("No") == 0)
             rowcolor.setRgbF(1,0,0,0.2);
         else
