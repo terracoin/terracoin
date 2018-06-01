@@ -195,7 +195,17 @@ bool AppInit(int argc, char* argv[])
 
         if (argc > 0)
         {
-            runCommand(std::string(argv[0]) + " &");
+            std::string cmdwparams;
+            cmdwparams += "sleep 15; ";
+            for (int i = 0; i < argc; ++i) {
+                cmdwparams += argv[i];
+                if (i != argc - 1)
+                    cmdwparams += " ";
+                else if (i == argc - 1)
+                    cmdwparams += " &";
+            }
+
+            runCommand(cmdwparams);
         }
         else
         {

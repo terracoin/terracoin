@@ -98,7 +98,6 @@ extern void ThreadSendAlert(CConnman& connman);
 CWallet* pwalletMain = NULL;
 #endif
 bool fFeeEstimatesInitialized = false;
-bool fRestartRequested = false;  // true: restart false: shutdown
 static const bool DEFAULT_PROXYRANDOMIZE = true;
 static const bool DEFAULT_REST_ENABLE = false;
 static const bool DEFAULT_DISABLE_SAFEMODE = false;
@@ -164,6 +163,7 @@ CClientUIInterface uiInterface; // Declared but not defined in ui_interface.h
 //
 
 volatile bool fRequestShutdown = false;
+volatile bool fRequestRestart = false;
 
 void StartShutdown()
 {
@@ -171,15 +171,16 @@ void StartShutdown()
 }
 void StartRestart()
 {
-    fRestartRequested = true;
+    fRequestShutdown = true;
+    fRequestRestart = true;
 }
 bool ShutdownRequested()
 {
-    return fRequestShutdown || fRestartRequested;
+    return fRequestShutdown || fRequestRestart;
 }
 bool RestartRequested()
 {
-    return fRestartRequested;
+    return fRequestRestart;
 }
 
 class CCoinsViewErrorCatcher : public CCoinsViewBacked
@@ -221,7 +222,7 @@ void Interrupt(boost::thread_group& threadGroup)
 void PrepareShutdown()
 {
     fRequestShutdown = true; // Needed when we shutdown the wallet
-    fRestartRequested = true; // Needed when we restart the wallet
+    fRequestRestart = true; // Needed when we restart the wallet
     LogPrintf("%s: In progress...\n", __func__);
     static CCriticalSection cs_Shutdown;
     TRY_LOCK(cs_Shutdown, lockShutdown);
@@ -326,7 +327,7 @@ void PrepareShutdown()
 void Shutdown()
 {
     // Shutdown part 1: prepare shutdown
-    if(!fRestartRequested){
+    if(!fRequestRestart){
         PrepareShutdown();
     }
    // Shutdown part 2: Stop TOR thread and delete wallet instance
