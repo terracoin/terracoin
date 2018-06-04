@@ -2,7 +2,7 @@ Terracoin Core version 0.12.2 is now available from:
 
   <https://terracoin.io/bin/terracoin-core-0.12.2.3/>
 
-This is a new major release, updated to the dash 0.12.2.x branch. This includes many updates to masternodes, InstantSend, PrivateSend. Also includes the first release of the new in client (Qt) proposal list, voting and creation tools. Aswell as the first update notification with download option (Install available about linux masternodes via RPC calls). GenrateBlockTemplate has made a return in this version to help miners out. Everyone is encouraged to update.
+This is a new major release, updated to the dash 0.12.2.x branch. This includes many updates to masternodes, InstantSend, PrivateSend. Also includes the first release of the new in client (Qt) proposal list, voting and creation tools. Aswell as the first update notification with download option (Install available about linux masternodes via RPC calls). `getblocktemplate` (gbt) has made a return in this version to help miners out. Everyone is encouraged to update.
 
 Please report bugs using the issue tracker at github:
 
