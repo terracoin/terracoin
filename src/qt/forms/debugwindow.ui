@@ -477,7 +477,7 @@
             <string>Decrease font size</string>
            </property>
            <property name="icon">
-            <iconset resource="../bitcoin.qrc">
+            <iconset resource="../terracoin.qrc">
              <normaloff>:/icons/fontsmaller</normaloff>:/icons/fontsmaller</iconset>
            </property>
            <property name="iconSize">
@@ -509,7 +509,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../bitcoin.qrc">
+            <iconset resource="../terracoin.qrc">
              <normaloff>:/icons/fontbigger</normaloff>:/icons/fontbigger</iconset>
            </property>
            <property name="iconSize">
@@ -544,7 +544,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../bitcoin.qrc">
+            <iconset resource="../terracoin.qrc">
              <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
            </property>
            <property name="shortcut">
