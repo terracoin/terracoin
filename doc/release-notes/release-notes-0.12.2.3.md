@@ -35,8 +35,24 @@ This fixes a potential vulnerability, so called 'Corebleed', which was demonstra
 
 To fix this issue in Terracoin Core however, we had to backport a lot of other improvements from Bitcoin Core, see full list of backports in the detailed change log below.
 
+Proposals Tab
+-------------
+
+For masternode users you will see two new tabs in the masternode area.  Proposal list where you can see more info (in the client if it's on services, or in your browser if not).  And you can vote right in the client.
+
+Also you'll be able to create new proposals right in the client.  We still recommend that you start with a discovery first and you will be able to link the discovery to the proposal on services.
+
+
+Updater
+-------
+
+As of version 0.12.2.3 and update detector has been added with an option in preferences to enable a check on startup.  It will notify you if you client is out of date and allow you to download the newer version with an SHA256 sum check built in for your protection, or you can click to open the download are in your browser.
+
+In addition on linux masternodes there are new rpc calls, `update check`, `update install`, `update status` and `update stop`. you can use the rpc calls to make a cronjob to always keep your masternode up to date.
+
 Additional indexes fix
 ----------------------
+
 If you were using additional indexes like `addressindex`, `spentindex` or `timestampindex` it's possible that they are not accurate. Please consider reindexing the database by starting your node with `-reindex` command line option. This is a one-time operation, the issue should be fixed now.
 
 InstantSend fix
