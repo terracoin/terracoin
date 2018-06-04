@@ -73,7 +73,7 @@ Keeping a wallet with 5000 TRC unlocked for 24/7 is definitely not a good idea a
 Other improvements and bug fixes
 --------------------------------
 
-As a result of previous intensive refactoring and some additional fixes, it should be possible to compile Dash Core with `--disable-wallet` option now.
+As a result of previous intensive refactoring and some additional fixes, it should be possible to compile Terracoin Core with `--disable-wallet` option now.
 
 This release also improves sync process and significantly lowers the time after which `getblocktemplate` rpc becomes available on node start.
 
