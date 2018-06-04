@@ -1,4 +1,4 @@
-Bitcoin Core version 0.12.1 is now available from:
+Terracoin Core version 0.12.1 is now available from:
 
   <https://terracoin.io/bin/terracoin-core-0.12.1.7/>
 
