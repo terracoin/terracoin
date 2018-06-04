@@ -180,13 +180,16 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
 
     QRegExp reg_alphanum("^[-_A-Za-z0-9]{3,99}$");
     QRegExp reg_base58("^[a-km-zA-HJ-NP-Z1-9]{25,34}$");
-    populateStartDates();
     ui->proposalName->setValidator(new QRegExpValidator(reg_alphanum, this));
     ui->trcAddress->setValidator(new QRegExpValidator(reg_base58, this));
-    formIsValid();
     ui->ajaxSpinner->hide();
-    ajaxLoader = new QMovie(":/icons/ajax-loader");
-    ui->ajaxSpinner->setMovie(ajaxLoader);
+    ajaxLoader = new QMovie(":/icons/loader");
+    if (!ajaxLoader->isValid())
+        ui->ajaxSpinner->setText(QString::fromStdString("..."));
+    else
+        ui->ajaxSpinner->setMovie(ajaxLoader);
+    populateStartDates();
+    formIsValid();
 }
 
 MasternodeList::~MasternodeList()
@@ -1037,7 +1040,8 @@ void MasternodeList::checkAvailName(QNetworkReply *NetReply) {
         }
 
         ajaxLoader->stop();
-        ui->ajaxSpinner->hide();
+        if (ajaxLoader->isValid())
+            ui->ajaxSpinner->hide();
 
         if (ui->trcAddress->hasAcceptableInput()) {
             ui->trcAddress->setStyleSheet("QLineEdit { border-color: initial; }");
@@ -1059,7 +1063,8 @@ void MasternodeList::formIsValid() {
     ui->proposalName->setStyleSheet("QLineEdit { border-color: red; }");
     if (ui->proposalName->hasAcceptableInput()) {
         ui->ajaxSpinner->show();
-        ajaxLoader->start();
+        if (ajaxLoader->isValid())
+            ajaxLoader->start();
 
         QUrl url;
         url.setScheme("https");
