@@ -184,10 +184,11 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->trcAddress->setValidator(new QRegExpValidator(reg_base58, this));
     ui->ajaxSpinner->hide();
     ajaxLoader = new QMovie(":/icons/loader");
-    if (!ajaxLoader->isValid())
-        ui->ajaxSpinner->setText(QString::fromStdString("..."));
-    else
+    if (ajaxLoader->isValid())
         ui->ajaxSpinner->setMovie(ajaxLoader);
+    else
+        ui->ajaxSpinner->setText(QString::fromStdString("..."));
+
     populateStartDates();
     formIsValid();
 }
@@ -1039,9 +1040,9 @@ void MasternodeList::checkAvailName(QNetworkReply *NetReply) {
             }
         }
 
-        ajaxLoader->stop();
         if (ajaxLoader->isValid())
-            ui->ajaxSpinner->hide();
+            ajaxLoader->stop();
+        ui->ajaxSpinner->hide();
 
         if (ui->trcAddress->hasAcceptableInput()) {
             ui->trcAddress->setStyleSheet("QLineEdit { border-color: initial; }");
