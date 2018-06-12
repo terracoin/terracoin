@@ -68,7 +68,12 @@ Some internal data structures were not cleared properly, which could lead to a s
 Removal of support for local masternodes
 ----------------------------------------
 
-Keeping a wallet with 5000 TRC unlocked for 24/7 is definitely not a good idea anymore. Because of this fact, it's also no longer reasonable to update and test this feature, so it's completely removed now. If for some reason you were still using it, please follow one of the guides and setup a remote masternode instead.
+Keeping a wallet with 5000 TRC unlocked for 24/7 is definitely not a good idea anymore. Because of this fact, it's also no longer reasonable to update and test this feature, so it's completely removed now. If for some reason you were still using it, please follow one of the guides and setup a remote masternode instead.This is currently a warning but it will become an error in the next release.
+
+Sporks
+------
+
+Re added the MASTERNODE_PAY_UPDATED_NODES spork, which will allow us to keep the network up to date by stopping payments to older nodes after a good amount of time and watching overview.
 
 Other improvements and bug fixes
 --------------------------------
@@ -76,6 +81,8 @@ Other improvements and bug fixes
 As a result of previous intensive refactoring and some additional fixes, it should be possible to compile Terracoin Core with `--disable-wallet` option now.
 
 This release also improves sync process and significantly lowers the time after which `getblocktemplate` rpc becomes available on node start.
+
+Updated our BIP32, BIP44, BIP45 CoinType properly set to 83 now.
 
 And as usual, various small bugs and typos were fixed and more refactoring was done too.
 
