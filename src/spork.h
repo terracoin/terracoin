@@ -26,7 +26,7 @@ static const int SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT                 = 10004;
 static const int SPORK_5_SUPERBLOCKS_ENABLED                            = 10005;
 static const int SPORK_6_RECONSIDER_BLOCKS                              = 10006;
 static const int SPORK_7_REQUIRE_SENTINEL_FLAG                          = 10007;
-static const int SPORK_8_MASTERNODE_PAY_UPDATED_NODES                   = 10008;
+static const int SPORK_8_MASTERNODE_PAY_PROTO_MIN                       = 10008;
 
 static const int64_t SPORK_1_INSTANTSEND_ENABLED_DEFAULT                = 4070908800ULL;// OFF
 static const int64_t SPORK_2_INSTANTSEND_BLOCK_FILTERING_DEFAULT        = 0;            // ON
@@ -35,7 +35,7 @@ static const int64_t SPORK_4_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT     = 407090
 static const int64_t SPORK_5_SUPERBLOCKS_ENABLED_DEFAULT                = 4070908800ULL;// OFF
 static const int64_t SPORK_6_RECONSIDER_BLOCKS_DEFAULT                  = 0;            // 0 BLOCKS
 static const int64_t SPORK_7_REQUIRE_SENTINEL_FLAG_DEFAULT              = 4070908800ULL;// OFF
-static const int64_t SPORK_8_MASTERNODE_PAY_UPDATED_NODES_DEFAULT       = 4070908800ULL;// OFF
+static const int64_t SPORK_8_MASTERNODE_PAY_PROTO_MIN_DEFAULT           = 70206;// First Masternode Protocol Version
 
 extern std::map<uint256, CSporkMessage> mapSporks;
 extern CSporkManager sporkManager;

@@ -268,9 +268,7 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int nBlockH
 }
 
 int CMasternodePayments::GetMinMasternodePaymentsProto() {
-    return sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAY_UPDATED_NODES)
-            ? MIN_MASTERNODE_PAYMENT_PROTO_VERSION_2
-            : MIN_MASTERNODE_PAYMENT_PROTO_VERSION_1;
+    return sporkManager.GetSporkValue(SPORK_8_MASTERNODE_PAY_PROTO_MIN);
 }
 
 void CMasternodePayments::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv, CConnman& connman)
@@ -643,7 +641,7 @@ bool CMasternodePaymentVote::IsValid(CNode* pnode, int nValidationHeight, std::s
         nMinRequiredProtocol = mnpayments.GetMinMasternodePaymentsProto();
     } else {
         // allow non-updated masternodes for old blocks
-        nMinRequiredProtocol = MIN_MASTERNODE_PAYMENT_PROTO_VERSION_1;
+        nMinRequiredProtocol = MIN_MASTERNODE_PAYMENT_PROTO_VERSION;
     }
 
     if(mnInfo.nProtocolVersion < nMinRequiredProtocol) {
@@ -820,7 +818,7 @@ void CMasternodePaymentVote::Relay(CConnman& connman)
 
     CInv inv(MSG_MASTERNODE_PAYMENT_VOTE, GetHash());
     // relay votes only strictly to new nodes until DIP0001 is locked in to avoid being banned by majority of (old) masternodes
-    connman.RelayInv(inv, fDIP0001WasLockedIn ? mnpayments.GetMinMasternodePaymentsProto() : MIN_MASTERNODE_PAYMENT_PROTO_VERSION_2);
+    connman.RelayInv(inv, fDIP0001WasLockedIn ? mnpayments.GetMinMasternodePaymentsProto() : DIP0001_PROTOCOL_VERSION);
 }
 
 bool CMasternodePaymentVote::CheckSignature(const CPubKey& pubKeyMasternode, int nValidationHeight, int &nDos)
