@@ -258,6 +258,7 @@ Spork
 | 10005 | 5 | SUPERBLOCKS_ENABLED | Superblocks are enabled (the 10% comes to fund the terracoin budget)
 | 10006 | 6 | RECONSIDER_BLOCKS |
 | 10007 | 7 | REQUIRE_SENTINEL_FLAG | Only masternode's running sentinel will be paid 
+| 10008 | 8 | MASTERNODE_PAY_PROTO_MIN | Minimum required protocol version for masternode payments 
 
 ## Undocumented messages
 
