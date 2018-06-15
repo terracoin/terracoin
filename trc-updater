@@ -98,11 +98,7 @@ for pid in ${pids}; do
 		continue;
 	fi
 
-	if [[ ${cmd} == /* ]]; then
-		terracoind_dir=${cmd%terracoind*}
-	else
-		terracoind_dir=${cwd}/${cmd%terracoind*}
-	fi
+	terracoind_dir=$(dirname ${exe})
 
 	if [ ! -d ${terracoind_dir} ]; then
 		echo "terracoind Install directory not found!"
