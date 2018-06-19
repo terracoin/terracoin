@@ -73,7 +73,7 @@ Keeping a wallet with 5000 TRC unlocked for 24/7 is definitely not a good idea a
 Sporks
 ------
 
-Re added the MASTERNODE_PAY_UPDATED_NODES spork, which will allow us to keep the network up to date by stopping payments to older nodes after a good amount of time and watching overview.
+Added MASTERNODE_PAY_PROTO_MIN as a spork, it will determind the minimum protocol version a masternode must have to get a payment.  This always us to put timeouts on older protocols.
 
 Other improvements and bug fixes
 --------------------------------
