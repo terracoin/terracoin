@@ -69,6 +69,7 @@ for pid in ${pids}; do
 	terracoind_uid=0
 	terracoincli_uid=0
 	runas=0
+	runasun="root"
 
 	if [ ! -d /proc/${pid} ]; then
 		echo "terracoind process not found!"
@@ -76,6 +77,7 @@ for pid in ${pids}; do
 	fi
 
 	runas=$(stat -c "%u" /proc/${pid}/cmdline)
+	runasun=$(id -nu ${runas})
 	usesudo=0
 	if [ ${myuid} -ne ${runas} ]; then
 	       usesudo=1
@@ -172,9 +174,9 @@ for pid in ${pids}; do
 	fi
 
 	echo -n "Restarting terracoind... "
-	${cmdprefix}bash -c "cd ${cwd} && ${cmd} &"
+	su - ${runasun} -c "cd ${cwd} && ${cmd} &" > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
-		echo "FAILED ($?)"
+		echo "FAILED ($?), Please restart it by hand"
 		continue
 	fi
 	echo "OK"
