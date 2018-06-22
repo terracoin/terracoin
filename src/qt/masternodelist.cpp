@@ -1189,14 +1189,13 @@ void MasternodeList::on_createProposal_clicked()
 
     // Build HEXed string
     int start = ui->startDate->currentData().toInt();
-    int nSuperblockCycleHalfTime = nSuperblockCycleTime / 2;
     QJsonObject proposalObj;
     proposalObj.insert(QString("name"), QJsonValue(strCurrentName));
     proposalObj.insert(QString("url"), QJsonValue("https://services.terracoin.io/p/" + strCurrentName));
     proposalObj.insert(QString("payment_address"), QJsonValue(ui->trcAddress->text()));
     proposalObj.insert(QString("payment_amount"), QJsonValue(ui->amounttrc->value()));
-    proposalObj.insert(QString("start_epoch"), QJsonValue(start - nSuperblockCycleHalfTime));
-    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_payments->text().toInt() * nSuperblockCycleTime) + nSuperblockCycleHalfTime));
+    proposalObj.insert(QString("start_epoch"), QJsonValue(start - floor(nSuperblockCycleTime * 0.10)));
+    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_payments->text().toInt() * nSuperblockCycleTime) + floor(nSuperblockCycleTime / 2)));
     proposalObj.insert(QString("type"), QJsonValue(1));
 
     QJsonArray proposalArray;
