@@ -1,5 +1,9 @@
 #!/bin/bash
 
+current_vers=120108
+downloaded=0
+tmpdir=$(mktemp -d)
+
 if [ $(uname -s) != "Linux" ]; then
 	echo "This script is only for Linux"
 	exit
@@ -34,35 +38,6 @@ if [ $(echo ${pids} | wc -w) -lt 1 ]; then
 	echo "terracoind not found running!"
 	exit
 fi
-
-tmpdir=$(mktemp -d)
-chmod 777 ${tmpdir}
-
-echo -n "Downloading new version... "
-if [ $usecurl -eq 1 ]; then
-	curl ${url} --output ${tmpdir}/terracoin.tar.gz --silent
-else
-	wget ${url} -O ${tmpdir}/terracoin.tar.gz --quiet
-fi
-
-if [ $? -ne 0 ]; then
-	echo "FAILED ($?)"
-	rm -rf ${tmpdir}
-	exit
-fi
-echo "OK"
-
-echo -n "Extracting files... "
-tar xzf ${tmpdir}/terracoin.tar.gz -C ${tmpdir}/ --strip-components=1
-
-if [ $? -ne 0 ]; then
-	echo "FAILED ($?)"
-	rm -rf ${tmpdir}
-	exit
-fi
-echo "OK"
-
-chmod 777 ${tmpdir}/bin
 
 for pid in ${pids}; do
 	terracoincli_found=0
@@ -128,6 +103,7 @@ for pid in ${pids}; do
 		echo "FAILED"
 	fi
 
+	terracoind_vers=0
 	terracoindprefix=""
 	terracoincliprefix=""
 	terracoind_uid=$(stat -c "%u" ${terracoind_dir}/terracoind)
@@ -139,6 +115,42 @@ for pid in ${pids}; do
 		if [ ${terracoincli_uid} -ne ${myuid} ]; then 
 			terracoincliprefix="sudo -u #${terracoincli_uid} "
 		fi
+		terracoind_vers=$(${cmdprefix}${terracoincli_dir}/terracoin-cli getinfo | grep '"version"' | cut -d: -f2 | tr -d " " | tr -d ",")
+		if [[ ${terracoind_vers} -ge ${current_vers} ]]; then
+			echo "terracoind already updated!"
+			continue
+		fi
+	fi
+
+	if [[ ${downloaded} -eq 0 ]]; then
+		chmod 777 ${tmpdir}
+
+		echo -n "Downloading new version... "
+		if [ $usecurl -eq 1 ]; then
+			curl ${url} --output ${tmpdir}/terracoin.tar.gz --silent
+		else
+			wget ${url} -O ${tmpdir}/terracoin.tar.gz --quiet
+		fi
+
+		if [ $? -ne 0 ]; then
+			echo "FAILED ($?)"
+			rm -rf ${tmpdir}
+			exit
+		fi
+		echo "OK"
+
+		echo -n "Extracting files... "
+		tar xzf ${tmpdir}/terracoin.tar.gz -C ${tmpdir}/ --strip-components=1
+
+		if [ $? -ne 0 ]; then
+			echo "FAILED ($?)"
+			rm -rf ${tmpdir}
+			exit
+		fi
+		echo "OK"
+
+		chmod 777 ${tmpdir}/bin
+		downloaded=1
 	fi
 
 	echo -n "Stopping terracoind... "
