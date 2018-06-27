@@ -100,7 +100,7 @@ void RPCUpdate::Install()
     string usesudo = "";
 
     if (getuid() != installuid)
-        usesudo = strprintf("sudo -n -u %d:%d ", installuid, installgid);
+        usesudo = strprintf("sudo -n -u \#%d -g \#%d ", installuid, installgid);
 
     // Extract archive
     bool result = TryCreateDirectory(tempDir / "archive");
