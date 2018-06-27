@@ -68,7 +68,7 @@ Some internal data structures were not cleared properly, which could lead to a s
 Removal of support for local masternodes
 ----------------------------------------
 
-Keeping a wallet with 5000 TRC unlocked for 24/7 is definitely not a good idea anymore. Because of this fact, it's also no longer reasonable to update and test this feature, so it's completely removed now. If for some reason you were still using it, please follow one of the guides and setup a remote masternode instead.This is currently a warning but it will become an error in the next release.
+Keeping a wallet with 5000 TRC unlocked for 24/7 is definitely not a good idea anymore. Because of this fact, it's also no longer reasonable to update and test this feature, so it's completely removed now. If for some reason you were still using it, please follow one of the guides and setup a remote masternode instead.If masternode=1 is set then disablewallet=1 is auto set now, if you currently have a wallet, start it without masternode and export the wallet so you can move it.
 
 Sporks
 ------
