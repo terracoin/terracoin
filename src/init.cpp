@@ -849,10 +849,12 @@ void InitParameterInteraction()
         // masternodes must accept connections from outside
         if (SoftSetBoolArg("-listen", true))
             LogPrintf("%s: parameter interaction: -masternode=1 -> setting -listen=1\n", __func__);
-        if(GetBoolArg("-disablewallet", false))
-            LogPrintf("Warning: running a wallet on a masternode is no longer supported.\n");
+#ifdef ENABLE_WALLET
+        if (!GetBoolArg("-disablewallet", false))
+            return InitError("-masternode is not allowed in combination with enabled wallet functionality");
         if (SoftSetBoolArg("-disablewallet", true))
             LogPrintf("%s: parameter interaction: -masternode=1 -> setting -disablewallet=1\n", __func__);
+#endif
     }
 
     if (mapArgs.count("-connect") && mapMultiArgs["-connect"].size() > 0) {
