@@ -101,7 +101,7 @@ Thanks to everyone who directly contributed to this release:
 
 - All the testers
 
-As well as Bitcoin Core Developers, Dash Core Developers, Bitcore Core Developers and everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/terracoin/).
+As well as Bitcoin Core Developers, Dash Core Developers, Crown Core Developers and everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/terracoin/).
 
 Older releases
 ==============
