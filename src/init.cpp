@@ -851,7 +851,7 @@ void InitParameterInteraction()
             LogPrintf("%s: parameter interaction: -masternode=1 -> setting -listen=1\n", __func__);
 #ifdef ENABLE_WALLET
         if (!GetBoolArg("-disablewallet", false))
-            return InitError("-masternode is not allowed in combination with enabled wallet functionality");
+            LogPrintf("Warning: running a wallet on a masternode is no longer supported.\n");
         if (SoftSetBoolArg("-disablewallet", true))
             LogPrintf("%s: parameter interaction: -masternode=1 -> setting -disablewallet=1\n", __func__);
 #endif
@@ -1000,6 +1000,11 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     typedef BOOL (WINAPI *PSETPROCDEPPOL)(DWORD);
     PSETPROCDEPPOL setProcDEPPol = (PSETPROCDEPPOL)GetProcAddress(GetModuleHandleA("Kernel32.dll"), "SetProcessDEPPolicy");
     if (setProcDEPPol != NULL) setProcDEPPol(PROCESS_DEP_ENABLE);
+#endif
+
+#ifdef ENABLE_WALLET
+    if (GetBoolArg("-masternode", false) && !GetBoolArg("-disablewallet", false))
+        return InitError("-masternode is not allowed in combination with enabled wallet functionality");
 #endif
 
     if (!SetupNetworking())
