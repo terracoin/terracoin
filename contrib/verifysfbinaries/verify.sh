@@ -24,7 +24,7 @@ VERSIONPREFIX="terracoin-core-"
 RCVERSIONSTRING="rc"
 
 #this URL is used if a version number is not specified as an argument to the script
-SIGNATUREFILE="$BASEDIR""$VERSIONPREFIX""0.12.1.8/""$RCSUBDIR""$SIGNATUREFILENAME"
+SIGNATUREFILE="$BASEDIR""$VERSIONPREFIX""0.12.2.3/""$RCSUBDIR""$SIGNATUREFILENAME"
 
 if [ ! -d "$WORKINGDIR" ]; then
    mkdir "$WORKINGDIR"
@@ -62,7 +62,7 @@ WGETOUT=$(wget -N "$BASEDIR$SIGNATUREFILENAME" 2>&1)
 #and then see if wget completed successfully
 if [ $? -ne 0 ]; then
    echo "Error: couldn't fetch signature file. Have you specified the version number in the following format?"
-   echo "[$VERSIONPREFIX]<version>-[$RCVERSIONSTRING[0-9]] (example: "$VERSIONPREFIX"0.12.1.8-"$RCVERSIONSTRING"1)"
+   echo "[$VERSIONPREFIX]<version>-[$RCVERSIONSTRING[0-9]] (example: "$VERSIONPREFIX"0.12.2.3-"$RCVERSIONSTRING"1)"
    echo "wget output:"
    echo "$WGETOUT"|sed 's/^/\t/g'
    exit 2

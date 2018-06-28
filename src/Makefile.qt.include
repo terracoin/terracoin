@@ -28,6 +28,8 @@ QT_FORMS_UI = \
   qt/forms/editaddressdialog.ui \
   qt/forms/helpmessagedialog.ui \
   qt/forms/intro.ui \
+  qt/forms/modaloverlay.ui \
+  qt/forms/modalproposaloverlay.ui \
   qt/forms/masternodelist.ui \
   qt/forms/openuridialog.ui \
   qt/forms/optionsdialog.ui \
@@ -38,7 +40,8 @@ QT_FORMS_UI = \
   qt/forms/sendcoinsdialog.ui \
   qt/forms/sendcoinsentry.ui \
   qt/forms/signverifymessagedialog.ui \
-  qt/forms/transactiondescdialog.ui
+  qt/forms/transactiondescdialog.ui \
+  qt/forms/updatedialog.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
@@ -59,6 +62,8 @@ QT_MOC_CPP = \
   qt/moc_intro.cpp \
   qt/moc_macdockiconhandler.cpp \
   qt/moc_macnotificationhandler.cpp \
+  qt/moc_modalproposaloverlay.cpp \
+  qt/moc_modaloverlay.cpp \
   qt/moc_masternodelist.cpp \
   qt/moc_notificator.cpp \
   qt/moc_openuridialog.cpp \
@@ -77,12 +82,14 @@ QT_MOC_CPP = \
   qt/moc_sendcoinsentry.cpp \
   qt/moc_signverifymessagedialog.cpp \
   qt/moc_splashscreen.cpp \
+  qt/moc_tooltipdialog.cpp \
   qt/moc_trafficgraphwidget.cpp \
   qt/moc_transactiondesc.cpp \
   qt/moc_transactiondescdialog.cpp \
   qt/moc_transactionfilterproxy.cpp \
   qt/moc_transactiontablemodel.cpp \
   qt/moc_transactionview.cpp \
+  qt/moc_updatedialog.cpp \
   qt/moc_utilitydialog.cpp \
   qt/moc_walletframe.cpp \
   qt/moc_walletmodel.cpp \
@@ -128,6 +135,8 @@ BITCOIN_QT_H = \
   qt/intro.h \
   qt/macdockiconhandler.h \
   qt/macnotificationhandler.h \
+  qt/modalproposaloverlay.h \
+  qt/modaloverlay.h \
   qt/masternodelist.h \
   qt/networkstyle.h \
   qt/notificator.h \
@@ -149,6 +158,8 @@ BITCOIN_QT_H = \
   qt/sendcoinsentry.h \
   qt/signverifymessagedialog.h \
   qt/splashscreen.h \
+  qt/tooltipdialog.h \
+  qt/trafficgraphdata.h \
   qt/trafficgraphwidget.h \
   qt/transactiondesc.h \
   qt/transactiondescdialog.h \
@@ -156,6 +167,7 @@ BITCOIN_QT_H = \
   qt/transactionrecord.h \
   qt/transactiontablemodel.h \
   qt/transactionview.h \
+  qt/updatedialog.h \
   qt/utilitydialog.h \
   qt/walletframe.h \
   qt/walletmodel.h \
@@ -166,6 +178,9 @@ BITCOIN_QT_H = \
 RES_ICONS = \
   qt/res/icons/terracoin.ico \
   qt/res/icons/terracoin.png \
+  qt/res/icons/chevron.png \
+  qt/res/icons/warning.png \
+  qt/res/icons/loader.gif \
   qt/res/icons/light/add.png \
   qt/res/icons/light/address-book.png \
   qt/res/icons/light/browse.png \
@@ -193,10 +208,13 @@ RES_ICONS = \
   qt/res/icons/light/eye_minus.png \
   qt/res/icons/light/eye_plus.png \
   qt/res/icons/light/filesave.png \
+  qt/res/icons/light/hd_disabled.png \
+  qt/res/icons/light/hd_enabled.png \
   qt/res/icons/light/history.png \
   qt/res/icons/light/key.png \
   qt/res/icons/light/lock_closed.png \
   qt/res/icons/light/lock_open.png \
+  qt/res/icons/light/notsynced.png \
   qt/res/icons/light/masternodes.png \
   qt/res/icons/light/overview.png \
   qt/res/icons/light/quit.png \
@@ -214,6 +232,10 @@ RES_ICONS = \
   qt/res/icons/light/about.png \
   qt/res/icons/light/about_qt.png \
   qt/res/icons/light/verify.png \
+  qt/res/icons/light/fontbigger.png \
+  qt/res/icons/light/fontsmaller.png \
+  qt/res/icons/light/transaction_abandoned.png \
+  qt/res/icons/light/network_disabled.png \
   qt/res/icons/trad/add.png \
   qt/res/icons/trad/address-book.png \
   qt/res/icons/trad/browse.png \
@@ -241,10 +263,13 @@ RES_ICONS = \
   qt/res/icons/trad/eye_minus.png \
   qt/res/icons/trad/eye_plus.png \
   qt/res/icons/trad/filesave.png \
+  qt/res/icons/trad/hd_disabled.png \
+  qt/res/icons/trad/hd_enabled.png \
   qt/res/icons/trad/history.png \
   qt/res/icons/trad/key.png \
   qt/res/icons/trad/lock_closed.png \
   qt/res/icons/trad/lock_open.png \
+  qt/res/icons/trad/notsynced.png \
   qt/res/icons/trad/masternodes.png \
   qt/res/icons/trad/overview.png \
   qt/res/icons/trad/quit.png \
@@ -261,7 +286,11 @@ RES_ICONS = \
   qt/res/icons/trad/tx_mined.png \
   qt/res/icons/trad/about.png \
   qt/res/icons/trad/about_qt.png \
-  qt/res/icons/trad/verify.png
+  qt/res/icons/trad/verify.png \
+  qt/res/icons/trad/fontbigger.png \
+  qt/res/icons/trad/fontsmaller.png \
+  qt/res/icons/trad/transaction_abandoned.png \
+  qt/res/icons/trad/network_disabled.png
 
 BITCOIN_QT_CPP = \
   qt/bantablemodel.cpp \
@@ -273,6 +302,8 @@ BITCOIN_QT_CPP = \
   qt/csvmodelwriter.cpp \
   qt/guiutil.cpp \
   qt/intro.cpp \
+  qt/modalproposaloverlay.cpp \
+  qt/modaloverlay.cpp \
   qt/networkstyle.cpp \
   qt/notificator.cpp \
   qt/optionsdialog.cpp \
@@ -283,7 +314,9 @@ BITCOIN_QT_CPP = \
   qt/qvaluecombobox.cpp \
   qt/rpcconsole.cpp \
   qt/splashscreen.cpp \
+  qt/trafficgraphdata.cpp \
   qt/trafficgraphwidget.cpp \
+  qt/updatedialog.cpp \
   qt/utilitydialog.cpp
 
 if TARGET_WINDOWS
@@ -310,6 +343,7 @@ BITCOIN_QT_CPP += \
   qt/sendcoinsdialog.cpp \
   qt/sendcoinsentry.cpp \
   qt/signverifymessagedialog.cpp \
+  qt/tooltipdialog.cpp \
   qt/transactiondesc.cpp \
   qt/transactiondescdialog.cpp \
   qt/transactionfilterproxy.cpp \
@@ -349,7 +383,9 @@ RES_IMAGES = \
   qt/res/images/trad/drkblue_walletFrame_bg.png
 
 RES_CSS = \
-  qt/res/css/light.css
+  qt/res/css/light.css \
+  qt/res/css/light-hires.css \
+  qt/res/css/trad.css
 
 RES_MOVIES = $(wildcard qt/res/movies/spinner-*.png)
 
@@ -401,7 +437,7 @@ if ENABLE_ZMQ
 qt_terracoin_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
 endif
 qt_terracoin_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) \
-  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
+  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) $(CURL_LIBS) \
   $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 qt_terracoin_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 qt_terracoin_qt_LIBTOOLFLAGS = --tag CXX
@@ -411,23 +447,23 @@ QT_QM=$(QT_TS:.ts=.qm)
 
 SECONDARY: $(QT_QM)
 
-qt/terracoinstrings.cpp: $(libbitcoin_server_a_SOURCES) $(libbitcoin_wallet_a_SOURCES) $(libbitcoin_common_a_SOURCES)
+qt/terracoinstrings.cpp: $(libbitcoin_server_a_SOURCES) $(libbitcoin_wallet_a_SOURCES) $(libbitcoin_common_a_SOURCES) $(libbitcoin_zmq_a_SOURCES) $(libbitcoin_consensus_a_SOURCES) $(libbitcoin_util_a_SOURCES)
 	@test -n $(XGETTEXT) || echo "xgettext is required for updating translations"
 	$(AM_V_GEN) cd $(srcdir); XGETTEXT=$(XGETTEXT) ../share/qt/extract_strings_qt.py $^
 
-translate: qt/terracoinstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(BITCOIN_QT_CPP) $(BITCOIN_QT_H) $(BITCOIN_MM)
+translate: qt/terracoinstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(BITCOIN_QT_CPP) qt/terracoin.cpp $(BITCOIN_QT_H) $(BITCOIN_MM)
 	@test -n $(LUPDATE) || echo "lupdate is required for updating translations"
 	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts qt/locale/terracoin_en.ts
 
 $(QT_QRC_LOCALE_CPP): $(QT_QRC_LOCALE) $(QT_QM)
 	@test -f $(RCC)
 	@test -f $(@D)/$(<F) || cp -f $< $(@D)
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name terracoin_locale $(@D)/$(<F) | \
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) $(RCCFLAGS) -name terracoin_locale $(@D)/$(<F) | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
 $(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES) $(PROTOBUF_H)
 	@test -f $(RCC)
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name terracoin $< | \
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) $(RCCFLAGS) -name terracoin $< | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
 CLEAN_QT = $(nodist_qt_libbitcoinqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno

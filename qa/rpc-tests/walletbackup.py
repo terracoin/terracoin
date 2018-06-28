@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-# Copyright (c) 2014-2015 The Bitcoin Core developers
+#!/usr/bin/env python3
+# Copyright (c) 2014-2016 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,7 +10,7 @@ Test case is:
 4 nodes. 1 2 and 3 send transactions between each other,
 fourth node is a miner.
 1 2 3 each mine a block to start, then
-Miner creates 100 blocks so 1 2 3 each have 500 mature
+Miner creates 100 blocks so 1 2 3 each have 20 mature
 coins to spend.
 Then 5 iterations of 1/2/3 sending coins amongst
 themselves to get transactions in the wallets,
@@ -23,7 +23,7 @@ Miner then generates 101 more blocks, so any
 transaction fees paid mature.
 
 Sanity check:
-  Sum(1,2,3,4 balances) == 114*500
+  Sum(1,2,3,4 balances) == 114*20
 
 1/2/3 are shutdown, and their wallets erased.
 Then restore using wallet.dat backup. And
@@ -110,9 +110,9 @@ class WalletBackupTest(BitcoinTestFramework):
         self.nodes[3].generate(100)
         sync_blocks(self.nodes)
 
-        assert_equal(self.nodes[0].getbalance(), 500)
-        assert_equal(self.nodes[1].getbalance(), 500)
-        assert_equal(self.nodes[2].getbalance(), 500)
+        assert_equal(self.nodes[0].getbalance(), 20)
+        assert_equal(self.nodes[1].getbalance(), 20)
+        assert_equal(self.nodes[2].getbalance(), 20)
         assert_equal(self.nodes[3].getbalance(), 0)
 
         logging.info("Creating transactions")
@@ -144,8 +144,8 @@ class WalletBackupTest(BitcoinTestFramework):
         total = balance0 + balance1 + balance2 + balance3
 
         # At this point, there are 214 blocks (103 for setup, then 10 rounds, then 101.)
-        # 114 are mature, so the sum of all wallets should be 114 * 500 = 57000.
-        assert_equal(total, 57000)
+        # 114 are mature, so the sum of all wallets should be 114 * 20 = 2280.
+        assert_equal(total, 2280)
 
         ##
         # Test restoring spender wallets from backups

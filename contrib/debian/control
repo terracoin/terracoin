@@ -1,8 +1,8 @@
 Source: terracoin
 Section: utils
 Priority: optional
-Maintainer: Holger Schinzel <holger@terracoin.io>
-Uploaders: Holger Schinzel <holger@terracoin.io>
+Maintainer: Holger Schinzel <holger@dash.org>
+Uploaders: Holger Schinzel <holger@dash.org>
 Build-Depends: debhelper,
  devscripts,
  automake,

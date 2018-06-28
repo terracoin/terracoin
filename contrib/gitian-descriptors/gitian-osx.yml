@@ -1,5 +1,5 @@
 ---
-name: "terracoin-osx-0.12.1.8"
+name: "terracoin-osx-0.12.2.3"
 enable_cache: true
 suites:
 - "trusty"
@@ -7,7 +7,6 @@ architectures:
 - "amd64"
 packages:
 - "ca-certificates"
-- "curl"
 - "g++"
 - "git-core"
 - "pkg-config"

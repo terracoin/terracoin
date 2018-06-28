@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-# Copyright (c) 2014-2015 The Bitcoin Core developers
+#!/usr/bin/env python3
+# Copyright (c) 2014-2016 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -70,14 +70,14 @@ if "TERRACOINCLI" not in os.environ:
 if EXEEXT == ".exe" and "-win" not in opts:
     # https://github.com/bitcoin/bitcoin/commit/d52802551752140cf41f0d9a225a43e84404d3e9
     # https://github.com/bitcoin/bitcoin/pull/5677#issuecomment-136646964
-    print "Win tests currently disabled by default.  Use -win option to enable"
+    print("Win tests currently disabled by default.  Use -win option to enable")
     sys.exit(0)
 
 if not (ENABLE_WALLET == 1 and ENABLE_UTILS == 1 and ENABLE_BITCOIND == 1):
-    print "No rpc tests to run. Wallet, utils, and bitcoind must all be enabled"
+    print("No rpc tests to run. Wallet, utils, and bitcoind must all be enabled")
     sys.exit(0)
 
-# python-zmq may not be installed. Handle this gracefully and with some helpful info
+# python3-zmq may not be installed. Handle this gracefully and with some helpful info
 if ENABLE_ZMQ:
     try:
         import zmq
@@ -89,8 +89,9 @@ if ENABLE_ZMQ:
 #Tests
 testScripts = [
     # FIXME: Enable once BIP9 is live for Terracoin.
-    #'bip68-112-113-p2p.py',
+    # 'bip68-112-113-p2p.py',
     'wallet.py',
+    'wallet-hd.py',
     'listtransactions.py',
     'receivedby.py',
     'mempool_resurrect_test.py',
@@ -108,6 +109,7 @@ testScripts = [
     'proxy_test.py',
     'merkle_blocks.py',
     'fundrawtransaction.py',
+    'fundrawtransaction-hd.py',
     'signrawtransactions.py',
     'walletbackup.py',
     'nodehandling.py',
@@ -116,17 +118,18 @@ testScripts = [
     'timestampindex.py',
     'spentindex.py',
     'decodescript.py',
-    'p2p-fullblocktest.py', # NOTE: needs terracoin_hash to pass
+    'p2p-fullblocktest.py',
     'blockchain.py',
     'disablewallet.py',
-    'sendheaders.py', # NOTE: needs terracoin_hash to pass
+    'sendheaders.py',
     'keypool.py',
+    'keypool-hd.py',
     'prioritise_transaction.py',
-    'invalidblockrequest.py', # NOTE: needs terracoin_hash to pass
-    'invalidtxrequest.py', # NOTE: needs terracoin_hash to pass
+    'invalidblockrequest.py',
+    'invalidtxrequest.py',
     'abandonconflict.py',
     # FIXME: Enable with versionbits.
-    #'p2p-versionbits-warning.py',
+    # 'p2p-versionbits-warning.py',
 
     # auxpow tests
     'getauxblock.py',
@@ -135,21 +138,25 @@ if ENABLE_ZMQ:
     testScripts.append('zmq_test.py')
 
 testScriptsExt = [
-    'bip9-softforks.py',
+    # FIXME: Enable once BIP9 is live for Terracoin.
+    # 'bip9-softforks.py',
     'bip65-cltv.py',
-    'bip65-cltv-p2p.py', # NOTE: needs terracoin_hash to pass
-    'bip68-sequence.py',
-    'bipdersig-p2p.py', # NOTE: needs terracoin_hash to pass
+    'bip65-cltv-p2p.py',
+    # FIXME: Enable once BIP9 is live for Terracoin.
+    # 'bip68-sequence.py',
+    'bipdersig-p2p.py',
     'bipdersig.py',
+    'getblocktemplate_longpoll.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651
+    'getblocktemplate_proposals.py', # FIXME: "socket.error: [Errno 54] Connection reset by peer" on my Mac, same as  https://github.com/bitcoin/bitcoin/issues/6651
     'txn_doublespend.py',
     'txn_clone.py --mineblock',
     # 'pruning.py', # Prune mode is incompatible with -txindex.
     'forknotify.py',
     'invalidateblock.py',
-#    'rpcbind_test.py', #temporary, bug in libevent, see #6655
+    # 'rpcbind_test.py', #temporary, bug in libevent, see #6655
     'smartfees.py',
     'maxblocksinflight.py',
-    'p2p-acceptblock.py', # NOTE: needs terracoin_hash to pass
+    'p2p-acceptblock.py',
     'mempool_packages.py',
     'maxuploadtarget.py',
     # 'replace-by-fee.py', # RBF is disabled in Terracoin Core

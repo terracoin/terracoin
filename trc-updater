@@ -1,0 +1,198 @@
+#!/bin/bash
+
+current_vers=120108
+downloaded=0
+tmpdir=$(mktemp -d)
+
+if [ $(uname -s) != "Linux" ]; then
+	echo "This script is only for Linux"
+	exit
+fi
+
+usecurl=1
+if ! which curl > /dev/null; then
+	usecurl=0
+	if ! which wget > /dev/null; then
+		echo "Could not find curl or wget!"
+		exit
+	fi
+fi
+
+if ! which sudo > /dev/null; then
+	echo "Could not find sudo!"
+	exit
+fi
+
+arch=$(uname -m)
+if [ $arch != "x86_64" ]; then
+	arch="i686-pc";
+fi
+vers="0.12.1"
+
+url=https://terracoin.io/bin/terracoin-core-current/terracoin-${vers}-${arch}-linux-gnu.tar.gz
+
+myuid=$(id -u)
+pwd=$(pwd)
+pids=$(ps auxwww | grep terracoind | grep -v grep | grep -v testnet | awk {'print $2'})
+if [ $(echo ${pids} | wc -w) -lt 1 ]; then
+	echo "terracoind not found running!"
+	exit
+fi
+
+for pid in ${pids}; do
+	terracoincli_found=0
+	terracoind_uid=0
+	terracoincli_uid=0
+	runas=0
+	runasun="root"
+
+	if [ ! -d /proc/${pid} ]; then
+		echo "terracoind process not found!"
+		continue
+	fi
+
+	runas=$(stat -c "%u" /proc/${pid}/cmdline)
+	runasun=$(id -nu ${runas})
+	usesudo=0
+	if [ ${myuid} -ne ${runas} ]; then
+	       usesudo=1
+	fi
+	if [ ${usesudo} -eq 1 ] && [ ${myuid} -ne 0 ]; then
+		echo "You do not have the required permissions, please run with sudo"
+		continue
+	fi
+
+	cmdprefix=""
+	if [ ${usesudo} -eq 1 ]; then
+		cmdprefix="sudo -u #${runas} "
+	fi
+
+	cmd=$(cat /proc/${pid}/cmdline | tr '\000' ' ')
+	exe=$(${cmdprefix}realpath /proc/${pid}/exe)
+	cwd=$(${cmdprefix}realpath /proc/${pid}/cwd)
+
+	if ! [[ ${exe} =~ terracoind$ ]]; then
+		continue;
+	fi
+
+	terracoind_dir=$(dirname ${exe})
+
+	if [ ! -d ${terracoind_dir} ]; then
+		echo "terracoind Install directory not found!"
+		continue
+	fi
+
+	echo "terracoind install directory... ${terracoind_dir}"
+	read -p "Replace terracoin in ${terracoind_dir}? " -n 1 -r
+	echo
+	if ! [[ $REPLY =~ ^[yY]$ ]]; then
+		continue
+	fi
+
+	echo -n "Looking for terracoin-cli... "
+	if [ -f ${terracoind_dir}/terracoin-cli ]; then
+		terracoincli_found=1
+		terracoincli_dir=${terracoind_dir}
+	elif [ -f $(which terracoin-cli) ]; then
+		terracoincli_found=1
+		terracoincli_dir=$(dirname $(which terracoin-cli))
+	fi
+	if [ ${terracoincli_found} -eq 1 ]; then
+		echo "OK"
+	else
+		echo "FAILED"
+	fi
+
+	terracoind_vers=0
+	terracoindprefix=""
+	terracoincliprefix=""
+	terracoind_uid=$(stat -c "%u" ${terracoind_dir}/terracoind)
+	if [ ${terracoind_uid} -ne ${myuid} ]; then 
+		terracoindprefix="sudo -u #${terracoind_uid} "
+	fi
+	if [ ${terracoincli_found} -eq 1 ]; then
+		terracoincli_uid=$(stat -c "%u" ${terracoincli_dir}/terracoin-cli)
+		if [ ${terracoincli_uid} -ne ${myuid} ]; then 
+			terracoincliprefix="sudo -u #${terracoincli_uid} "
+		fi
+		terracoind_vers=$(${cmdprefix}${terracoincli_dir}/terracoin-cli getinfo | grep '"version"' | cut -d: -f2 | tr -d " " | tr -d ",")
+		if [[ ${terracoind_vers} -ge ${current_vers} ]]; then
+			echo "terracoind already updated!"
+			continue
+		fi
+	fi
+
+	if [[ ${downloaded} -eq 0 ]]; then
+		chmod 777 ${tmpdir}
+
+		echo -n "Downloading new version... "
+		if [ $usecurl -eq 1 ]; then
+			curl ${url} --output ${tmpdir}/terracoin.tar.gz --silent
+		else
+			wget ${url} -O ${tmpdir}/terracoin.tar.gz --quiet
+		fi
+
+		if [ $? -ne 0 ]; then
+			echo "FAILED ($?)"
+			rm -rf ${tmpdir}
+			exit
+		fi
+		echo "OK"
+
+		echo -n "Extracting files... "
+		tar xzf ${tmpdir}/terracoin.tar.gz -C ${tmpdir}/ --strip-components=1
+
+		if [ $? -ne 0 ]; then
+			echo "FAILED ($?)"
+			rm -rf ${tmpdir}
+			exit
+		fi
+		echo "OK"
+
+		chmod 777 ${tmpdir}/bin
+		downloaded=1
+	fi
+
+	echo -n "Stopping terracoind... "
+	if [ ${terracoincli_found} -eq 1 ]; then
+		kill -INT ${pid} > /dev/null
+	else
+		${cmdprefix}${terracoincli_dir}/terracoin-cli stop > /dev/null
+	fi
+	if [ $? -ne 0 ]; then
+		echo "FAILED ($?)"
+		continue
+	fi
+	while [ -d /proc/${pid} ]; do
+		sleep 1
+	done
+	echo "OK"
+
+	echo -n "Updating terracoind... "
+	${terracoindprefix}cp ${tmpdir}/bin/terracoind ${terracoind_dir}
+	if [ $? -ne 0 ]; then
+		echo "FAILED ($?)"
+	else
+		echo "OK"
+		if [ ${terracoincli_found} -eq 1 ]; then
+			echo -n "Updating terracoin-cli... "
+			${terracoincliprefix}cp ${tmpdir}/bin/terracoin-cli ${terracoincli_dir}
+			if [ $? -ne 0 ]; then
+				echo "FAILED ($?), you should do this manually"
+			else
+				echo "OK"
+			fi
+		fi
+	fi
+
+	echo -n "Restarting terracoind... "
+	su - ${runasun} -c "cd ${cwd} && ${cmd} &" > /dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo "FAILED ($?), Please restart it by hand"
+		continue
+	fi
+	echo "OK"
+done
+
+rm -rf ${tmpdir}
+echo "Done"

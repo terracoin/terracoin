@@ -12,8 +12,28 @@
 #include "wallet/wallet.h"
 #include "walletmodel.h"
 
+#include "messagesigner.h"
+#include "governance.h"
+#include "governance-object.h"
+#include "governance-vote.h"
+#include "governance-classes.h"
+#include "governance-validators.h"
+
+#include "bitcoingui.h"
+
+#include "tooltipdialog.h"
+#include "utilstrencodings.h"
+
+#include <QUrl>
 #include <QTimer>
 #include <QMessageBox>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QSignalMapper>
+#include <QPushButton>
+#include <QColor>
+#include <QDesktopServices>
 
 int GetOffsetFromUtc()
 {
@@ -26,6 +46,30 @@ int GetOffsetFromUtc()
 #endif
 }
 
+void morphNumericString (char *s, int n) {
+    char *p;
+    int count;
+
+    p = strchr (s,'.');         // Find decimal point, if any.
+    if (p != NULL) {
+        count = n;              // Adjust for more or less decimals.
+        while (count >= 0) {    // Maximum decimals allowed.
+             count--;
+             if (*p == '\0')    // If there's less than desired.
+                 break;
+             p++;               // Next character.
+        }
+
+        *p-- = '\0';            // Truncate string.
+        while (*p == '0')       // Remove trailing zeros.
+            *p-- = '\0';
+
+        if (*p == '.') {        // If all decimals were zeros, remove ".".
+            *p = '\0';
+        }
+    }
+}
+
 MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MasternodeList),
@@ -35,6 +79,38 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->setupUi(this);
 
     ui->startButton->setEnabled(false);
+    ui->voteManyYesButton->setEnabled(false);
+    ui->voteManyNoButton->setEnabled(false);
+
+    int columnNameWidth = 200;
+    int columnCreatedWidth = 90;
+    int columnStartWidth = 90;
+    int columnEndWidth = 90;
+    int columnYesWidth = 45;
+    int columnNoWidth = 45;
+    int columnAbstainWidth = 45;
+    int columnMonthlyWidth = 80;
+    int columnPaymentsWidth = 60;
+    int columnRemainingWidth = 60;
+    int columnTotalWidth = 80;
+    int columnPassingWidth = 45;
+    int columnPayeeWidth = 200;
+    int columnHashWidth = 200;
+
+    ui->tableWidgetVoting->setColumnWidth(0, columnNameWidth);
+    ui->tableWidgetVoting->setColumnWidth(1, columnCreatedWidth);
+    ui->tableWidgetVoting->setColumnWidth(2, columnStartWidth);
+    ui->tableWidgetVoting->setColumnWidth(3, columnEndWidth);
+    ui->tableWidgetVoting->setColumnWidth(4, columnYesWidth);
+    ui->tableWidgetVoting->setColumnWidth(5, columnNoWidth);
+    ui->tableWidgetVoting->setColumnWidth(6, columnAbstainWidth);
+    ui->tableWidgetVoting->setColumnWidth(7, columnMonthlyWidth);
+    ui->tableWidgetVoting->setColumnWidth(8, columnPaymentsWidth);
+    ui->tableWidgetVoting->setColumnWidth(9, columnRemainingWidth);
+    ui->tableWidgetVoting->setColumnWidth(10, columnTotalWidth);
+    ui->tableWidgetVoting->setColumnWidth(11, columnPassingWidth);
+    ui->tableWidgetVoting->setColumnWidth(12, columnPayeeWidth);
+    ui->tableWidgetVoting->setColumnWidth(13, columnHashWidth);
 
     int columnAliasWidth = 100;
     int columnAddressWidth = 200;
@@ -66,12 +142,55 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateNodeList()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateVoteList()));
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
     timer->start(1000);
 
     fFilterUpdated = false;
     nTimeFilterUpdated = GetTime();
     updateNodeList();
+    updateVoteList();
+
+    // Compute last/next superblock
+    int nLastSuperblock, nNextSuperblock;
+
+    // Get current block height
+    int nBlockHeight = 0;
+    {   
+        LOCK(cs_main); 
+        nBlockHeight = (int)chainActive.Height();
+    }
+
+    // Get chain parameters
+    int nSuperblockStartBlock = Params().GetConsensus().nSuperblockStartBlock;
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+
+    // Get first superblock
+    int nFirstSuperblockOffset = (nSuperblockCycle - nSuperblockStartBlock % nSuperblockCycle) % nSuperblockCycle;
+    int nFirstSuperblock = nSuperblockStartBlock + nFirstSuperblockOffset;
+
+    if(nBlockHeight < nFirstSuperblock){
+        nLastSuperblock = 0;
+        nNextSuperblock = nFirstSuperblock;
+    } else {
+        nLastSuperblock = nBlockHeight - nBlockHeight % nSuperblockCycle;
+        nNextSuperblock = nLastSuperblock + nSuperblockCycle;
+    }
+    ui->superblockLabel->setText(QString::number(nNextSuperblock));
+
+    QRegExp reg_alphanum("^[-_A-Za-z0-9]{3,99}$");
+    QRegExp reg_base58("^[a-km-zA-HJ-NP-Z1-9]{25,34}$");
+    ui->proposalName->setValidator(new QRegExpValidator(reg_alphanum, this));
+    ui->trcAddress->setValidator(new QRegExpValidator(reg_base58, this));
+    ui->ajaxSpinner->hide();
+    ajaxLoader = new QMovie(":/icons/loader");
+    if (ajaxLoader->isValid())
+        ui->ajaxSpinner->setMovie(ajaxLoader);
+    else
+        ui->ajaxSpinner->setText(QString::fromStdString("..."));
+
+    populateStartDates();
+    formIsValid();
 }
 
 MasternodeList::~MasternodeList()
@@ -113,9 +232,9 @@ void MasternodeList::StartAlias(std::string strAlias)
 
             if(fSuccess) {
                 strStatusHtml += "<br>Successfully started masternode.";
-                mnodeman.UpdateMasternodeList(mnb);
-                mnb.Relay();
-                mnodeman.NotifyMasternodeUpdates();
+                mnodeman.UpdateMasternodeList(mnb, *g_connman);
+                mnb.Relay(*g_connman);
+                mnodeman.NotifyMasternodeUpdates(*g_connman);
             } else {
                 strStatusHtml += "<br>Failed to start masternode.<br>Error: " + strError;
             }
@@ -146,17 +265,17 @@ void MasternodeList::StartAll(std::string strCommand)
             continue;
         }
 
-        CTxIn txin = CTxIn(uint256S(mne.getTxHash()), nOutputIndex);
+        COutPoint outpoint = COutPoint(uint256S(mne.getTxHash()), nOutputIndex);
 
-        if(strCommand == "start-missing" && mnodeman.Has(txin)) continue;
+        if(strCommand == "start-missing" && mnodeman.Has(outpoint)) continue;
 
         bool fSuccess = CMasternodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), strError, mnb);
 
         if(fSuccess) {
             nCountSuccessful++;
-            mnodeman.UpdateMasternodeList(mnb);
-            mnb.Relay();
-            mnodeman.NotifyMasternodeUpdates();
+            mnodeman.UpdateMasternodeList(mnb, *g_connman);
+            mnb.Relay(*g_connman);
+            mnodeman.NotifyMasternodeUpdates(*g_connman);
         } else {
             nCountFailed++;
             strFailedHtml += "\nFailed to start " + mne.getAlias() + ". Error: " + strError;
@@ -177,7 +296,7 @@ void MasternodeList::StartAll(std::string strCommand)
     updateMyNodeList(true);
 }
 
-void MasternodeList::updateMyMasternodeInfo(QString strAlias, QString strAddr, masternode_info_t& infoMn)
+void MasternodeList::updateMyMasternodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint)
 {
     bool fOldRowFound = false;
     int nNewRow = 0;
@@ -195,14 +314,17 @@ void MasternodeList::updateMyMasternodeInfo(QString strAlias, QString strAddr, m
         ui->tableWidgetMyMasternodes->insertRow(nNewRow);
     }
 
+    masternode_info_t infoMn;
+    bool fFound = mnodeman.GetMasternodeInfo(outpoint, infoMn);
+
     QTableWidgetItem *aliasItem = new QTableWidgetItem(strAlias);
-    QTableWidgetItem *addrItem = new QTableWidgetItem(infoMn.fInfoValid ? QString::fromStdString(infoMn.addr.ToString()) : strAddr);
-    QTableWidgetItem *protocolItem = new QTableWidgetItem(QString::number(infoMn.fInfoValid ? infoMn.nProtocolVersion : -1));
-    QTableWidgetItem *statusItem = new QTableWidgetItem(QString::fromStdString(infoMn.fInfoValid ? CMasternode::StateToString(infoMn.nActiveState) : "MISSING"));
-    QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(QString::fromStdString(DurationToDHMS(infoMn.fInfoValid ? (infoMn.nTimeLastPing - infoMn.sigTime) : 0)));
+    QTableWidgetItem *addrItem = new QTableWidgetItem(fFound ? QString::fromStdString(infoMn.addr.ToString()) : strAddr);
+    QTableWidgetItem *protocolItem = new QTableWidgetItem(QString::number(fFound ? infoMn.nProtocolVersion : -1));
+    QTableWidgetItem *statusItem = new QTableWidgetItem(QString::fromStdString(fFound ? CMasternode::StateToString(infoMn.nActiveState) : "MISSING"));
+    QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(QString::fromStdString(DurationToDHMS(fFound ? (infoMn.nTimeLastPing - infoMn.sigTime) : 0)));
     QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M",
-                                                                                                   infoMn.fInfoValid ? infoMn.nTimeLastPing + GetOffsetFromUtc() : 0)));
-    QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(infoMn.fInfoValid ? CBitcoinAddress(infoMn.pubKeyCollateralAddress.GetID()).ToString() : ""));
+                                                                                                   fFound ? infoMn.nTimeLastPing + GetOffsetFromUtc() : 0)));
+    QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(fFound ? CBitcoinAddress(infoMn.pubKeyCollateralAddress.GetID()).ToString() : ""));
 
     ui->tableWidgetMyMasternodes->setItem(nNewRow, 0, aliasItem);
     ui->tableWidgetMyMasternodes->setItem(nNewRow, 1, addrItem);
@@ -236,11 +358,7 @@ void MasternodeList::updateMyNodeList(bool fForce)
             continue;
         }
 
-        CTxIn txin = CTxIn(uint256S(mne.getTxHash()), nOutputIndex);
-
-        masternode_info_t infoMn = mnodeman.GetMasternodeInfo(txin);
-
-        updateMyMasternodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), infoMn);
+        updateMyMasternodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), COutPoint(uint256S(mne.getTxHash()), nOutputIndex));
     }
     ui->tableWidgetMasternodes->setSortingEnabled(true);
 
@@ -274,17 +392,19 @@ void MasternodeList::updateNodeList()
     ui->tableWidgetMasternodes->setSortingEnabled(false);
     ui->tableWidgetMasternodes->clearContents();
     ui->tableWidgetMasternodes->setRowCount(0);
-    std::vector<CMasternode> vMasternodes = mnodeman.GetFullMasternodeVector();
+    std::map<COutPoint, CMasternode> mapMasternodes = mnodeman.GetFullMasternodeMap();
+    int offsetFromUtc = GetOffsetFromUtc();
 
-    BOOST_FOREACH(CMasternode& mn, vMasternodes)
+    for(auto& mnpair : mapMasternodes)
     {
+        CMasternode mn = mnpair.second;
         // populate list
         // Address, Protocol, Status, Active Seconds, Last Seen, Pub Key
         QTableWidgetItem *addressItem = new QTableWidgetItem(QString::fromStdString(mn.addr.ToString()));
         QTableWidgetItem *protocolItem = new QTableWidgetItem(QString::number(mn.nProtocolVersion));
         QTableWidgetItem *statusItem = new QTableWidgetItem(QString::fromStdString(mn.GetStatus()));
         QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(QString::fromStdString(DurationToDHMS(mn.lastPing.sigTime - mn.sigTime)));
-        QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M", mn.lastPing.sigTime + GetOffsetFromUtc())));
+        QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M", mn.lastPing.sigTime + offsetFromUtc)));
         QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString()));
 
         if (strCurrentFilter != "")
@@ -423,4 +543,842 @@ void MasternodeList::on_tableWidgetMyMasternodes_itemSelectionChanged()
 void MasternodeList::on_UpdateButton_clicked()
 {
     updateMyNodeList(true);
+}
+
+void MasternodeList::on_UpdateVotesButton_clicked()
+{
+    updateVoteList(true);
+}
+
+void MasternodeList::showProposalInfo(const QString &hash)
+{
+    bool showURL = true;
+
+    std::vector<CGovernanceObject*> objs = governance.GetAllNewerThan(0);
+    CGovernanceObject* govObj;
+
+    BOOST_FOREACH(CGovernanceObject* pGovObj, objs)
+    {
+        if(!pGovObj->IsSetCachedValid()) continue;
+        if(pGovObj->GetObjectType() != GOVERNANCE_OBJECT_PROPOSAL) continue;
+
+        if (QString::fromStdString(pGovObj->GetHash().ToString()).compare(hash) == 0)
+        {
+            govObj = pGovObj;
+            break;
+        }
+    }
+
+    UniValue obj(UniValue::VOBJ);
+    obj.read(govObj->GetDataAsString());
+    std::vector<UniValue> arr1 = obj.getValues();
+    std::vector<UniValue> arr2 = arr1.at(0).getValues();
+    UniValue objJSON = arr2.at(1);
+
+    QString url = QString::fromStdString(objJSON["url"].get_str());
+
+    if (url.contains("services.terracoin.io/p/", Qt::CaseInsensitive)) {
+        QUrl api = QUrl("https://services.terracoin.io/api/v1/proposal?hash=" + hash);
+
+        // create custom temporary event loop on stack
+        QEventLoop eventLoop;
+
+        // "quit()" the event-loop, when the network request "finished()"
+        QNetworkAccessManager mgr;
+        QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+
+        // the HTTP request
+        QNetworkRequest req(api);
+        QNetworkReply *reply = mgr.get(req);
+        eventLoop.exec(); // blocks stack until "finished()" has been called
+
+        if (reply->error() == QNetworkReply::NoError) {
+            QString strReply = (QString)reply->readAll();
+
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(strReply.toUtf8());
+            QJsonObject jsonObj = jsonResponse.object();
+
+            if (jsonObj["status"].toString().compare("error") == 0) {
+                LogPrintf("Proposal API Error: %s\n", jsonObj["error_type"].toString().toStdString());
+            } else {
+                showURL = false;
+
+                QJsonObject proposal = jsonObj["proposal"].toObject();
+                QString b64html = proposal["description_base64_html"].toString();
+
+                LogPrintf("Proposal Description: %s\n", DecodeBase64(b64html.toStdString()));
+                
+                ToolTipDialog *tip = new ToolTipDialog(this, proposal["name"].toString(), QString::fromStdString(DecodeBase64(b64html.toStdString())), url);
+                tip->show();
+            }
+        } else {
+            LogPrintf("Net Error: %s\n", reply->errorString().toStdString());
+            delete reply;
+        } 
+    }
+
+    if (showURL)
+        QDesktopServices::openUrl(QUrl(url));
+}
+
+void MasternodeList::updateVoteList(bool reset)
+{
+
+    static int64_t lastVoteListUpdate = 0;
+    int nMnCount = mnodeman.CountEnabled();
+
+    // CALCULATE THE MINUMUM VOTE COUNT REQUIRED FOR FULL SIGNAL
+
+    int nAbsVoteReq;
+    if(Params().NetworkIDString() == CBaseChainParams::MAIN)
+    {
+        nAbsVoteReq = std::max(Params().GetConsensus().nGovernanceMinQuorum, nMnCount / 10);
+    }
+    else
+    {
+        nAbsVoteReq = Params().GetConsensus().nGovernanceMinQuorum;
+    }
+
+    // automatically update my masternode list only once in MY_MASTERNODELIST_UPDATE_SECONDS seconds,
+    // this update still can be triggered manually at any time via button click
+    int64_t timeTillUpdate = lastVoteListUpdate + MY_MASTERNODELIST_UPDATE_SECONDS - GetTime();
+    ui->voteSecondsLabel->setText(QString::number(timeTillUpdate));
+
+    if(timeTillUpdate > 0 && !reset) return;
+    lastVoteListUpdate = GetTime();
+
+    QString strToFilter;
+    ui->tableWidgetVoting->setSortingEnabled(false);
+    ui->tableWidgetVoting->clearContents();
+    ui->tableWidgetVoting->setRowCount(0);
+
+    // Compute last/next superblock
+    int nLastSuperblock, nNextSuperblock;
+
+    // Get current block height
+    int nBlockHeight = 0;
+    {   
+        LOCK(cs_main); 
+        nBlockHeight = (int)chainActive.Height();
+    }
+
+    // Get chain parameters
+    int nSuperblockStartBlock = Params().GetConsensus().nSuperblockStartBlock;
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+    int nPowTargetSpacing = Params().GetConsensus().nPowTargetSpacing;
+
+    // Get first superblock
+    int nFirstSuperblockOffset = (nSuperblockCycle - nSuperblockStartBlock % nSuperblockCycle) % nSuperblockCycle;
+    int nFirstSuperblock = nSuperblockStartBlock + nFirstSuperblockOffset;
+
+    if(nBlockHeight < nFirstSuperblock){
+        nLastSuperblock = 0;
+        nNextSuperblock = nFirstSuperblock;
+    } else {
+        nLastSuperblock = nBlockHeight - nBlockHeight % nSuperblockCycle;
+        nNextSuperblock = nLastSuperblock + nSuperblockCycle;
+    }
+
+    int64_t nNextTime = GetAdjustedTime() + ((nNextSuperblock - nBlockHeight) * nPowTargetSpacing);
+    int64_t nSuperblockCycleSeconds = nSuperblockCycle * nPowTargetSpacing;
+    double nSuperblockValue = CSuperblock::GetPaymentsLimit(nNextSuperblock) / 100000000;
+    double nTotalAllotted = 0;
+
+    std::vector<CGovernanceObject*> objs = governance.GetAllNewerThan(0);
+    BOOST_FOREACH(CGovernanceObject* pGovObj, objs)
+    {
+        if(!pGovObj->IsSetCachedValid()) continue;
+        if(pGovObj->GetObjectType() != GOVERNANCE_OBJECT_PROPOSAL) continue;
+
+        UniValue obj(UniValue::VOBJ);
+        obj.read(pGovObj->GetDataAsString());
+        std::vector<UniValue> arr1 = obj.getValues();
+        std::vector<UniValue> arr2 = arr1.at(0).getValues();
+        UniValue objJSON = arr2.at(1);
+
+        int64_t nStartEpoch = 0;
+        const UniValue uValueSE = objJSON["start_epoch"];
+        switch(uValueSE.getType()) {
+            case UniValue::VNUM:
+                nStartEpoch = uValueSE.get_int64();
+                break;
+            default:
+                std::istringstream ss(uValueSE.get_str());
+                ss >> nStartEpoch;
+                break;
+        }
+
+        int64_t nEndEpoch = 0;
+        const UniValue uValueEE = objJSON["end_epoch"];
+        switch(uValueEE.getType()) {
+            case UniValue::VNUM:
+                nEndEpoch = uValueEE.get_int64();
+                break;
+            default:
+                std::istringstream ss(uValueEE.get_str());
+                ss >> nEndEpoch;
+                break;
+        }
+
+        double nAmount = 0;
+        const UniValue uValuePA = objJSON["payment_amount"];
+        switch(uValuePA.getType()) {
+            case UniValue::VNUM:
+                nAmount = uValuePA.get_real();
+                break;
+            default:
+                nAmount = ::atof(uValuePA.get_str().c_str());
+                //std::istringstream ss(uValuePA.get_str());
+                //ss >> nAmount;
+                break;
+        }
+
+        // Don't display past proposals
+	if (nEndEpoch < nNextTime) continue;
+
+        int nPayments = floor((nEndEpoch - nStartEpoch) / nSuperblockCycleSeconds);
+        int nStart = nStartEpoch;
+        if (GetAdjustedTime() > nStartEpoch) {
+            nStart = GetAdjustedTime();
+        }
+        int nRemaining = nPayments - floor((nStart - nStartEpoch) / nSuperblockCycleSeconds);
+
+        CBitcoinAddress address2(objJSON["payment_address"].get_str());
+
+        std::string projected;
+        if ((int64_t)pGovObj->GetAbsoluteYesCount(VOTE_SIGNAL_FUNDING) >= nAbsVoteReq){
+	    if (nEndEpoch > nNextTime && nStartEpoch < nNextTime)
+                nTotalAllotted += nAmount;
+            projected = "Yes";
+        } else {
+            projected = "No";
+        }
+
+        // populate list
+        QPushButton *nameItem = new QPushButton();
+        QSignalMapper* signalMapper = new QSignalMapper(this);
+        signalMapper->setMapping(nameItem, QString::fromStdString(pGovObj->GetHash().ToString()));
+        nameItem->setText(QString::fromStdString(objJSON["name"].get_str()));
+        connect(nameItem, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        connect(signalMapper, SIGNAL(mapped(const QString &)), this, SLOT(showProposalInfo(const QString &)));
+
+        QTableWidgetItem *hashItem = new QTableWidgetItem(QString::fromStdString(pGovObj->GetHash().ToString()));
+        QTableWidgetItem *blockCreatedItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", (int64_t)pGovObj->GetCreationTime() + GetOffsetFromUtc())));
+        QTableWidgetItem *blockStartItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", nStartEpoch + GetOffsetFromUtc())));
+        QTableWidgetItem *blockEndItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d", nEndEpoch + GetOffsetFromUtc())));
+        QTableWidgetItem *yesVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetYesCount(VOTE_SIGNAL_FUNDING)));
+        QTableWidgetItem *noVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetNoCount(VOTE_SIGNAL_FUNDING)));
+        QTableWidgetItem *abstainVotesItem = new QTableWidgetItem(QString::number((int64_t)pGovObj->GetAbstainCount(VOTE_SIGNAL_FUNDING)));
+        char strAmount[50];
+        sprintf(strAmount, "%.8f", nAmount);
+        morphNumericString(strAmount, 8);
+        QTableWidgetItem *monthlyPaymentItem = new QTableWidgetItem(QString::fromStdString(strAmount));
+        QTableWidgetItem *paymentsItem = new QTableWidgetItem(QString::number(nPayments));
+        QTableWidgetItem *remainingPaymentsItem = new QTableWidgetItem(QString::number(nRemaining));
+        char strTotalPayments[50];
+        sprintf(strTotalPayments, "%.8f", nAmount * nPayments);
+        morphNumericString(strTotalPayments, 8);
+        QTableWidgetItem *totalPaymentItem = new QTableWidgetItem(QString::fromStdString(strTotalPayments));
+        QTableWidgetItem *AddressItem = new QTableWidgetItem(QString::fromStdString(address2.ToString()));
+        QTableWidgetItem *projectedItem = new QTableWidgetItem(QString::fromStdString(projected));
+
+	QColor rowcolor;
+        ui->tableWidgetVoting->insertRow(0);
+        if (projected.compare("No") == 0)
+            rowcolor.setRgbF(1,0,0,0.2);
+        else
+            rowcolor.setRgbF(0,1,0,0.2);
+        ui->tableWidgetVoting->setCellWidget(0, 0, nameItem);
+        ui->tableWidgetVoting->setItem(0, 1, blockCreatedItem);
+        ui->tableWidgetVoting->item(0, 1)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 2, blockStartItem);
+        ui->tableWidgetVoting->item(0, 2)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 3, blockEndItem);
+        ui->tableWidgetVoting->item(0, 3)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 4, yesVotesItem);
+        ui->tableWidgetVoting->item(0, 4)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 5, noVotesItem);
+        ui->tableWidgetVoting->item(0, 5)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 6, abstainVotesItem);
+        ui->tableWidgetVoting->item(0, 6)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 7, monthlyPaymentItem);
+        ui->tableWidgetVoting->item(0, 7)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 8, paymentsItem);
+        ui->tableWidgetVoting->item(0, 8)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 9, remainingPaymentsItem);
+        ui->tableWidgetVoting->item(0, 9)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 10, totalPaymentItem);
+        ui->tableWidgetVoting->item(0, 10)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 11, projectedItem);
+        ui->tableWidgetVoting->item(0, 11)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 12, AddressItem);
+        ui->tableWidgetVoting->item(0, 12)->setBackground(rowcolor);
+        ui->tableWidgetVoting->setItem(0, 13, hashItem);
+        ui->tableWidgetVoting->item(0, 13)->setBackground(rowcolor);
+    }
+
+    ui->superblockLabel->setText(QString::number(nNextSuperblock));
+    char strAllotted[50];
+    sprintf(strAllotted, "%.8f", nTotalAllotted);
+    morphNumericString(strAllotted, 8);
+    char strSuperblockValue[50];
+    sprintf(strSuperblockValue, "%.8f", nSuperblockValue);
+    morphNumericString(strSuperblockValue, 8);
+    ui->totalAllottedLabel->setText(QString::fromStdString(strAllotted) + " of " + QString::fromStdString(strSuperblockValue));
+    ui->tableWidgetVoting->setSortingEnabled(true);
+
+    // Update superblock times on the create form
+    populateStartDates();
+
+    // reset "timer"
+    ui->voteSecondsLabel->setText("0");
+}
+
+void MasternodeList::VoteMany(std::string strCommand)
+{
+    // Find selected Budget Hash
+    QItemSelectionModel* selectionModel = ui->tableWidgetVoting->selectionModel();
+    QModelIndexList selected = selectionModel->selectedRows();
+    if(selected.count() == 0)
+        return;
+
+    QModelIndex index = selected.at(0);
+    int r = index.row();
+    std::string strHash = ui->tableWidgetVoting->item(r, 13)->text().toStdString();
+    uint256 hash;
+    hash.SetHex(strHash);
+
+    vote_signal_enum_t eVoteSignal = CGovernanceVoting::ConvertVoteSignal("funding");
+    if(eVoteSignal == VOTE_SIGNAL_NONE) {
+        // "Invalid vote signal. Please using one of the following: (funding|valid|delete|endorsed) OR `custom sentinel code`"
+    }
+
+    vote_outcome_enum_t eVoteOutcome = CGovernanceVoting::ConvertVoteOutcome(strCommand);
+    if(eVoteOutcome == VOTE_OUTCOME_NONE) {
+        // "Invalid vote outcome. Please use one of the following: 'yes', 'no' or 'abstain'"
+    }
+
+    int nSuccessful = 0;
+    int nFailed = 0;
+    std::string statusObj;
+
+    std::vector<CMasternodeConfig::CMasternodeEntry> mnEntries;
+    mnEntries = masternodeConfig.getEntries();
+
+    BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
+        std::string strError;
+        std::vector<unsigned char> vchMasterNodeSignature;
+        std::string strMasterNodeSignMessage;
+
+        CPubKey pubKeyCollateralAddress;
+        CKey keyCollateralAddress;
+        CPubKey pubKeyMasternode;
+        CKey keyMasternode;
+
+        if(!CMessageSigner::GetKeysFromSecret(mne.getPrivKey(), keyMasternode, pubKeyMasternode)){
+            nFailed++;
+            statusObj += "\nFailed to vote with " + mne.getAlias() + ". Masternode signing error, could not set key correctly: " + statusObj;
+            continue;
+        }
+
+        uint256 nTxHash;
+        nTxHash.SetHex(mne.getTxHash());
+
+        int32_t nOutputIndex = 0;
+        if(!ParseInt32(mne.getOutputIndex(), &nOutputIndex)) {
+            continue;
+        }
+
+        COutPoint outpoint(nTxHash, nOutputIndex);
+
+        CMasternode mn;
+        bool fMnFound = mnodeman.Get(outpoint, mn);
+
+        if(!fMnFound) {
+            nFailed++;
+            statusObj += "\nFailed to find masternode " + mne.getAlias() + " by collateral output. Error: " + statusObj;
+            continue;
+        }
+
+        CGovernanceVote vote(mn.vin.prevout, hash, eVoteSignal, eVoteOutcome);
+        if(!vote.Sign(keyMasternode, pubKeyMasternode)){
+            nFailed++;
+            statusObj += "\nFailed to vote with " + mne.getAlias() + ". Error: Failure to sign";
+            continue;
+        }
+
+        CGovernanceException exception;
+        if(governance.ProcessVoteAndRelay(vote, exception, *g_connman)) {
+            nSuccessful++;
+        }
+        else {
+            nFailed++;
+            statusObj += "\nFailed to vote on proposal. Error: " + exception.GetMessage();
+        }
+    }
+    std::string returnObj;
+    returnObj = strprintf("Voted successfully %d time(s) and failed %d time(s).", nSuccessful, nFailed);
+    if (nFailed > 0)
+        returnObj += statusObj;
+
+    QMessageBox msg;
+    msg.setText(QString::fromStdString(returnObj));
+    msg.exec();
+    updateVoteList(true);
+}
+
+void MasternodeList::on_voteManyYesButton_clicked()
+{
+    // Display message box
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm vote-many"),
+        tr("Are you sure you want to vote with ALL of your masternodes?"),
+        QMessageBox::Yes | QMessageBox::Cancel,
+        QMessageBox::Cancel);
+
+    if(retval != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    WalletModel::EncryptionStatus encStatus = walletModel->getEncryptionStatus();
+    if(encStatus == walletModel->Locked || encStatus == walletModel->UnlockedForMixingOnly)
+    {
+        WalletModel::UnlockContext ctx(walletModel->requestUnlock(true));
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            return;
+        }
+        VoteMany("yes");
+        return;
+    }
+
+    VoteMany("yes");
+}
+
+void MasternodeList::on_voteManyNoButton_clicked()
+{
+    // Display message box
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm vote-many"),
+        tr("Are you sure you want to vote with ALL of your masternodes?"),
+        QMessageBox::Yes | QMessageBox::Cancel,
+        QMessageBox::Cancel);
+
+    if(retval != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    WalletModel::EncryptionStatus encStatus = walletModel->getEncryptionStatus();
+    if(encStatus == walletModel->Locked || encStatus == walletModel->UnlockedForMixingOnly)
+    {
+        WalletModel::UnlockContext ctx(walletModel->requestUnlock(true));
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            return;
+        }
+        VoteMany("no");
+        return;
+    }
+
+    VoteMany("no");
+}
+
+void MasternodeList::on_voteManyAbstainButton_clicked()
+{
+    // Display message box
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm vote-many"),
+        tr("Are you sure you want to vote with ALL of your masternodes?"),
+        QMessageBox::Yes | QMessageBox::Cancel,
+        QMessageBox::Cancel);
+
+    if(retval != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    WalletModel::EncryptionStatus encStatus = walletModel->getEncryptionStatus();
+    if(encStatus == walletModel->Locked || encStatus == walletModel->UnlockedForMixingOnly)
+    {
+        WalletModel::UnlockContext ctx(walletModel->requestUnlock(true));
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            return;
+        }
+        VoteMany("abstain");
+        return;
+    }
+
+    VoteMany("abstain");
+}
+
+void MasternodeList::on_tableWidgetVoting_itemSelectionChanged()
+{
+    if(ui->tableWidgetVoting->selectedItems().count() > 0)
+    {
+        ui->voteManyYesButton->setEnabled(true);
+        ui->voteManyNoButton->setEnabled(true);
+    }
+}
+
+void MasternodeList::checkAvailName(QNetworkReply *NetReply) {
+    if (NetReply->isFinished()) {
+        int error = 0;
+
+        if (NetReply->error()) {
+            LogPrintf("Net Error: %s\n", NetReply->error());
+            error++;
+        } else {
+            QByteArray bytes = NetReply->readAll();
+            QString reply = QString::fromUtf8(bytes.data(), bytes.size());
+            if (reply.toStdString() == "1") {
+                error++;
+            } else {
+                ui->proposalName->setStyleSheet("QLineEdit { border-color: initial; }");
+            }
+        }
+
+        if (ajaxLoader->isValid())
+            ajaxLoader->stop();
+        ui->ajaxSpinner->hide();
+
+        if (ui->trcAddress->hasAcceptableInput()) {
+            ui->trcAddress->setStyleSheet("QLineEdit { border-color: initial; }");
+        } else {
+            error++;
+            ui->trcAddress->setStyleSheet("QLineEdit { border-color: red; }");
+        }
+
+        if (error > 0) {
+            ui->createProposal->setEnabled(false);
+        } else {
+            ui->createProposal->setEnabled(true);
+        }
+    }
+}
+
+void MasternodeList::formIsValid() {
+    ui->createProposal->setEnabled(false);
+    ui->proposalName->setStyleSheet("QLineEdit { border-color: red; }");
+    if (ui->proposalName->hasAcceptableInput()) {
+        ui->ajaxSpinner->show();
+        if (ajaxLoader->isValid())
+            ajaxLoader->start();
+
+        QUrl url;
+        url.setScheme("https");
+        url.setHost("services.terracoin.io");
+        url.setPath("/ajax/checkAvailableProposalName.php?name=" + ui->proposalName->text());
+        url.setUrl(QUrl::fromPercentEncoding(url.toEncoded()));
+
+        QNetworkRequest request(url);
+        request.setRawHeader("User-Agent", CLIENT_NAME.c_str());
+        QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+        QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(checkAvailName(QNetworkReply*)));
+        manager->get(request);
+    }
+}
+
+void MasternodeList::on_trcAddress_textChanged(const QString &strAddress)
+{
+    formIsValid();
+}
+
+void MasternodeList::on_proposalName_textChanged(const QString &strProposalName)
+{
+    strCurrentName = strProposalName;
+
+    if (ui->proposalName->hasAcceptableInput()) {
+    	ui->label_servicesurl->setText(QString::fromStdString("https://services.terracoin.io/p/") + strProposalName);
+    } else {
+        ui->label_servicesurl->setText(QString::fromStdString("https://services.terracoin.io/p/proposal-name"));
+    }
+
+    formIsValid();
+}
+
+void MasternodeList::on_paymentSlider_valueChanged(const int &intPayments)
+{
+    intCurrentPayments = intPayments;
+
+    ui->label_payments->setText(QString::number(intCurrentPayments));
+    MasternodeList::updateProposalTotals();
+}
+
+void MasternodeList::on_amounttrc_valueChanged(const double &doubleAmount)
+{
+    doubleCurrentAmount = doubleAmount;
+
+    MasternodeList::updateProposalTotals();
+}
+
+void MasternodeList::updateProposalTotals() {
+    ui->label_totaltrc->setText(QString::number(doubleCurrentAmount * intCurrentPayments, 'f', 2) + " TRC");
+}
+
+void MasternodeList::showProposalModal(QString submitStr)
+{
+    Q_EMIT requestedProposalOverlay(submitStr);
+}
+
+void MasternodeList::updateProposalConfirmations(int count, bool unlock, bool failed)
+{
+    Q_EMIT requestedConfirmationUpdate(count, unlock, failed);
+}
+
+void MasternodeList::populateStartDates()
+{
+    // Assume we are filling in the form, there has to be a better way!
+    if (ui->startDate->currentIndex() > 0)
+        return;
+
+    // Compute last/next superblock
+    int nLastSuperblock, nNextSuperblock;
+
+    // Get current block height
+    int nBlockHeight = 0;
+    {   
+        LOCK(cs_main); 
+        nBlockHeight = (int)chainActive.Height();
+    }
+
+    // Get chain parameters
+    int nSuperblockStartBlock = Params().GetConsensus().nSuperblockStartBlock;
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+    int nPowTargetSpacing = Params().GetConsensus().nPowTargetSpacing;
+
+    // Get first superblock
+    int nFirstSuperblockOffset = (nSuperblockCycle - nSuperblockStartBlock % nSuperblockCycle) % nSuperblockCycle;
+    int nFirstSuperblock = nSuperblockStartBlock + nFirstSuperblockOffset;
+
+    if(nBlockHeight < nFirstSuperblock){
+        nLastSuperblock = 0;
+        nNextSuperblock = nFirstSuperblock;
+    } else {
+        nLastSuperblock = nBlockHeight - nBlockHeight % nSuperblockCycle;
+        nNextSuperblock = nLastSuperblock + nSuperblockCycle;
+    }
+
+    int64_t nNextTime = GetAdjustedTime() + ((nNextSuperblock - nBlockHeight) * nPowTargetSpacing);
+    int64_t nSuperblockCycleSeconds = nSuperblockCycle * nPowTargetSpacing;
+
+    ui->startDate->clear();
+
+    QDateTime timestamp;
+    timestamp.setTime_t(nNextTime);
+    if (GetTime() < timestamp.toTime_t() - (nSuperblockCycleSeconds * 0.10)) {
+        ui->startDate->addItem(timestamp.toString(Qt::SystemLocaleShortDate), QVariant(timestamp.toTime_t()));
+    }
+    int i;
+    for(i = 1; i <= 15; i++) {
+        nNextTime += nSuperblockCycleSeconds;
+        timestamp.setTime_t(nNextTime);
+        ui->startDate->addItem(timestamp.toString(Qt::SystemLocaleShortDate), QVariant(timestamp.toTime_t()));
+    }
+
+    ui->startDate->setCurrentIndex(0);
+}
+
+void MasternodeList::on_createProposal_clicked()
+{
+    int nSuperblockCycle = Params().GetConsensus().nSuperblockCycle;
+    int nPowTargetSpacing = Params().GetConsensus().nPowTargetSpacing;
+    int nSuperblockCycleTime = nSuperblockCycle * nPowTargetSpacing;
+
+    // Build HEXed string
+    int start = ui->startDate->currentData().toInt();
+    QJsonObject proposalObj;
+    proposalObj.insert(QString("name"), QJsonValue(strCurrentName));
+    proposalObj.insert(QString("url"), QJsonValue("https://services.terracoin.io/p/" + strCurrentName));
+    proposalObj.insert(QString("payment_address"), QJsonValue(ui->trcAddress->text()));
+    proposalObj.insert(QString("payment_amount"), QJsonValue(ui->amounttrc->value()));
+    proposalObj.insert(QString("start_epoch"), QJsonValue(start - floor(nSuperblockCycleTime * 0.10)));
+    proposalObj.insert(QString("end_epoch"), QJsonValue(start + (ui->label_payments->text().toInt() * nSuperblockCycleTime) + floor(nSuperblockCycleTime / 2)));
+    proposalObj.insert(QString("type"), QJsonValue(1));
+
+    QJsonArray proposalArray;
+    proposalArray.push_back("proposal");
+    proposalArray.push_back(proposalObj);
+    QJsonArray proposalArray2;
+    proposalArray2.push_back(proposalArray);
+    QJsonDocument proposalDoc;
+    proposalDoc.setArray(proposalArray2);
+    QString proposalString = proposalDoc.toJson(QJsonDocument::Compact);
+
+    std::string proposalHex = QString(proposalString.toLatin1().toHex()).toStdString();
+    int64_t currentTS = GetAdjustedTime();
+
+    // Prepare
+    uint256 txid;
+    txid = prepareProposal(uint256(), 1, currentTS, proposalHex);
+    if (txid == uint256()) return;
+
+    QString submitStr = QString::fromStdString("gobject submit 0 1 ") + QString::number(currentTS) + QString::fromStdString(" " + proposalHex + " " + txid.ToString());
+
+    // Display Modal
+    showProposalModal(submitStr);
+
+    int unlockat = GOVERNANCE_FEE_CONFIRMATIONS * 10 * 1.5;
+    auto *fakeLoop = new QTimer();
+    connect(fakeLoop, &QTimer::timeout, [this, fakeLoop, txid, currentTS, proposalHex, unlockat] {
+        // static means that it will initialize only once.
+        static int confirmations = 0;
+        static int counter = 0;
+        static bool unlock = false;
+        counter++;
+
+        if (counter >= unlockat) {
+            unlock = true;
+        }
+
+        const CWalletTx& wtx = pwalletMain->mapWallet[txid];
+        confirmations = wtx.GetDepthInMainChain(false);
+        updateProposalConfirmations(confirmations, unlock, false);
+
+        // break the loop after confirmations met or 1.5 the time it should take
+        if (confirmations >= GOVERNANCE_FEE_CONFIRMATIONS) {
+            // Submit
+            uint256 strHash;
+            strHash = submitProposal(uint256(), 1, currentTS, txid, proposalHex);
+            if (strHash == uint256()) {
+                updateProposalConfirmations(confirmations, true, true);
+            }
+
+            fakeLoop->stop();
+            fakeLoop->deleteLater();
+            confirmations = 0;
+            counter = 0;
+            unlock = false;
+            return;
+        }
+    });
+
+    // call the loop function every nPowTargetSpacing/10 second
+    fakeLoop->start(nPowTargetSpacing/10 * 1000);
+
+    // Reset form
+    ui->proposalName->setText("");
+    ui->trcAddress->setText("");
+    doubleCurrentAmount = 0;
+    ui->amounttrc->setValue(0);
+    intCurrentPayments = 1;
+    ui->paymentSlider->setValue(1);
+    ui->startDate->setCurrentIndex(0);
+    populateStartDates();
+    formIsValid();
+}
+
+uint256 MasternodeList::prepareProposal(uint256 hashParent, int nRevision, int64_t nTime, std::string strData)
+{
+    QMessageBox msg;
+
+    // CREATE A NEW COLLATERAL TRANSACTION FOR THIS SPECIFIC OBJECT
+
+    CGovernanceObject govobj(hashParent, nRevision, nTime, uint256(), strData);
+
+    if(govobj.GetObjectType() == GOVERNANCE_OBJECT_PROPOSAL) {
+        CProposalValidator validator(strData);
+        if(!validator.Validate())  {
+            msg.setText(QString::fromStdString("Invalid proposal data, error messages:" + validator.GetErrorMessages()));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    if((govobj.GetObjectType() == GOVERNANCE_OBJECT_TRIGGER) ||
+       (govobj.GetObjectType() == GOVERNANCE_OBJECT_WATCHDOG)) {
+        msg.setText(QString::fromStdString("Trigger and watchdog objects need not be prepared (however only masternodes can create them)"));
+        msg.exec();
+        return uint256();
+    }
+
+    {
+        LOCK(cs_main);
+        std::string strError = "";
+        if(!govobj.IsValidLocally(strError, false)) {
+            msg.setText(QString::fromStdString("Governance object is not valid - " + govobj.GetHash().ToString() + " - " + strError));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    CWalletTx wtx;
+    if(!pwalletMain->GetBudgetSystemCollateralTX(wtx, govobj.GetHash(), govobj.GetMinCollateralFee(), false)) {
+        msg.setText(QString::fromStdString("Error making collateral transaction for governance object. Please check your wallet balance and make sure your wallet is unlocked."));
+        msg.exec();
+        return uint256();
+    }
+
+    // -- make our change address
+    CReserveKey reservekey(pwalletMain);
+
+    // -- send the tx to the network
+    pwalletMain->CommitTransaction(wtx, reservekey, g_connman.get(), NetMsgType::TX);
+
+    return wtx.GetHash();
+}
+
+uint256 MasternodeList::submitProposal(uint256 hashParent, int nRevision, int64_t nTime, uint256 txidFee, std::string strData)
+{
+    QMessageBox msg;
+
+    bool fMnFound = mnodeman.Has(activeMasternode.outpoint);
+
+    CGovernanceObject govobj(hashParent, nRevision, nTime, txidFee, strData);
+
+    if(govobj.GetObjectType() == GOVERNANCE_OBJECT_PROPOSAL) {
+        CProposalValidator validator(strData);
+        if(!validator.Validate())  {
+            msg.setText(QString::fromStdString("Invalid proposal data, error messages:" + validator.GetErrorMessages()));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    // Attempt to sign triggers if we are a MN
+    if((govobj.GetObjectType() == GOVERNANCE_OBJECT_TRIGGER) ||
+       (govobj.GetObjectType() == GOVERNANCE_OBJECT_WATCHDOG)) {
+        if(fMnFound) {
+            govobj.SetMasternodeVin(activeMasternode.outpoint);
+            govobj.Sign(activeMasternode.keyMasternode, activeMasternode.pubKeyMasternode);
+        }
+        else {
+            msg.setText(QString::fromStdString("Only valid masternodes can submit this type of object"));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    std::string strHash = govobj.GetHash().ToString();
+
+    std::string strError = "";
+    bool fMissingMasternode;
+    bool fMissingConfirmations;
+    {
+        LOCK(cs_main);
+        if(!govobj.IsValidLocally(strError, fMissingMasternode, fMissingConfirmations, true) && !fMissingConfirmations) {
+            msg.setText(QString::fromStdString("Governance object is not valid - " + strHash + " - " + strError));
+            msg.exec();
+            return uint256();
+        }
+    }
+
+    // RELAY THIS OBJECT
+    // Reject if rate check fails but don't update buffer
+    if(!governance.MasternodeRateCheck(govobj)) {
+        msg.setText(QString::fromStdString("Object creation rate limit exceeded"));
+        msg.exec();
+        return uint256();
+    }
+
+    if(fMissingConfirmations) {
+        governance.AddPostponedObject(govobj);
+        govobj.Relay(*g_connman);
+    } else {
+        governance.AddGovernanceObject(govobj, *g_connman);
+    }
+
+    return govobj.GetHash();
 }

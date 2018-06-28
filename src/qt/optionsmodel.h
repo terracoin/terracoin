@@ -28,6 +28,8 @@ public:
 
     enum OptionID {
         StartAtStartup,         // bool
+        CheckAtStartup,         // bool
+        HideTrayIcon,           // bool
         MinimizeToTray,         // bool
         MapPortUPnP,            // bool
         MinimizeOnClose,        // bool
@@ -66,6 +68,8 @@ public:
     void setDisplayUnit(const QVariant &value);
 
     /* Explicit getters */
+    bool getCheckOnStartup() { return fCheckOnStartup; }
+    bool getHideTrayIcon() { return fHideTrayIcon; }
     bool getMinimizeToTray() { return fMinimizeToTray; }
     bool getMinimizeOnClose() { return fMinimizeOnClose; }
     int getDisplayUnit() { return nDisplayUnit; }
@@ -82,6 +86,8 @@ public:
 
 private:
     /* Qt-only settings */
+    bool fCheckOnStartup;
+    bool fHideTrayIcon;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
     QString language;
@@ -101,6 +107,7 @@ Q_SIGNALS:
     void privateSentAmountChanged();
     void advancedPSUIChanged(bool);
     void coinControlFeaturesChanged(bool);
+    void hideTrayIconChanged(bool);
 };
 
 #endif // BITCOIN_QT_OPTIONSMODEL_H

@@ -29,9 +29,9 @@ if __name__ == '__main__':
 
     output = json.loads(outs[0])
 
-    assert_equal(output[0], "XwKHjUS2pS4inZT8nkqDSybMHi5hCYNSNx")
-    assert_equal(output[1], "XrihbS2Y29C3Gca72UWJiarUeaCHu7wumB")
-    assert_equal(output[2], "XqWwRpETvism6uSiAv2oHj4gxzUvtxSNkW")
+    assert_equal(output[0], "13EngsxkRi7SJPPqCyJsKf34U8FoX9E9Av")
+    assert_equal(output[1], "1FKCLGTpPeYBUqfNxktck8k5nqxB8sjim8")
+    assert_equal(output[2], "13cdtE9tnNeXCZJ8KQ5WELgEmLSBLnr48F")
 
     execargs = '-datadir=' + datadir + ' -dumppass'
     execrun = execprog + ' ' + execargs
@@ -45,12 +45,12 @@ if __name__ == '__main__':
 
     output = json.loads(outs[0])
 
-    assert_equal(output[0]['addr'], "XwKHjUS2pS4inZT8nkqDSybMHi5hCYNSNx")
-    assert_equal(output[0]['pkey'], "XKk4fT2aB1pW5sGa6pBF8MA4bUaAcVEpWUnZQWzDc2XKUBkvxDq1")
-    assert_equal(output[1]['addr'], "XrihbS2Y29C3Gca72UWJiarUeaCHu7wumB")
-    assert_equal(output[1]['pkey'], "XBMge2M9Fd9YvCw3JqSE1aWEw56xJeRxRcQvb3JztsR45yK12s1H")
-    assert_equal(output[2]['addr'], "XqWwRpETvism6uSiAv2oHj4gxzUvtxSNkW")
-    assert_equal(output[2]['pkey'], "XBL71uLhA2p8q3qtXRSaLuQ5rwRb9gxFAeuhSbofwNcr26bGexfG")
+    assert_equal(output[0]['addr'], "13EngsxkRi7SJPPqCyJsKf34U8FoX9E9Av")
+    assert_equal(output[0]['pkey'], "5Jz5BWE2WQxp1hGqDZeisQFV1mRFR2AVBAgiXCbNcZyXNjD9aUd")
+    assert_equal(output[1]['addr'], "1FKCLGTpPeYBUqfNxktck8k5nqxB8sjim8")
+    assert_equal(output[1]['pkey'], "5HsX2b3v2GjngYQ5ZM4mLp2b2apw6aMNVaPELV1YmpiYR1S4jzc")
+    assert_equal(output[2]['addr'], "13cdtE9tnNeXCZJ8KQ5WELgEmLSBLnr48F")
+    assert_equal(output[2]['pkey'], "5KCWAs1wX2ESiL4PfDR8XYVSSETHFd2jaRGxt1QdanBFTit4XcH")
 
     if os.path.exists(datadir + '/database'):
         if os.path.isdir(datadir + '/database'):

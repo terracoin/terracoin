@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-# Copyright (c) 2014-2015 The Bitcoin Core developers
+#!/usr/bin/env python3
+# Copyright (c) 2014-2016 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -61,7 +61,7 @@ class ReceivedByTest(BitcoinTestFramework):
 
         #Empty Tx
         addr = self.nodes[1].getnewaddress()
-        assert_array_result(self.nodes[1].listreceivedbyaddress(0,True),
+        assert_array_result(self.nodes[1].listreceivedbyaddress(0, False, True),
                            {"address":addr},
                            {"address":addr, "account":"", "amount":0, "confirmations":0, "txids":[]})
 
@@ -128,7 +128,7 @@ class ReceivedByTest(BitcoinTestFramework):
 
         #Create a new account named "mynewaccount" that has a 0 balance
         self.nodes[1].getaccountaddress("mynewaccount")
-        received_by_account_json = get_sub_array_from_array(self.nodes[1].listreceivedbyaccount(0,True),{"account":"mynewaccount"})
+        received_by_account_json = get_sub_array_from_array(self.nodes[1].listreceivedbyaccount(0, False, True),{"account":"mynewaccount"})
         if len(received_by_account_json) == 0:
             raise AssertionError("No accounts found in node")
 

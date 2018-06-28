@@ -7,7 +7,7 @@ export PYTHONPATH
 
 if BUILD_BITCOIN_LIBS
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libbitcoinconsensus.pc
+pkgconfig_DATA = libterracoinconsensus.pc
 endif
 
 BITCOIND_BIN=$(top_builddir)/src/terracoind$(EXEEXT)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # Copyright (c) 2014-2015 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -36,7 +36,7 @@ class SpentIndexTest(BitcoinTestFramework):
         self.sync_all()
 
     def run_test(self):
-        print "Mining blocks..."
+        print("Mining blocks...")
         self.nodes[0].generate(105)
         self.sync_all()
 
@@ -44,15 +44,15 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(chain_height, 105)
 
         # Check that
-        print "Testing spent index..."
+        print("Testing spent index...")
 
-        privkey = "cU4zhap7nPJAWeMFu4j6jLrfPmqakDAzy8zn8Fhb3oEevdm4e5Lc"
-        address = "yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3"
-        addressHash = "C5E4FB9171C22409809A3E8047A29C83886E325D".decode("hex")
+        privkey = "cSdkPxkAjA4HDr5VHgsebAPDEh9Gyub4HK8UJr2DFGGqKKy4K5sG"
+        address = "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW"
+        addressHash = binascii.unhexlify("0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc")
         scriptPubKey = CScript([OP_DUP, OP_HASH160, addressHash, OP_EQUALVERIFY, OP_CHECKSIG])
         unspent = self.nodes[0].listunspent()
         tx = CTransaction()
-        amount = unspent[0]["amount"] * 100000000
+        amount = int(unspent[0]["amount"] * 100000000)
         tx.vin = [CTxIn(COutPoint(int(unspent[0]["txid"], 16), unspent[0]["vout"]))]
         tx.vout = [CTxOut(amount, scriptPubKey)]
         tx.rehash()
@@ -62,7 +62,7 @@ class SpentIndexTest(BitcoinTestFramework):
         self.nodes[0].generate(1)
         self.sync_all()
 
-        print "Testing getspentinfo method..."
+        print("Testing getspentinfo method...")
 
         # Check that the spentinfo works standalone
         info = self.nodes[1].getspentinfo({"txid": unspent[0]["txid"], "index": unspent[0]["vout"]})
@@ -70,7 +70,7 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(info["index"], 0)
         assert_equal(info["height"], 106)
 
-        print "Testing getrawtransaction method..."
+        print("Testing getrawtransaction method...")
 
         # Check that verbose raw transaction includes spent info
         txVerbose = self.nodes[3].getrawtransaction(unspent[0]["txid"], 1)
@@ -84,13 +84,13 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(txVerbose2["vin"][0]["valueSat"], amount)
 
         # Check that verbose raw transaction includes address values and input values
-        privkey2 = "cU4zhap7nPJAWeMFu4j6jLrfPmqakDAzy8zn8Fhb3oEevdm4e5Lc"
-        address2 = "yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3"
-        addressHash2 = "C5E4FB9171C22409809A3E8047A29C83886E325D".decode("hex")
+        privkey2 = "cSdkPxkAjA4HDr5VHgsebAPDEh9Gyub4HK8UJr2DFGGqKKy4K5sG"
+        address2 = "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW"
+        addressHash2 = binascii.unhexlify("0b2f0a0c31bfe0406b0ccc1381fdbe311946dadc")
         scriptPubKey2 = CScript([OP_DUP, OP_HASH160, addressHash2, OP_EQUALVERIFY, OP_CHECKSIG])
         tx2 = CTransaction()
         tx2.vin = [CTxIn(COutPoint(int(txid, 16), 0))]
-        tx2.vout = [CTxOut(amount, scriptPubKey2)]
+        tx2.vout = [CTxOut(int(amount - 100000000), scriptPubKey2)]
         tx.rehash()
         self.nodes[0].importprivkey(privkey)
         signed_tx2 = self.nodes[0].signrawtransaction(binascii.hexlify(tx2.serialize()).decode("utf-8"))
@@ -114,7 +114,7 @@ class SpentIndexTest(BitcoinTestFramework):
 
 
         # Check block deltas
-        print "Testing getblockdeltas..."
+        print("Testing getblockdeltas...")
 
         block = self.nodes[3].getblockdeltas(block_hash[0])
         assert_equal(len(block["deltas"]), 2)
@@ -130,9 +130,9 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(block["deltas"][1]["inputs"][0]["prevout"], 0)
         assert_equal(block["deltas"][1]["outputs"][0]["index"], 0)
         assert_equal(block["deltas"][1]["outputs"][0]["address"], "mgY65WSfEmsyYaYPQaXhmXMeBhwp4EcsQW")
-        assert_equal(block["deltas"][1]["outputs"][0]["satoshis"], amount)
+        assert_equal(block["deltas"][1]["outputs"][0]["satoshis"], int(amount - 100000000))
 
-        print "Passed\n"
+        print("Passed\n")
 
 
 if __name__ == '__main__':

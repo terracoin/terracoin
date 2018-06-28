@@ -38,6 +38,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="checkAtStartup">
+         <property name="toolTip">
+          <string>Automatically check for new version of Terracoin Core on startup.</string>
+         </property>
+         <property name="text">
+          <string>&amp;Check for Terracoin Core update on startup</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2_Main">
          <item>
           <widget class="QLabel" name="databaseCacheLabel">
@@ -613,6 +623,16 @@
        <string>&amp;Window</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_Window">
+       <item>
+        <widget class="QCheckBox" name="hideTrayIcon">
+         <property name="toolTip">
+          <string>&amp;Hide the icon from the system tray.</string>
+         </property>
+         <property name="text">
+          <string>Hide tray icon</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QCheckBox" name="minimizeToTray">
          <property name="toolTip">

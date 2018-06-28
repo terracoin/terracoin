@@ -1,5 +1,5 @@
-#!/usr/bin/env python2
-# Copyright (c) 2014-2015 The Bitcoin Core developers
+#!/usr/bin/env python3
+# Copyright (c) 2014-2016 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,14 +17,8 @@ import binascii
 
 from test_framework import auxpow
 
-try:
-    import http.client as httplib
-except ImportError:
-    import httplib
-try:
-    import urllib.parse as urlparse
-except ImportError:
-    import urlparse
+import http.client
+import urllib.parse
 
 def deser_uint256(f):
     r = 0
@@ -35,7 +29,7 @@ def deser_uint256(f):
 
 #allows simple http get calls
 def http_get_call(host, port, path, response_object = 0):
-    conn = httplib.HTTPConnection(host, port)
+    conn = http.client.HTTPConnection(host, port)
     conn.request('GET', path)
 
     if response_object:
@@ -45,7 +39,7 @@ def http_get_call(host, port, path, response_object = 0):
 
 #allows simple http post calls with a request body
 def http_post_call(host, port, path, requestdata = '', response_object = 0):
-    conn = httplib.HTTPConnection(host, port)
+    conn = http.client.HTTPConnection(host, port)
     conn.request('POST', path, requestdata)
 
     if response_object:
@@ -69,15 +63,15 @@ class RESTTest (BitcoinTestFramework):
         self.sync_all()
 
     def run_test(self):
-        url = urlparse.urlparse(self.nodes[0].url)
-        print "Mining blocks..."
+        url = urllib.parse.urlparse(self.nodes[0].url)
+        print("Mining blocks...")
 
         self.nodes[0].generate(1)
         self.sync_all()
         self.nodes[2].generate(100)
         self.sync_all()
 
-        assert_equal(self.nodes[0].getbalance(), 500)
+        assert_equal(self.nodes[0].getbalance(), 20)
 
         txid = self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 0.1)
         self.sync_all()
@@ -153,7 +147,7 @@ class RESTTest (BitcoinTestFramework):
         output.write(bin_response)
         output.seek(0)
         chainHeight = unpack("i", output.read(4))[0]
-        hashFromBinResponse = hex(deser_uint256(output))[2:].zfill(65).rstrip("L")
+        hashFromBinResponse = hex(deser_uint256(output))[2:].zfill(64)
 
         assert_equal(bb_hash, hashFromBinResponse) #check if getutxo's chaintip during calculation was fine
         assert_equal(chainHeight, 102) #chain height must be 102
@@ -239,7 +233,7 @@ class RESTTest (BitcoinTestFramework):
         assert_equal(response_hex.status, 200)
         assert_greater_than(int(response_hex.getheader('content-length')), 160)
         response_hex_str = response_hex.read().strip()
-        assert_equal(response_str.encode("hex_codec"), response_hex_str)
+        assert_equal(encode(response_str, "hex_codec"), response_hex_str)
 
         # compare with hex block header
         response_header_hex = http_get_call(url.hostname, url.port, '/rest/headers/1/'+bb_hash+self.FORMAT_SEPARATOR+"hex", True)
@@ -248,7 +242,7 @@ class RESTTest (BitcoinTestFramework):
         response_header_hex_str = response_header_hex.read().strip()
         headerLen = len (response_header_hex_str)
         assert_equal(response_hex_str[0:headerLen], response_header_hex_str)
-        assert_equal(response_header_str.encode("hex_codec"), response_header_hex_str)
+        assert_equal(encode(response_header_str, "hex_codec"), response_header_hex_str)
 
         # check json format
         block_json_string = http_get_call(url.hostname, url.port, '/rest/block/'+bb_hash+self.FORMAT_SEPARATOR+'json')
@@ -301,9 +295,9 @@ class RESTTest (BitcoinTestFramework):
         # check block tx details
         # let's make 3 tx and mine them on node 1
         txs = []
-        txs.append(self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 11))
-        txs.append(self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 11))
-        txs.append(self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 11))
+        txs.append(self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 1))
+        txs.append(self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 1))
+        txs.append(self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 1))
         self.sync_all()
 
         # check that there are exactly 3 transactions in the TX memory pool before generating the block

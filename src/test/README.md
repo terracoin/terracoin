@@ -1,6 +1,6 @@
 # Notes
 The sources in this directory are unit test cases.  Boost includes a
-unit testing framework, and since terracoin already uses boost, it makes
+unit testing framework, and since Terracoin Core already uses boost, it makes
 sense to simply use this framework rather than require developers to
 configure some other framework (we want as few impediments to creating
 unit tests as possible).

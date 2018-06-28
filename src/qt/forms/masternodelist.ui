@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>723</width>
-    <height>457</height>
+    <height>468</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,9 +46,507 @@
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>721</width>
+         <height>427</height>
+        </size>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <widget class="QWidget" name="tabProposals">
+        <attribute name="title">
+         <string>Proposals/Voting</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_4" columnstretch="0,0,0,0,0">
+         <item row="0" column="0">
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_superblock">
+           <property name="text">
+            <string>Next Superblock</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="superblockLabel">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_totalAllotted">
+           <property name="text">
+            <string>Total Allotted</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="totalAllottedLabel">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="5">
+          <widget class="QTableWidget" name="tableWidgetVoting">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Submitted</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Start</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>End</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Yes</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>No</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Abstain</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Monthly</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Payments</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Remaining</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Total</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Passing</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Address</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Hash</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="5">
+          <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,0,0,0,1,0,0">
+           <property name="spacing">
+            <number>-1</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="voteManyYesButton">
+             <property name="text">
+              <string>Vote Yes</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="voteManyNoButton">
+             <property name="text">
+              <string>Vote No</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="voteManyAbstainButton">
+             <property name="text">
+              <string>Vote Abstain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="UpdateVotesButton">
+             <property name="text">
+              <string>&amp;Update status</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="autoupdate_label_2">
+             <property name="text">
+              <string>Status will be updated automatically in (sec):</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="voteSecondsLabel">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabGenerator">
+        <attribute name="title">
+         <string>Create Proposal</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="2" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_note_2">
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="updateNote_2">
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>&amp;bull; if this is your first proposal, please publish your proposal idea in &lt;a href=&quot;https://services.terracoin.io/discoveries&quot; target=&quot;_blank&quot;&gt;Discoveries&lt;/a&gt;, before submitting it to the Terracoin network. You'll get valuable feedback and are able to make adjustments, to increase the chance that it will be funded.&lt;br&gt;&amp;bull; please enter your proposal details and click the button &quot;Create proposal&quot;&lt;br&gt;&amp;bull; this will prepare your proposal at a &lt;strong&gt;cost of 10 TRC&lt;/strong&gt; (network fee)&lt;br&gt;&amp;bull; after your proposal has been broadcasted to the network, it appears within 1h on &lt;a href=&quot;https://services.terracoin.io/budget&quot; target=&quot;_blank&quot;&gt;Terracoin Services&lt;/a&gt; and you can claim the ownership of your proposal to edit the title, description and images&lt;br&gt;</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0,0">
+             <property name="spacing">
+              <number>8</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>&lt;strong&gt;Proposal name:&lt;/strong&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="proposalName">
+                 <property name="placeholderText">
+                  <string>proposal-name</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="ajaxSpinner">
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>&lt;strong&gt;Your proposal description URL. Please ensure, that this URL is not occupied by another proposal!&lt;/strong&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_servicesurl">
+               <property name="text">
+                <string>https://services.terracoin.io/p/proposal-name</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,1">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>&lt;strong&gt;Payment start date:&lt;/strong&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="startDate"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>&lt;strong&gt;Payment Address:&lt;/strong&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="trcAddress">
+                 <property name="placeholderText">
+                  <string>Terracoin address</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0,1,1">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>&lt;strong&gt;Payment amount:&lt;/strong&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="amounttrc">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="decimals">
+                  <number>8</number>
+                 </property>
+                 <property name="maximum">
+                  <double>42000000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>&lt;strong&gt;Payments:&lt;/strong&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_payments">
+                 <property name="minimumSize">
+                  <size>
+                   <width>20</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="baseSize">
+                  <size>
+                   <width>-1</width>
+                   <height>-1</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSlider" name="paymentSlider">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>12</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>2</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::TicksBelow</enum>
+                 </property>
+                 <property name="tickInterval">
+                  <number>1</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0,1,0">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>&lt;strong&gt;Total amount:&lt;/strong&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_totaltrc">
+                 <property name="text">
+                  <string>0 TRC</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="createProposal">
+                 <property name="text">
+                  <string>Create proposal</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="tabMyMasternodes">
         <attribute name="title">
          <string>My Masternodes</string>
@@ -67,7 +565,13 @@
              <item>
               <widget class="QLabel" name="updateNote">
                <property name="text">
-                <string>Note: Status of your masternodes in local wallet can potentially be slightly incorrect.&lt;br /&gt;Always wait for wallet to sync additional data and then double check from another node&lt;br /&gt;if your masternode should be running but you still do not see "ENABLED" in "Status" field.</string>
+                <string>Note: Status of your masternodes in local wallet can potentially be slightly incorrect.&lt;br /&gt;Always wait for wallet to sync additional data and then double check from another node&lt;br /&gt;if your masternode should be running but you still do not see &quot;ENABLED&quot; in &quot;Status&quot; field.</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -98,9 +602,6 @@
              </property>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
-             </attribute>
-             <attribute name="ResizeMode">
-              <enum>QHeaderView::Interactive</enum>
              </attribute>
              <column>
               <property name="text">
@@ -226,9 +727,6 @@
            </property>
            <attribute name="horizontalHeaderStretchLastSection">
             <bool>true</bool>
-           </attribute>
-           <attribute name="ResizeMode">
-            <enum>QHeaderView::Interactive</enum>
            </attribute>
            <column>
             <property name="text">

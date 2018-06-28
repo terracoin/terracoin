@@ -6,15 +6,15 @@
 
 #include "chainparams.h"
 #include "clientversion.h"
-#include "rpcserver.h"
+#include "rpc/server.h"
 #include "init.h"
+#include "net.h"
 #include "noui.h"
 #include "scheduler.h"
 #include "util.h"
 #include "masternodeconfig.h"
 #include "httpserver.h"
 #include "httprpc.h"
-#include "rpcserver.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
@@ -96,7 +96,8 @@ bool AppInit(int argc, char* argv[])
 
     try
     {
-        if (!boost::filesystem::is_directory(GetDataDir(false)))
+        bool datadirFromCmdLine = mapArgs.count("-datadir") != 0;
+        if (datadirFromCmdLine && !boost::filesystem::is_directory(GetDataDir(false)))
         {
             fprintf(stderr, "Error: Specified data directory \"%s\" does not exist.\n", mapArgs["-datadir"].c_str());
             return false;
@@ -107,6 +108,11 @@ bool AppInit(int argc, char* argv[])
         } catch (const std::exception& e) {
             fprintf(stderr,"Error reading configuration file: %s\n", e.what());
             return false;
+        }
+        if (!datadirFromCmdLine && !boost::filesystem::is_directory(GetDataDir(false)))
+        {
+            fprintf(stderr, "Error: Specified data directory \"%s\" from config file does not exist.\n", mapArgs["-datadir"].c_str());
+            return EXIT_FAILURE;
         }
         // Check for -testnet or -regtest parameter (Params() calls are only valid after this clause)
         try {
@@ -179,6 +185,32 @@ bool AppInit(int argc, char* argv[])
         // thread-blocking-waiting-for-another-thread-during-startup case
     } else {
         WaitForShutdown(&threadGroup);
+    }
+    if (RestartRequested())
+    {
+        // If restart requested cleanup resources and run application again.
+        // The old one will be exited below.
+        PrepareShutdown();
+        CExplicitNetCleanup::callCleanup();
+
+        if (argc > 0)
+        {
+            std::string cmdwparams;
+            cmdwparams += "sleep 15; ";
+            for (int i = 0; i < argc; ++i) {
+                cmdwparams += argv[i];
+                if (i != argc - 1)
+                    cmdwparams += " ";
+                else if (i == argc - 1)
+                    cmdwparams += " &";
+            }
+
+            runCommand(cmdwparams);
+        }
+        else
+        {
+            fprintf(stderr, "Error: Application name couldn't be detected.");
+        }
     }
     Shutdown();
 

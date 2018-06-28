@@ -1,7 +1,5 @@
-#!/usr/bin/env python2
-# coding=utf-8
-# ^^^^^^^^^^^^ TODO remove when supporting only Python3
-# Copyright (c) 2014-2015 The Bitcoin Core developers
+#!/usr/bin/env python3
+# Copyright (c) 2014-2016 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -40,20 +38,20 @@ class WalletTest (BitcoinTestFramework):
         assert_equal(len(self.nodes[1].listunspent()), 0)
         assert_equal(len(self.nodes[2].listunspent()), 0)
 
-        print "Mining blocks..."
+        print("Mining blocks...")
 
         self.nodes[0].generate(1)
 
         walletinfo = self.nodes[0].getwalletinfo()
-        assert_equal(walletinfo['immature_balance'], 500)
+        assert_equal(walletinfo['immature_balance'], 20)
         assert_equal(walletinfo['balance'], 0)
 
         self.sync_all()
         self.nodes[1].generate(101)
         self.sync_all()
 
-        assert_equal(self.nodes[0].getbalance(), 500)
-        assert_equal(self.nodes[1].getbalance(), 500)
+        assert_equal(self.nodes[0].getbalance(), 20)
+        assert_equal(self.nodes[1].getbalance(), 20)
         assert_equal(self.nodes[2].getbalance(), 0)
 
         # Check that only first and second nodes have UTXOs
@@ -61,10 +59,10 @@ class WalletTest (BitcoinTestFramework):
         assert_equal(len(self.nodes[1].listunspent()), 1)
         assert_equal(len(self.nodes[2].listunspent()), 0)
 
-        # Send 210 TRC from 0 to 2 using sendtoaddress call.
+        # Send 11 TRC from 0 to 2 using sendtoaddress call.
         # Second transaction will be child of first, and will require a fee
-        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 110)
-        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 100)
+        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 10)
+        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 1)
 
         walletinfo = self.nodes[0].getwalletinfo()
         assert_equal(walletinfo['immature_balance'], 0)
@@ -77,7 +75,7 @@ class WalletTest (BitcoinTestFramework):
         unspent_0 = self.nodes[2].listunspent()[0]
         unspent_0 = {"txid": unspent_0["txid"], "vout": unspent_0["vout"]}
         self.nodes[2].lockunspent(False, [unspent_0])
-        assert_raises(JSONRPCException, self.nodes[2].sendtoaddress, self.nodes[2].getnewaddress(), 200)
+        assert_raises(JSONRPCException, self.nodes[2].sendtoaddress, self.nodes[2].getnewaddress(), 20)
         assert_equal([unspent_0], self.nodes[2].listlockunspent())
         self.nodes[2].lockunspent(True, [unspent_0])
         assert_equal(len(self.nodes[2].listlockunspent()), 0)
@@ -88,8 +86,8 @@ class WalletTest (BitcoinTestFramework):
 
         # node0 should end up with 1000 TRC in block rewards plus fees, but
         # minus the 210 plus fees sent to node2
-        assert_equal(self.nodes[0].getbalance(), 1000-210)
-        assert_equal(self.nodes[2].getbalance(), 210)
+        assert_equal(self.nodes[0].getbalance(), 40-11)
+        assert_equal(self.nodes[2].getbalance(), 11)
 
         # Node0 should have two unspent outputs.
         # Create a couple of transactions to send them to node2, submit them through
@@ -116,42 +114,42 @@ class WalletTest (BitcoinTestFramework):
         self.sync_all()
 
         assert_equal(self.nodes[0].getbalance(), 0)
-        assert_equal(self.nodes[2].getbalance(), 1000)
-        assert_equal(self.nodes[2].getbalance("from1"), 1000-210)
+        assert_equal(self.nodes[2].getbalance(), 40)
+        assert_equal(self.nodes[2].getbalance("from1"), 40-11)
 
-        # Send 100 TRC normal
+        # Send 5 TRC normal
         address = self.nodes[0].getnewaddress("test")
         fee_per_byte = Decimal('0.001') / 1000
         self.nodes[2].settxfee(fee_per_byte * 1000)
-        txid = self.nodes[2].sendtoaddress(address, 100, "", "", False)
+        txid = self.nodes[2].sendtoaddress(address, 5, "", "", False)
         self.nodes[2].generate(1)
         self.sync_all()
-        node_2_bal = self.check_fee_amount(self.nodes[2].getbalance(), Decimal('900'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
-        assert_equal(self.nodes[0].getbalance(), Decimal('100'))
+        node_2_bal = self.check_fee_amount(self.nodes[2].getbalance(), Decimal('35'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
+        assert_equal(self.nodes[0].getbalance(), Decimal('5'))
 
-        # Send 100 TRC with subtract fee from amount
-        txid = self.nodes[2].sendtoaddress(address, 100, "", "", True)
+        # Send 5 TRC with subtract fee from amount
+        txid = self.nodes[2].sendtoaddress(address, 5, "", "", True)
         self.nodes[2].generate(1)
         self.sync_all()
-        node_2_bal -= Decimal('100')
+        node_2_bal -= Decimal('5')
         assert_equal(self.nodes[2].getbalance(), node_2_bal)
-        node_0_bal = self.check_fee_amount(self.nodes[0].getbalance(), Decimal('200'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
+        node_0_bal = self.check_fee_amount(self.nodes[0].getbalance(), Decimal('10'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
 
-        # Sendmany 100 TRC
-        txid = self.nodes[2].sendmany('from1', {address: 100}, 0, "", [])
+        # Sendmany 5 TRC
+        txid = self.nodes[2].sendmany('from1', {address: 5}, 0, False, "", [])
         self.nodes[2].generate(1)
         self.sync_all()
-        node_0_bal += Decimal('100')
-        node_2_bal = self.check_fee_amount(self.nodes[2].getbalance(), node_2_bal - Decimal('100'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
+        node_0_bal += Decimal('5')
+        node_2_bal = self.check_fee_amount(self.nodes[2].getbalance(), node_2_bal - Decimal('5'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
         assert_equal(self.nodes[0].getbalance(), node_0_bal)
 
-        # Sendmany 100 TRC with subtract fee from amount
-        txid = self.nodes[2].sendmany('from1', {address: 100}, 0, "", [address])
+        # Sendmany 5 TRC with subtract fee from amount
+        txid = self.nodes[2].sendmany('from1', {address: 5}, 0, False, "", [address])
         self.nodes[2].generate(1)
         self.sync_all()
-        node_2_bal -= Decimal('100')
+        node_2_bal -= Decimal('5')
         assert_equal(self.nodes[2].getbalance(), node_2_bal)
-        node_0_bal = self.check_fee_amount(self.nodes[0].getbalance(), node_0_bal + Decimal('100'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
+        node_0_bal = self.check_fee_amount(self.nodes[0].getbalance(), node_0_bal + Decimal('5'), fee_per_byte, count_bytes(self.nodes[2].getrawtransaction(txid)))
 
         # Test ResendWalletTransactions:
         # Create a couple of transactions, then start up a fourth
@@ -182,7 +180,7 @@ class WalletTest (BitcoinTestFramework):
         #4. check if recipient (node0) can list the zero value tx
         usp = self.nodes[1].listunspent()
         inputs = [{"txid":usp[0]['txid'], "vout":usp[0]['vout']}]
-        outputs = {self.nodes[1].getnewaddress(): 499.998, self.nodes[0].getnewaddress(): 11.11}
+        outputs = {self.nodes[1].getnewaddress(): 19.998, self.nodes[0].getnewaddress(): 11.11}
 
         rawTx = self.nodes[1].createrawtransaction(inputs, outputs).replace("c0833842", "00000000") #replace 11.11 with 0.0 (int32)
         decRawTx = self.nodes[1].decoderawtransaction(rawTx)
@@ -307,20 +305,6 @@ class WalletTest (BitcoinTestFramework):
         balance_nodes = [self.nodes[i].getbalance() for i in range(3)]
         block_count = self.nodes[0].getblockcount()
 
-        # Check modes:
-        #   - True: unicode escaped as \u....
-        #   - False: unicode directly as UTF-8
-        for mode in [True, False]:
-            self.nodes[0].ensure_ascii = mode
-            # unicode check: Basic Multilingual Plane, Supplementary Plane respectively
-            for s in [u'рыба', u'𝅘𝅥𝅯']:
-                addr = self.nodes[0].getaccountaddress(s)
-                label = self.nodes[0].getaccount(addr)
-                assert_equal(label.encode('utf-8'), s.encode('utf-8')) # TODO remove encode(...) when supporting only Python3
-                assert(s in self.nodes[0].listaccounts().keys())
-        self.nodes[0].ensure_ascii = True # restore to default
-
-        # maintenance tests
         maintenance = [
             '-rescan',
             '-reindex',
@@ -329,7 +313,7 @@ class WalletTest (BitcoinTestFramework):
             '-salvagewallet',
         ]
         for m in maintenance:
-            print "check " + m
+            print("check " + m)
             stop_nodes(self.nodes)
             wait_bitcoinds()
             self.nodes = start_nodes(3, self.options.tmpdir, [[m]] * 3)
