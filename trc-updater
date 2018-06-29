@@ -1,6 +1,7 @@
 #!/bin/bash
 
-current_vers=120108
+current_vers=120203
+vers="0.12.2"
 downloaded=0
 tmpdir=$(mktemp -d)
 
@@ -27,7 +28,6 @@ arch=$(uname -m)
 if [ $arch != "x86_64" ]; then
 	arch="i686-pc";
 fi
-vers="0.12.1"
 
 url=https://terracoin.io/bin/terracoin-core-current/terracoin-${vers}-${arch}-linux-gnu.tar.gz
 
