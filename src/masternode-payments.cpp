@@ -818,7 +818,7 @@ void CMasternodePaymentVote::Relay(CConnman& connman)
 
     CInv inv(MSG_MASTERNODE_PAYMENT_VOTE, GetHash());
     // relay votes only strictly to new nodes until DIP0001 is locked in to avoid being banned by majority of (old) masternodes
-    connman.RelayInv(inv, fDIP0001WasLockedIn ? mnpayments.GetMinMasternodePaymentsProto() : DIP0001_PROTOCOL_VERSION);
+    connman.RelayInv(inv, fDIP0001WasLockedIn ? mnpayments.GetMinMasternodePaymentsProto() : MIN_DIP0001_PROTOCOL_VERSION);
 }
 
 bool CMasternodePaymentVote::CheckSignature(const CPubKey& pubKeyMasternode, int nValidationHeight, int &nDos)
