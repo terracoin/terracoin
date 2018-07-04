@@ -53,6 +53,7 @@ if [ ! -z $1 ] && [ "$1" == "-f" ]; then
 fi
 
 for pid in ${pids}; do
+	tempforce=${force}
 	terracoincli_found=0
 	terracoind_uid=0
 	terracoincli_uid=0
@@ -139,7 +140,7 @@ for pid in ${pids}; do
 			echo "terracoind already at newer then requested, to force please rerun with -f"
 			continue
 		elif [[ ${terracoind_vers} -gt ${current_vers} ]] && [ ${force} -eq 1 ]; then
-			echo "terracoind is newer, downgrading (will take long as reindex is enabled)"
+			echo "terracoind is newer, downgrading"
 		fi
 	fi
 	if [ ${terracoind_vers} == 0 ]; then
@@ -148,6 +149,13 @@ for pid in ${pids}; do
 		if ! [[ $REPLY =~ ^[yY]$ ]]; then
 			continue
 		fi
+		read -p "Add reindex to be safe?" -n 1 -r
+		echo
+		if [[ $REPLY =~ ^[yY]$ ]]; then
+			tmpforce=1
+		fi
+	elif  [[ ${terracoind_vers} -lt 120108 ]]; then
+		tmpforce=1
 	fi
 
 	if [[ ${downloaded} -eq 0 ]]; then
@@ -216,8 +224,9 @@ for pid in ${pids}; do
 
 	echo -n "Restarting terracoind... "
 	if [[ ${newstart} -eq 1 ]]; then
-		if [[ ${force} -eq 1 ]] && [[ ${cmd} != *"-reindex"* ]]; then
+		if [[ ${tmpforce} -eq 1 ]] && [[ ${cmd} != *"-reindex"* ]]; then
 			cmd=${reindexcmd}
+ 			echo -n "(will take longer as reindex is enabled)... "
 		else
 			cmd=${cleancmd}
 		fi
