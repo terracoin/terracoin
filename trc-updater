@@ -53,7 +53,7 @@ if [ ! -z $1 ] && [ "$1" == "-f" ]; then
 fi
 
 for pid in ${pids}; do
-	tempforce=${force}
+	tmpforce=${force}
 	terracoincli_found=0
 	terracoind_uid=0
 	terracoincli_uid=0
