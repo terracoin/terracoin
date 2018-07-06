@@ -133,17 +133,17 @@ for pid in ${pids}; do
 			terracoincliprefix="sudo -u #${terracoincli_uid} "
 		fi
 		terracoind_vers=$(${cmdprefix}${terracoincli_dir}/terracoin-cli getinfo 2>/dev/null | grep '"version"' | cut -d: -f2 | tr -d " " | tr -d ",")
-		if [[ ${terracoind_vers} -eq ${current_vers} ]]; then
+		if [ ${terracoind_vers} -eq ${current_vers} ]; then
 			echo "terracoind already at current version!"
 			continue
-		elif [[ ${terracoind_vers} -gt ${current_vers} ]] && [ ${force} -ne 1 ]; then
+		elif [ ${terracoind_vers} -gt ${current_vers} ] && [ ${force} -ne 1 ]; then
 			echo "terracoind already at newer then requested, to force please rerun with -f"
 			continue
-		elif [[ ${terracoind_vers} -gt ${current_vers} ]] && [ ${force} -eq 1 ]; then
+		elif [ ${terracoind_vers} -gt ${current_vers} ] && [ ${force} -eq 1 ]; then
 			echo "terracoind is newer, downgrading"
 		fi
 	fi
-	if [ ${terracoind_vers} == 0 ]; then
+	if [ ${terracoind_vers} -eq 0 ]; then
 		read -p "Could not detect current running version, continue?" -n 1 -r
 		echo
 		if ! [[ $REPLY =~ ^[yY]$ ]]; then
@@ -154,11 +154,11 @@ for pid in ${pids}; do
 		if [[ $REPLY =~ ^[yY]$ ]]; then
 			tmpforce=1
 		fi
-	elif  [[ ${terracoind_vers} -lt 120108 ]]; then
+	elif  [ ${terracoind_vers} -lt 120108 ]; then
 		tmpforce=1
 	fi
 
-	if [[ ${downloaded} -eq 0 ]]; then
+	if [ ${downloaded} -eq 0 ]; then
 		chmod 777 ${tmpdir}
 
 		echo -n "Downloading new version... "
@@ -223,8 +223,8 @@ for pid in ${pids}; do
 	fi
 
 	echo -n "Restarting terracoind... "
-	if [[ ${newstart} -eq 1 ]]; then
-		if [[ ${tmpforce} -eq 1 ]] && [[ ${cmd} != *"-reindex"* ]]; then
+	if [ ${newstart} -eq 1 ]; then
+		if [ ${tmpforce} -eq 1 ] && [[ ${cmd} != *"-reindex"* ]]; then
 			cmd=${reindexcmd}
  			echo -n "(will take longer as reindex is enabled)... "
 		else
