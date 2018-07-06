@@ -1200,7 +1200,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             pfrom->fRelayTxes = fRelay; // set to true after we get the first filter* message
         }
 
-        // FIXME: START: Create a soft fork based on version
+        // START: Create a soft fork based on version
         int versparts[4];
         sscanf(pfrom->cleanSubVer.c_str(), "/Terracoin Core:%d.%d.%d.%d", &versparts[0], &versparts[1], &versparts[2], &versparts[3]);
         int intVersion = 1000000 * versparts[0] + 10000 * versparts[1] + 100 * versparts[2] + 1 * versparts[3];
