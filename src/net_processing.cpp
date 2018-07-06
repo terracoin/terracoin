@@ -1200,6 +1200,21 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             pfrom->fRelayTxes = fRelay; // set to true after we get the first filter* message
         }
 
+        // FIXME: START: Create a soft fork based on version
+        int versparts[4];
+        sscanf(pfrom->cleanSubVer.c_str(), "/Terracoin Core:%d.%d.%d.%d", &versparts[0], &versparts[1], &versparts[2], &versparts[3]);
+        int intVersion = 1000000 * versparts[0] + 10000 * versparts[1] + 100 * versparts[2] + 1 * versparts[3];
+        if (intVersion < MIN_PEER_VERSION)
+        {
+            // disconnect from peers older than this version
+            LogPrintf("peer=%d using obsolete version %d; disconnecting\n", pfrom->id, intVersion);
+            connman.PushMessageWithVersion(pfrom, INIT_PROTO_VERSION, NetMsgType::REJECT, strCommand, REJECT_OBSOLETE,
+                               strprintf("Version must be %d or greater", MIN_PEER_VERSION));
+            pfrom->fDisconnect = true;
+            return false;
+        }
+        // END: Create a soft fork based on version
+
         // Change version
         pfrom->SetSendVersion(nSendVersion);
         pfrom->nVersion = nVersion;
