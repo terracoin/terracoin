@@ -1202,13 +1202,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
         // Terracoin as version based ignoring
         // START: Create a soft fork based on version
-        int versparts[4];
-        sscanf(pfrom->cleanSubVer.c_str(), "/Terracoin Core:%d.%d.%d.%d", &versparts[0], &versparts[1], &versparts[2], &versparts[3]);
+        int versparts[5];
+        sscanf(pfrom->cleanSubVer.c_str(), "%*[^:]:%d.%d.%d.%d", &versparts[0], &versparts[1], &versparts[2], &versparts[3]);
         int intVersion = 1000000 * versparts[0] + 10000 * versparts[1] + 100 * versparts[2] + 1 * versparts[3];
         // disconnect from 0.12.2.3 peers
         if (intVersion == 120203)
         {
-            LogPrintf("peer=%d using obsolete version %d; disconnecting\n", pfrom->id, intVersion);
+            LogPrintf("peer=%d using obsolete version %s (%d); disconnecting\n", pfrom->id, pfrom->cleanSubVer, intVersion);
             connman.PushMessageWithVersion(pfrom, INIT_PROTO_VERSION, NetMsgType::REJECT, strCommand, REJECT_OBSOLETE, string("Version 0.12.2.3 banned"));
             pfrom->fDisconnect = true;
             return false;
