@@ -1,6 +1,6 @@
 Terracoin Core version 0.12.2 is now available from:
 
-  <https://terracoin.io/bin/terracoin-core-0.12.2.3/>
+  <https://terracoin.io/bin/terracoin-core-0.12.2.4/>
 
 This is a new minor release, updated to the terracoin 0.12.2.x branch. This includes ignoring all nodes lower then 0.12.1.7, and the problematic 0.12.2.3.  Enabling concensus for BIP 68, 112, 113, DIP 1, and finally enforcring V4 blocks.
 
