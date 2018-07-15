@@ -31,7 +31,7 @@ Notable changes
 Add ability to ignore based on client version
 ---------------------------------------------
 
-This allows us to forward with softforks a little bit cleaner.  Previously this was done with protocol version only, now we have the change to do it with a few different options.
+This allows us to forward with softforks a little bit cleaner.  Previously this was done with protocol version only, now we have the chance to do it with a few different options.
 
 BIP 68, 112, 113
 ----------------
@@ -47,7 +47,7 @@ DIP 0001 will not start the concensus to lock it in, this will bring 2 MB blocks
 V4 Blocks
 ---------
 
-We have accepted V4 blocks for a while, but it wasn't enforced in the code, causing inconsistencies int he BIPs we already have locked in, These will not start a 950 block lock in, making older client vulnerable to accepting a V2/3 block and thus splitting, please update ASAP.
+We have accepted V4 blocks for a while, but it wasn't enforced in the code, causing inconsistencies in the BIPs we already have locked in, These will not start a 950 block lock in, making older client vulnerable to accepting a V2/3 block and thus splitting, please update ASAP.
 
 0.12.2.4 Change log
 ===================
