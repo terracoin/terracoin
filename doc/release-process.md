@@ -24,6 +24,7 @@ Check out the source code in the following directory hierarchy.
 	doc/Doxyfile
 	contrib/gitian-descriptors/*.yml
 	src/clientversion.h (change CLIENT_VERSION_IS_RELEASE to true)
+	trc-updater
 
 	# tag version in git
 
