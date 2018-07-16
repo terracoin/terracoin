@@ -1,7 +1,9 @@
 Terracoin Core staging tree 0.12.2
 ==================================
 
-`master:` [![Build Status](https://travis-ci.org/terracoin/terracoin.svg?branch=master)](https://travis-ci.org/terracoin/terracoin) `v0.12.2.x:` [![Build Status](https://travis-ci.org/terracoin/terracoin.svg?branch=v0.12.2.x)](https://travis-ci.org/terracoin/terracoin/branches)
+Release Branch (`master`): [![Build Status](https://travis-ci.org/terracoin/terracoin.svg?branch=master)](https://travis-ci.org/terracoin/terracoin)
+
+Development Branch (`v0.12.2.x`): [![Build Status](https://travis-ci.org/terracoin/terracoin.svg?branch=v0.12.2.x)](https://travis-ci.org/terracoin/terracoin/branches)
 
 https://www.terracoin.io
 

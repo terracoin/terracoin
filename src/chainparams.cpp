@@ -106,18 +106,18 @@ public:
 
         // Deployment of BIP68, BIP112, and BIP113.
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].bit = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 0; // Not yet enabled
+        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 1530403200; // Jul 1st, 2018
+        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1561939200; // Jul 1st, 2019
 
         // Deployment of DIP0001
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].bit = 1;
-        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nStartTime = 0; //1508025600; // Oct 15th, 2017
-        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nTimeout = 0; //1539561600; // Oct 15th, 2018
+        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nStartTime = 1530403200; // Jul 1st, 2018
+        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nTimeout = 1561939200; // Jul 1st, 2019
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nWindowSize = 4032;
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nThreshold = 3226; // 80% of 4032
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000441fe9c8d4f45d3dec1ce"); // 1210000
+        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000013c31ec956b02ded0e535c"); // 1270000
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0xb40f66a62b2802614fe4941e1abbb6b112d7b3945d5c09ef6a1932c1d0a5585e"); // 1210000
@@ -252,7 +252,10 @@ public:
             (900000, uint256S("0x6b9457bc395353eb5f08a88229125f3f30872e0771c5bbd5436beb950e20571a"))
             (1000000, uint256S("0x003bdc5e722fda8bb52ff1f54b3fe4896bed0708274ef787de6209d6817b7edd"))
             (1087500, uint256S("0x5b03f9206287debfdfa60496481da4b994d7d3a3a7264f2dd22c8e5c9cf443a1"))
-            (1210000, uint256S("0xb40f66a62b2802614fe4941e1abbb6b112d7b3945d5c09ef6a1932c1d0a5585e")),
+            (1210000, uint256S("0xb40f66a62b2802614fe4941e1abbb6b112d7b3945d5c09ef6a1932c1d0a5585e"))
+            (1260375, uint256S("0x470cc5f7e82d4169d8ec8ba09bc5f9cd20192168075a3c330232d85e311b913d"))
+            (1260376, uint256S("0xc101914bd67438b2f37a0ca888a9007af608f16f15cf1187dff6890db7f9eba0"))
+            (1270000, uint256S("0x583b3b08d02c7004ba5738de5900c382e7225def47bd3a3ad9c245d0131fdca1")),
             1506940111, // * UNIX timestamp of last checkpoint block
             1656788,    // * total number of transactions between genesis and last checkpoint
                         //   (the tx=... number in the SetBestChain debug.log lines)
@@ -306,8 +309,8 @@ public:
 
         // Deployment of DIP0001
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].bit = 1;
-        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nStartTime = 0; //1505692800; // Sep 18th, 2017
-        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nTimeout = 0; //1537228800; // Sep 18th, 2018
+        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nStartTime = 1530403200; // Jul 1st, 2018
+        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nTimeout = 1561939200; // Jul 1st, 2019
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nWindowSize = 100;
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nThreshold = 50; // 50% of 100
 

@@ -1,6 +1,6 @@
 Terracoin Core version 0.12.1 is now available from:
 
-  <https://terracoin.io/bin/terracoin-core-0.12.1.7/>
+  *** THIS RELEASE HAS BEEN REMOVED, DO NOT USE ***
 
 This is a new minor version release, updated auxpow code, including adding a
 wallet-utility binary, insight fixes to indexes, updated icons, background,

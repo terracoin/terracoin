@@ -3281,7 +3281,6 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
         return state.Invalid(error("%s: block's timestamp is too early", __func__),
                              REJECT_INVALID, "time-too-old");
 
-#if 0
     // Reject block.nVersion=1 blocks when 95% (75% on testnet) of the network has upgraded:
     if (block.GetBaseVersion() < 2 && IsSuperMajority(2, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
         return state.Invalid(error("%s: rejected nVersion=1 block", __func__),
@@ -3296,7 +3295,6 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
     if (block.GetBaseVersion() < 4 && IsSuperMajority(4, pindexPrev, consensusParams.nMajorityRejectBlockOutdated, consensusParams))
         return state.Invalid(error("%s : rejected nVersion=3 block", __func__),
                              REJECT_OBSOLETE, "bad-version");
-#endif
 
     return true;
 }
@@ -3501,7 +3499,7 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned 
 {
     // Don't start till after a specifical marker
     int nHeight = pstart->nHeight + 1;
-    if (Params().NetworkIDString() == CBaseChainParams::MAIN && nHeight < consensusParams.nSuperblockStartBlock + consensusParams.nMajorityRejectBlockOutdated)
+    if (Params().NetworkIDString() == CBaseChainParams::MAIN && nHeight < 1274000 + consensusParams.nMajorityRejectBlockOutdated)
 	return false;
 
     unsigned int nFound = 0;
