@@ -36,7 +36,7 @@ vers_build=$(echo ${install_vers} | cut -d. -f4)
 printf -v current_vers "%02d%02d%02d" $vers_minor $vers_micro $vers_build
 vers="${vers_major}.${vers_minor}.${vers_micro}"
 
-url=https://terracoin.io/bin/terracoin-core-current/terracoin-${vers}-${arch}-linux-gnu.tar.gz
+url=https://terracoin.io/bin/terracoin-core-${install_vers}/terracoin-${vers}-${arch}-linux-gnu.tar.gz
 
 myuid=$(id -u)
 pwd=$(pwd)
