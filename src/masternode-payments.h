@@ -21,7 +21,6 @@ static const int MNPAYMENTS_SIGNATURES_TOTAL            = 10;
 
 // Version Masternode Payements started at
 static const int MIN_MASTERNODE_PAYMENT_PROTO_VERSION = 70206;
-static const int MIN_DIP0001_PROTOCOL_VERSION = 70208;
 
 extern CCriticalSection cs_vecPayees;
 extern CCriticalSection cs_mapMasternodeBlocks;

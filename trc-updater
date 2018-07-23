@@ -1,6 +1,6 @@
 #!/bin/bash
 
-install_vers=0.12.2.4
+install_vers=0.12.2.5
 
 downloaded=0
 tmpdir=$(mktemp -d)

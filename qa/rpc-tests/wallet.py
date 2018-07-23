@@ -119,7 +119,7 @@ class WalletTest (BitcoinTestFramework):
 
         # Send 5 TRC normal
         address = self.nodes[0].getnewaddress("test")
-        fee_per_byte = Decimal('0.001') / 1000
+        fee_per_byte = Decimal('0.0001') / 1000
         self.nodes[2].settxfee(fee_per_byte * 1000)
         txid = self.nodes[2].sendtoaddress(address, 5, "", "", False)
         self.nodes[2].generate(1)
