@@ -47,10 +47,21 @@ if [ $(echo ${pids} | wc -w) -lt 1 ]; then
 fi
 
 force=0
-if [ ! -z $1 ] && [ "$1" == "-f" ]; then
-	echo "Enabling downgrading"
-	force=1
-fi
+yes=0
+for param in "$@"; do
+	case $param in
+		"-f")
+			echo "Enabling downgrading"
+			force=1
+			;;
+		"-y")
+			echo "Enabling assume yes"
+			yes=1
+			;;
+	esac
+done
+
+exit;
 
 for pid in ${pids}; do
 	tmpforce=${force}
