@@ -137,7 +137,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
                 "  current      - Print info on current masternode winner to be paid the next block (calculated locally)\n"
                 "  genkey       - Generate new masternodeprivkey\n"
 #ifdef ENABLE_WALLET
-                "  outputs      - Print masternode compatible outputs\n"
+                "  outputs      - Print masternode compatible outputs (optional: 'full')\n"
                 "  start-alias  - Start single remote masternode by assigned alias configured in masternode.conf\n"
                 "  start-<mode> - Start remote masternodes configured in masternode.conf (<mode>: 'all', 'missing', 'disabled')\n"
 #endif // ENABLE_WALLET
@@ -371,12 +371,39 @@ UniValue masternode(const UniValue& params, bool fHelp)
     if (strCommand == "outputs") {
         // Find possible candidates
         std::vector<COutput> vPossibleCoins;
-        pwalletMain->AvailableCoins(vPossibleCoins, true, NULL, false, ONLY_1000);
+        pwalletMain->AvailableCoins(vPossibleCoins, true, NULL, false, ONLY_COLLATERAL);
+	bool full = (params.size() > 1 && params[1].get_str() == "full");
 
         UniValue obj(UniValue::VOBJ);
+        UniValue objUnsorted(UniValue::VOBJ);
+
         BOOST_FOREACH(COutput& out, vPossibleCoins) {
-            obj.push_back(Pair(out.tx->GetHash().ToString(), strprintf("%d", out.i)));
+            if (full) {
+                Coin coin;
+                COutPoint this_out(out.tx->GetHash(), out.i);
+                std::string address;
+                if (pcoinsTip->GetCoin(this_out, coin)) {
+                    txnouttype type;
+                    vector<CTxDestination> addresses;
+                    int nRequired;
+
+                    if (ExtractDestinations(coin.out.scriptPubKey, type, addresses, nRequired)) {
+                        if (addresses.size() == 1)
+                            address = CBitcoinAddress(addresses[0]).ToString();
+                    }
+                }
+                objUnsorted.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%s %d %s", out.tx->GetHash().ToString(), out.i, address)));
+            } else {
+                obj.push_back(Pair(out.tx->GetHash().ToString(), strprintf("%d", out.i)));
+            }
         }
+
+	if (full) {
+            std::vector<std::string> keys = objUnsorted.getKeys();
+            sort(keys.begin(), keys.end());
+            for (unsigned int i = 0; i < keys.size(); i++)
+                obj.push_back(Pair(keys[i], find_value(objUnsorted, keys[i])));
+	}
 
         return obj;
     }

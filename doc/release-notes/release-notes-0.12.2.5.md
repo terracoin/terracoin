@@ -2,7 +2,7 @@ Terracoin Core version 0.12.2 is now available from:
 
   <https://terracoin.io/bin/terracoin-core-0.12.2.5/>
 
-This is a new minor release, bringing various bugfixes and other improvements and also locking in for DIP0001.
+This is a new minor release, which blocks more version unifying our chain even more. It also contains various bugfixes and other improvements.
 
 Please report bugs using the issue tracker at github:
 
@@ -28,10 +28,10 @@ This does not affect wallet forward or backward compatibility.
 Notable changes
 ===============
 
-DIP 0001
---------
+RPC
+---
 
-is now locked in
+Added optional sub command `full` to `masternode outputs`.  A ascending timstamp of the tx key has been added with the collateral `<txid> <index> <address>` as a value.
 
 0.12.2.5 Change log
 ===================
