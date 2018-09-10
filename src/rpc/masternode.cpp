@@ -375,35 +375,40 @@ UniValue masternode(const UniValue& params, bool fHelp)
 	bool full = (params.size() > 1 && params[1].get_str() == "full");
 
         UniValue obj(UniValue::VOBJ);
-        UniValue objUnsorted(UniValue::VOBJ);
+        UniValue objCol(UniValue::VOBJ);
+        UniValue objIdx(UniValue::VOBJ);
+        UniValue objAddr(UniValue::VOBJ);
 
         BOOST_FOREACH(COutput& out, vPossibleCoins) {
-            if (full) {
-                Coin coin;
-                COutPoint this_out(out.tx->GetHash(), out.i);
-                std::string address;
-                if (pcoinsTip->GetCoin(this_out, coin)) {
-                    txnouttype type;
-                    vector<CTxDestination> addresses;
-                    int nRequired;
+            Coin coin;
+            COutPoint this_out(out.tx->GetHash(), out.i);
+            std::string address;
+            if (pcoinsTip->GetCoin(this_out, coin)) {
+                txnouttype type;
+                vector<CTxDestination> addresses;
+                int nRequired;
 
+                if (full) {
                     if (ExtractDestinations(coin.out.scriptPubKey, type, addresses, nRequired)) {
                         if (addresses.size() == 1)
                             address = CBitcoinAddress(addresses[0]).ToString();
                     }
+                    objAddr.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%s", address)));
                 }
-                objUnsorted.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%s %d %s", out.tx->GetHash().ToString(), out.i, address)));
-            } else {
-                obj.push_back(Pair(out.tx->GetHash().ToString(), strprintf("%d", out.i)));
             }
+            objCol.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%s", out.tx->GetHash().ToString())));
+            objIdx.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%d", out.i)));
         }
 
-	if (full) {
-            std::vector<std::string> keys = objUnsorted.getKeys();
-            sort(keys.begin(), keys.end());
-            for (unsigned int i = 0; i < keys.size(); i++)
-                obj.push_back(Pair(keys[i], find_value(objUnsorted, keys[i])));
-	}
+        std::vector<std::string> keys = objCol.getKeys();
+        sort(keys.begin(), keys.end());
+        for (unsigned int i = 0; i < keys.size(); i++) {
+            if (full) {
+                obj.push_back(Pair(find_value(objCol, keys[i]).get_str(), strprintf("%s %s", find_value(objIdx, keys[i]).get_str(), find_value(objAddr, keys[i]).get_str())));
+            } else {
+                obj.push_back(Pair(find_value(objCol, keys[i]).get_str(), find_value(objIdx, keys[i]).get_str()));
+            }
+        }
 
         return obj;
     }
