@@ -31,7 +31,9 @@ Notable changes
 RPC
 ---
 
-Added optional sub command `full` to `masternode outputs`.  A ascending timstamp of the tx key has been added with the collateral `<txid> <index> <address>` as a value.
+Added sort to `masternode outputs` via txid tiemstamp in ascending order.
+
+Added optional sub command `full` to `masternode outputs` which adds the address the txid is from.
 
 0.12.2.5 Change log
 ===================
