@@ -35,6 +35,13 @@ Added sort to `masternode outputs` via txid tiemstamp in ascending order.
 
 Added optional sub command `full` to `masternode outputs` which adds the address the txid is from.
 
+TestNet
+-------
+
+Changed tested from 1 hour superblocks to 30 hours.  Was too hard to test with superblocks going so fast.
+
+Testnet has been reset and only 0.12.2.5+ is allowed on it.
+
 0.12.2.5 Change log
 ===================
 
