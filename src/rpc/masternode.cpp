@@ -375,10 +375,12 @@ UniValue masternode(const UniValue& params, bool fHelp)
 	bool full = (params.size() > 1 && params[1].get_str() == "full");
 
         UniValue obj(UniValue::VOBJ);
+        UniValue objTS(UniValue::VOBJ);
         UniValue objCol(UniValue::VOBJ);
         UniValue objIdx(UniValue::VOBJ);
         UniValue objAddr(UniValue::VOBJ);
 
+	int outcount = 0;
         BOOST_FOREACH(COutput& out, vPossibleCoins) {
             Coin coin;
             COutPoint this_out(out.tx->GetHash(), out.i);
@@ -393,11 +395,12 @@ UniValue masternode(const UniValue& params, bool fHelp)
                         if (addresses.size() == 1)
                             address = CBitcoinAddress(addresses[0]).ToString();
                     }
-                    objAddr.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%s", address)));
+                    objAddr.push_back(Pair(strprintf("%d%d", out.tx->GetTxTime(), outcount), strprintf("%s", address)));
                 }
             }
-            objCol.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%s", out.tx->GetHash().ToString())));
-            objIdx.push_back(Pair(strprintf("%d", out.tx->GetTxTime()), strprintf("%d", out.i)));
+            objCol.push_back(Pair(strprintf("%d%d", out.tx->GetTxTime(), outcount), strprintf("%s", out.tx->GetHash().ToString())));
+            objIdx.push_back(Pair(strprintf("%d%d", out.tx->GetTxTime(), outcount), strprintf("%d", out.i)));
+            outcount++;
         }
 
         std::vector<std::string> keys = objCol.getKeys();
