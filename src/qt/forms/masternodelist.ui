@@ -161,7 +161,7 @@
            </column>
            <column>
             <property name="text">
-             <string>Monthly</string>
+             <string>Payment</string>
             </property>
            </column>
            <column>
