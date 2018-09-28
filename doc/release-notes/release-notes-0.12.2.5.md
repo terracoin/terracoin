@@ -35,6 +35,13 @@ Added sort to `masternode outputs` via txid tiemstamp in ascending order.
 
 Added optional sub command `full` to `masternode outputs` which adds the address the txid is from.
 
+Fixes
+-----
+
+Fixed how the total and reminaing payments are calculated on the proposals tab.
+
+Changed the term `Monthly` to `Payment` on the proposals tab since it was presumptuous.
+ 
 TestNet
 -------
 
