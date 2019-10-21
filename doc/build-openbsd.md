@@ -29,13 +29,13 @@ within the same executable will result in linker errors.
 
 BerkeleyDB is only necessary for the wallet functionality. To skip this, pass `--disable-wallet` to `./configure`.
 
-It is mandatory to use Berkeley DB 4.8. There is no BerkeleyDB library package in OpenBSD so if you need it you should build it yourself. To do so you can download the installation script included in BTC contrib [here/](https://github.com/bitcoin/bitcoin/blob/master/contrib/install_db4.sh) and use it in the following way from the folder where you've decided to put it:
+It is mandatory to use Berkeley DB 4.8. There is no BerkeleyDB library package in OpenBSD so if you need it you should build it yourself. To do so you can download the installation script included in BTC contrib [here](https://github.com/bitcoin/bitcoin/blob/master/contrib/install_db4.sh) and use it in the following way from the folder where you've decided to put it:
 
 ```shell
 ./install_db4.sh `pwd` CC=cc CXX=c++
 ```
 
-Before using it please keep in mind that the backslash (```\```) may not be interpreted correctly by your version of bash so it may be advisable to edit instal_db4.sh and to change the line 
+Before using it please keep in mind that the backslash (```\```) may not be interpreted correctly by your version of bash so it could be advisable to edit instal_db4.sh and to change the line 
 
 ```"${BDB_PREFIX}/${BDB_VERSION}/dist/configure" \
   --enable-cxx --disable-shared --disable-replication --with-pic --prefix="${BDB_PREFIX}" \
