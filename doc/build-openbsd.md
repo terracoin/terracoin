@@ -37,14 +37,12 @@ It is mandatory to use Berkeley DB 4.8. There is no BerkeleyDB library package i
 
 Before using it please keep in mind that the backslash (```\```) may not be interpreted correctly by your version of bash so it could be advisable to edit instal_db4.sh and to change the line 
 
-```"${BDB_PREFIX}/${BDB_VERSION}/dist/configure" \
+`"${BDB_PREFIX}/${BDB_VERSION}/dist/configure" \
   --enable-cxx --disable-shared --disable-replication --with-pic --prefix="${BDB_PREFIX}" \
-  "${@}"
-```
+  "${@}"`
 into 
 
-```"${BDB_PREFIX}/${BDB_VERSION}/dist/configure"  --enable-cxx --disable-shared --disable-replication --with-pic --prefix="${BDB_PREFIX}"  "${@}"
-```
+`"${BDB_PREFIX}/${BDB_VERSION}/dist/configure"  --enable-cxx --disable-shared --disable-replication --with-pic --prefix="${BDB_PREFIX}"  "${@}"`
 
 Then set `BDB_PREFIX` for the next section:
 
