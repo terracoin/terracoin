@@ -9,3 +9,7 @@ The seeds compiled into the release are created from sipa's DNS seed data, like 
     python makeseeds.py < seeds_main.txt > nodes_main.txt
     python generate-seeds.py . > ../../src/chainparamsseeds.h
 
+For Terracoin simply:
+
+    curl -s http://seeder.southofheaven.ca/nodes_main.txt > nodes_main.txt
+    python generate-seeds.py . > ../../src/chainparamsseeds.h
