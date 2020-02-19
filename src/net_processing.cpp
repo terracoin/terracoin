@@ -1204,7 +1204,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         // Terracoin as version based ignoring
         // START: Ban specific version and clients
         // disconnect from 0.12.2.3 peers (Bad version)
-        if (strstr(pfrom->cleanSubVer, "Terracoin Core:0.12.2.3") != NULL)
+        if (strstr(pfrom->cleanSubVer.c_str(), "Terracoin Core:0.12.2.3") != NULL)
         {
             LogPrintf("peer=%d using obsolete version %s; disconnecting\n", pfrom->id, pfrom->cleanSubVer);
             connman.PushMessageWithVersion(pfrom, INIT_PROTO_VERSION, NetMsgType::REJECT, strCommand, REJECT_OBSOLETE, string("Terracoin Core version 0.12.2.3 is banned"));
