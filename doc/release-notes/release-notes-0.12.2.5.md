@@ -2,7 +2,8 @@ Terracoin Core version 0.12.2 is now available from:
 
   <https://terracoin.io/bin/terracoin-core-0.12.2.5/>
 
-This is a new minor release, which blocks more version unifying our chain even more. It also contains various bugfixes and other improvements.
+This is a new minor release. This includes hard coding a ban on Terracon Core 0.12.2.3, other are based on protocol verison with was increased to 70208. Added a gitian definition for arm builds. Updated the seeds. Removed qt4 from the configure script since 5 is required. Also contains various bugfixes and other improvements.
+
 
 Please report bugs using the issue tracker at github:
 
@@ -28,6 +29,11 @@ This does not affect wallet forward or backward compatibility.
 Notable changes
 ===============
 
+Remove ability to ignore based on client version
+------------------------------------------------
+
+This was a bad assumption.  Since clients can define there own version string including a version it's not a good idea to ban based on this.  We did not have any such nodes and as such was a bad assumption in 0.12.2.4, A Hard coded ban on 0.12.2.3 was made and all other banning was returned to how it was pre 0.12.2.4.
+
 RPC
 ---
 
@@ -48,6 +54,11 @@ TestNet
 Changed tested from 1 hour superblocks to 30 hours.  Was too hard to test with superblocks going so fast.
 
 Testnet has been reset and only 0.12.2.5+ is allowed on it.
+
+Build System
+------------
+
+Remove qt4 as an option, qt5 is required.  Add arm options for gitian.
 
 0.12.2.5 Change log
 ===================
