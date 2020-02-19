@@ -135,9 +135,9 @@ AC_DEFUN([BITCOIN_QT_CONFIGURE],[
   ])
 
   _BITCOIN_QT_CHECK_QT5
-  if test x$bitcoin_cv_qt5 = xno; then
-    BITCOIN_QT_FAIL(Qt 5.7+ is required for gui)
-  fi
+  #if test x$bitcoin_cv_qt5 = xno; then
+  #  BITCOIN_QT_FAIL(Qt 5.7+ is required for gui)
+  #fi
 
   if test "x$use_pkgconfig$qt_bin_path" = xyes; then
     qt_bin_path="`$PKG_CONFIG --variable=host_bins Qt5Core 2>/dev/null`"
