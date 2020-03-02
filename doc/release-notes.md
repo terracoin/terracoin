@@ -39,7 +39,7 @@ RPC
 
 Added sort to `masternode outputs` via txid tiemstamp in ascending order.
 
-Added optional sub command `full` to `masternode outputs` which adds the address the txid is from.
+Added optional sub command `full` to `masternode outputs` which adds the address and timestamp the collateral txid is from.
 
 Fixes
 -----
