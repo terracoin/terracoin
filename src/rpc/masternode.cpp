@@ -137,7 +137,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
                 "  current      - Print info on current masternode winner to be paid the next block (calculated locally)\n"
                 "  genkey       - Generate new masternodeprivkey\n"
 #ifdef ENABLE_WALLET
-                "  outputs      - Print masternode compatible outputs (optional: 'full')\n"
+                "  outputs      - Print masternode compatible outputs (optional: 'full', adds collateral address and tx timestamp)\n"
                 "  start-alias  - Start single remote masternode by assigned alias configured in masternode.conf\n"
                 "  start-<mode> - Start remote masternodes configured in masternode.conf (<mode>: 'all', 'missing', 'disabled')\n"
 #endif // ENABLE_WALLET
@@ -375,7 +375,6 @@ UniValue masternode(const UniValue& params, bool fHelp)
 	bool full = (params.size() > 1 && params[1].get_str() == "full");
 
         UniValue obj(UniValue::VOBJ);
-        UniValue objTS(UniValue::VOBJ);
         UniValue objCol(UniValue::VOBJ);
         UniValue objIdx(UniValue::VOBJ);
         UniValue objAddr(UniValue::VOBJ);
@@ -407,7 +406,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
         sort(keys.begin(), keys.end());
         for (unsigned int i = 0; i < keys.size(); i++) {
             if (full) {
-                obj.push_back(Pair(find_value(objCol, keys[i]).get_str(), strprintf("%s %s", find_value(objIdx, keys[i]).get_str(), find_value(objAddr, keys[i]).get_str())));
+                obj.push_back(Pair(find_value(objCol, keys[i]).get_str(), strprintf("%s %s %s", find_value(objIdx, keys[i]).get_str(), find_value(objAddr, keys[i]).get_str(), keys[i])));
             } else {
                 obj.push_back(Pair(find_value(objCol, keys[i]).get_str(), find_value(objIdx, keys[i]).get_str()));
             }
