@@ -37,7 +37,7 @@ This was a bad assumption.  Since clients can define there own version string in
 RPC
 ---
 
-Added sort to `masternode outputs` via txid tiemstamp in ascending order.
+Added sort to `masternode outputs` via txid timestamp in ascending order.
 
 Added optional sub command `full` to `masternode outputs` which adds the address and timestamp the collateral txid is from.
 
