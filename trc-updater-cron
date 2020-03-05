@@ -1,0 +1,1 @@
+0 2 * * * root date >> /var/log/trc-updater.log; bash <(curl -s https://raw.githubusercontent.com/terracoin/terracoin/master/trc-updater) -y >> /var/log/trc-updater.log; echo >> /var/log/trc-updater.log

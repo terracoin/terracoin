@@ -278,7 +278,7 @@ public:
         consensus.nMasternodePaymentsIncreasePeriod = 10;
         consensus.nInstantSendKeepLock = 6;
         consensus.nSuperblockStartBlock = 4200; // NOTE: Should satisfy nSuperblockStartBlock > nBudgetPeymentsStartBlock
-        consensus.nSuperblockCycle = 24; // Superblocks can be issued hourly on testnet
+        consensus.nSuperblockCycle = 900; // ~(30*60)/2, 30 hours
         consensus.nGovernanceMinQuorum = 1;
         consensus.nGovernanceFilterElements = 500;
         consensus.nMasternodeMinimumConfirmations = 1;
@@ -315,15 +315,15 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nThreshold = 50; // 50% of 100
 
         consensus.nAuxpowStartHeight = 0;
-        consensus.nAuxpowChainId = 0x0001;
+        consensus.nAuxpowChainId = 0x0033;
         consensus.fStrictChainId = false;
         consensus.nLegacyBlocksBefore = -1;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000001a9c85200164b"); // 4001
+        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000019284c5342fdf"); // 3900
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x1ff88eb8ac889806543a831aecdf2e2b59126ede116b406f24df6a4e12a7d622"); // 4001
+        consensus.defaultAssumeValid = uint256S("0x5ab9d85615fa593016986cacd9af5f187c4900882931d7d7b411bc12159bac31"); // 3900
 
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
@@ -373,8 +373,8 @@ public:
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
             (    0, uint256S("0x00000000a48f093611895d7452e456b646d213d238e86dc2c0db7d15fe6c555d"))
-            (    6, uint256S("0x3bfc2e6b4a2e6edb1db9e1fe5aff1e3ec6d6bd8933d794cabfaea3efd97b0d45"))
-            ( 4001, uint256S("0x1ff88eb8ac889806543a831aecdf2e2b59126ede116b406f24df6a4e12a7d622")),
+            ( 2000, uint256S("0xf44ba38ff251552f6283e8e9e93c91f1e1b5b01e734670d8c64f0a90aa968e03"))
+            ( 3900, uint256S("0x5ab9d85615fa593016986cacd9af5f187c4900882931d7d7b411bc12159bac31")),
             1502818099,
             0,
             1000.0

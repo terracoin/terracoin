@@ -77,7 +77,7 @@ void CSporkManager::ExecuteSpork(int nSporkID, int nValue)
     //correct fork via spork technology
     if(nSporkID == SPORK_6_RECONSIDER_BLOCKS && nValue > 0) {
         // allow to reprocess 24h of blocks max, which should be enough to resolve any issues
-        int64_t nMaxBlocks = 576;
+        int64_t nMaxBlocks = 720;
         // this potentially can be a heavy operation, so only allow this to be executed once per 10 minutes
         int64_t nTimeout = 10 * 60;
 

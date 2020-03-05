@@ -1,30 +1,30 @@
 {
    "Linux32":{
-      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.3/terracoin-0.12.2-i686-pc-linux-gnu.tar.gz",
-      "sha256sum":"8ebe7a20eec800344270a66b791b2ed4435763dcdce044929c65f58f5500a1fa",
-      "size":"25654002"
+      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.5/terracoin-0.12.2-i686-pc-linux-gnu.tar.gz",
+      "sha256sum":"cc2f2b6e63933cbe530193c6b3cfb39c01de77361d3e9411e19fa44ad67ed8c0",
+      "size":"25660970"
    },
    "Linux64":{
-      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.3/terracoin-0.12.2-x86_64-linux-gnu.tar.gz",
-      "sha256sum":"34e15021be98c50c21fa9ceb704c7f580e1fba0d44b173bb88b5aea70a71e697",
-      "size":"26164961"
+      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.5/terracoin-0.12.2-x86_64-linux-gnu.tar.gz",
+      "sha256sum":"a983cb9ca990b77566017fbccfaf70b42cf8947a6f82f247bace19a332ce18e3",
+      "size":"26169989"
    },
    "Osx":{
-      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.3/terracoin-0.12.2-osx-unsigned.dmg",
-      "sha256sum":"7a2a846797feb02d9f58b3cb716120925e69d41ab500026c1d8752dd4f9351d2",
-      "size":"15036226"
+      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.5/terracoin-0.12.2-osx-unsigned.dmg",
+      "sha256sum":"a6d15e915fe3086f9b087419046dcbba13ea6c5b5fc91306e159bed76836ad9c",
+      "size":"15040146"
    },
    "Win32":{
-      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.3/terracoin-0.12.2-win32-setup-unsigned.exe",
-      "sha256sum":"89cdb1911542c16edfeeee0d1ccdd4740e5eb6bd8e4529057326db50994a8554",
-      "size":"15359038"
+      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.5/terracoin-0.12.2-win32-setup-unsigned.exe",
+      "sha256sum":"988232d8c83126a1c645d1dfd210e9dd10668d13425a87d7423ba8c4769fd824",
+      "size":"15359917"
    },
    "Win64":{
-      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.3/terracoin-0.12.2-win64-setup-unsigned.exe",
-      "sha256sum":"f2f2bea2b8ac484486561856c5a2f23b80c4002d11584fc65c3bfe2917c8a85b",
-      "size":"16312267"
+      "Url":"https://terracoin.io/bin/terracoin-core-0.12.2.5/terracoin-0.12.2-win64-setup-unsigned.exe",
+      "sha256sum":"01731aa4d3bc92c98cda86631392682b39ae23443196e91b974ead1257c73588",
+      "size":"16318580"
    },
 
-   "Version":120204,
+   "Version":120205,
    "NeedToBeUpdated": true
 }

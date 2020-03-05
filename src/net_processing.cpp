@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2016 The Bitcoin Core developers
+// Copyright (c) 2017-2020 The Terracoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1201,28 +1202,16 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         }
 
         // Terracoin as version based ignoring
-        // START: Create a soft fork based on version
-        int versparts[5];
-        sscanf(pfrom->cleanSubVer.c_str(), "%*[^:]:%d.%d.%d.%d", &versparts[0], &versparts[1], &versparts[2], &versparts[3]);
-        int intVersion = 1000000 * versparts[0] + 10000 * versparts[1] + 100 * versparts[2] + 1 * versparts[3];
-        // disconnect from 0.12.2.3 peers
-        if (intVersion == 120203)
+        // START: Ban specific version and clients
+        // disconnect from 0.12.2.3 peers (Bad version)
+        if (strstr(pfrom->cleanSubVer.c_str(), "Terracoin Core:0.12.2.3") != NULL)
         {
-            LogPrintf("peer=%d using obsolete version %s (%d); disconnecting\n", pfrom->id, pfrom->cleanSubVer, intVersion);
-            connman.PushMessageWithVersion(pfrom, INIT_PROTO_VERSION, NetMsgType::REJECT, strCommand, REJECT_OBSOLETE, string("Version 0.12.2.3 banned"));
+            LogPrintf("peer=%d using obsolete version %s; disconnecting\n", pfrom->id, pfrom->cleanSubVer);
+            connman.PushMessageWithVersion(pfrom, INIT_PROTO_VERSION, NetMsgType::REJECT, strCommand, REJECT_OBSOLETE, string("Terracoin Core version 0.12.2.3 is banned"));
             pfrom->fDisconnect = true;
             return false;
         }
-        if (intVersion < MIN_PEER_VERSION)
-        {
-            // disconnect from peers older than this version
-            LogPrintf("peer=%d using obsolete version %d; disconnecting\n", pfrom->id, intVersion);
-            connman.PushMessageWithVersion(pfrom, INIT_PROTO_VERSION, NetMsgType::REJECT, strCommand, REJECT_OBSOLETE,
-                               strprintf("Version must be %d or greater", MIN_PEER_VERSION));
-            pfrom->fDisconnect = true;
-            return false;
-        }
-        // END: Create a soft fork based on version
+        // END: Ban specific version and clients
 
         // Change version
         pfrom->SetSendVersion(nSendVersion);

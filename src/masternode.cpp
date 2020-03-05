@@ -96,7 +96,7 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb, CConnman& co
 //
 arith_uint256 CMasternode::CalculateScore(const uint256& blockHash)
 {
-    if (fDIP0001WasLockedIn) {
+   if (fDIP0001WasLockedIn) {
         // Deterministically calculate a "score" for a Masternode based on any given (block)hash
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << vin.prevout << nCollateralMinConfBlockHash << blockHash;
@@ -106,7 +106,6 @@ arith_uint256 CMasternode::CalculateScore(const uint256& blockHash)
     // TODO: remove calculations below after migration to 12.2
 
     uint256 aux = ArithToUint256(UintToArith256(vin.prevout.hash) + vin.prevout.n);
-
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
     ss << blockHash;
     arith_uint256 hash2 = UintToArith256(ss.GetHash());
@@ -578,7 +577,7 @@ bool CMasternodeBroadcast::CheckOutpoint(int& nDos)
         }
 
         if (err == COLLATERAL_INVALID_AMOUNT) {
-            LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO should have 5000 TRC, masternode=%s\n", vin.prevout.ToStringShort());
+            LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO should have %d TRC, masternode=%s\n", MASTERNODE_COLLATERAL / COIN, vin.prevout.ToStringShort());
             return false;
         }
 

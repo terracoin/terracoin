@@ -736,12 +736,28 @@ void MasternodeList::updateVoteList(bool reset)
         // Don't display past proposals
 	if (nEndEpoch < nNextTime) continue;
 
-        int nPayments = floor((nEndEpoch - nStartEpoch) / nSuperblockCycleSeconds);
-        int nStart = nStartEpoch;
-        if (GetAdjustedTime() > nStartEpoch) {
-            nStart = GetAdjustedTime();
-        }
-        int nRemaining = nPayments - floor((nStart - nStartEpoch) / nSuperblockCycleSeconds);
+	int nPayments = 0;
+	int nRemaining = 0;
+	int nPaymentCycle = nNextTime;
+	// find first payment cycle
+	if (nNextTime > nStartEpoch) {
+		while (nPaymentCycle > nStartEpoch)
+			nPaymentCycle -= nSuperblockCycleSeconds;
+	} else {
+		while (nPaymentCycle < nStartEpoch)
+			nPaymentCycle += nSuperblockCycleSeconds;
+
+		nPaymentCycle -= nSuperblockCycleSeconds;
+	}
+
+	int nCurrentTS = GetAdjustedTime();
+	// Count Payments and Remaining Payments
+	while ((nPaymentCycle + nSuperblockCycleSeconds) < nEndEpoch) {
+		nPaymentCycle += nSuperblockCycleSeconds;
+		nPayments++;
+		if (nPaymentCycle > nCurrentTS)
+			nRemaining++;
+	}
 
         CBitcoinAddress address2(objJSON["payment_address"].get_str());
 
