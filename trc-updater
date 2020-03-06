@@ -61,8 +61,6 @@ for param in "$@"; do
 	esac
 done
 
-exit;
-
 for pid in ${pids}; do
 	tmpforce=${force}
 	terracoincli_found=0
