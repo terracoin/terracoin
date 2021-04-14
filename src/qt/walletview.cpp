@@ -130,8 +130,11 @@ void WalletView::setBitcoinGUI(BitcoinGUI *gui)
         // Connect HD enabled state signal
         connect(this, SIGNAL(hdEnabledStatusChanged(int)), gui, SLOT(setHDStatus(int)));
 
-        connect(masternodeListPage, SIGNAL(requestedProposalOverlay(QString)), gui, SLOT(showModalProposalOverlay(QString)));
-        connect(masternodeListPage, SIGNAL(requestedConfirmationUpdate(int, bool, bool)), gui, SLOT(updateModalProposalConfirmations(int, bool, bool)));
+        QSettings settings;
+        if (settings.value("fShowMasternodesTab").toBool()) {
+            connect(masternodeListPage, SIGNAL(requestedProposalOverlay(QString)), gui, SLOT(showModalProposalOverlay(QString)));
+            connect(masternodeListPage, SIGNAL(requestedConfirmationUpdate(int, bool, bool)), gui, SLOT(updateModalProposalConfirmations(int, bool, bool)));
+        }
     }
 }
 
